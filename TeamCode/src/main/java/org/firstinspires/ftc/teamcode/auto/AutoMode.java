@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -15,6 +16,9 @@ public class AutoMode extends LinearOpMode {
     OpenCvCamera webcam;
     private DcMotor LEFTDRIVE;
     private DcMotor RIGHTDRIVE;
+    private DcMotor LEFTAXLE;
+    private DcMotor RIGHTAXLE;
+    private Servo ARM;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,6 +26,9 @@ public class AutoMode extends LinearOpMode {
 
         LEFTDRIVE = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
         RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
+        LEFTAXLE   = hardwareMap.get(DcMotor.class, "LEFT AXLE");
+        RIGHTAXLE  = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
+        ARM        = hardwareMap.get(Servo.class, "ARM");
 
         int cameraMonitorViewId = hardwareMap.appContext.
                 getResources().getIdentifier("cameraMonitorViewId",
