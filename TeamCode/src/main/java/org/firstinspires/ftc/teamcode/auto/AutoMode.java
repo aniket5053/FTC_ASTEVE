@@ -18,8 +18,8 @@ public class AutoMode extends LinearOpMode {
     private DcMotor RIGHTDRIVE;
     private DcMotor LEFTAXLE;
     private DcMotor RIGHTAXLE;
-    private Servo ARM;
-
+    private Servo ARM1;
+    private Servo ARM2;
     @Override
     public void runOpMode() throws InterruptedException {
         double StartTimes;
@@ -28,7 +28,8 @@ public class AutoMode extends LinearOpMode {
         RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
         LEFTAXLE   = hardwareMap.get(DcMotor.class, "LEFT AXLE");
         RIGHTAXLE  = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
-        ARM        = hardwareMap.get(Servo.class, "ARM");
+        ARM1        = hardwareMap.get(Servo.class, "ARM1");
+        ARM2        = hardwareMap.get(Servo.class, "ARM2");
 
         int cameraMonitorViewId = hardwareMap.appContext.
                 getResources().getIdentifier("cameraMonitorViewId",
