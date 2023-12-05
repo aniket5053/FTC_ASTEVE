@@ -41,7 +41,7 @@ public class RobotController extends LinearOpMode {
                     ARM.setPosition(0);
                 }
                 if(gamepad2.b) {
-                    // move to 90 degrees.
+                    // move to 90 degrees
                     ARM.setPosition(0.5);
                 }
                 ARM.setPosition(-gamepad2.right_stick_y);
