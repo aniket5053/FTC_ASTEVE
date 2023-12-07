@@ -28,10 +28,10 @@ public class RobotController extends LinearOpMode {
 
         LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
         LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
-        ELBOW2.setDirection(Servo.Direction.REVERSE);
+        //ELBOW2.setDirection(Servo.Direction.REVERSE);
 
-        ELBOW1.setPosition(0);
-        ELBOW2.setPosition(0);
+        //ELBOW1.setPosition(0);
+        //ELBOW2.setPosition(0);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -39,38 +39,38 @@ public class RobotController extends LinearOpMode {
                 LEFTDRIVE.setPower(-gamepad1.left_stick_y);
                 RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
 
-                LEFTAXLE.setPower(-gamepad2.left_stick_y);
-                RIGHTAXLE.setPower(-gamepad2.left_stick_y);
+                LEFTAXLE.setPower(gamepad2.left_stick_y);
+                RIGHTAXLE.setPower(gamepad2.left_stick_y);
 
                 if(gamepad2.y) {
                     // move to 0 degrees.
                     ELBOW1.setPosition(0);
-                    ELBOW2.setPosition(0);
+                    ELBOW2.setPosition(0.6);
                 }
-                if(gamepad2.b) {
+                else if(gamepad2.b) {
                     // move to 90 degrees
-                    ELBOW1.setPosition(0.5);
-                    ELBOW2.setPosition(0.5);
+                    ELBOW1.setPosition(1);
+                    ELBOW2.setPosition(1);
                 }
-                if(gamepad2.a){
+                else if(gamepad2.a){
                     WRIST.setPosition(0.0);
                 }
-                if(gamepad2.x){
+                else if(gamepad2.x){
                     WRIST.setPosition(0.5);
                 }
 
-                ELBOW1.setPosition(-gamepad2.right_stick_y);
-                ELBOW2.setPosition(-gamepad2.right_stick_y);
-                WRIST.setPosition(gamepad2.right_trigger);
+                //ELBOW1.setPosition(-gamepad2.right_stick_y);
+                //ELBOW2.setPosition(-gamepad2.right_stick_y);
+                //WRIST.setPosition(gamepad2.right_trigger);
                 telemetry.addData("Left Power", LEFTDRIVE.getPower());
                 telemetry.addData("Right Power", RIGHTDRIVE.getPower());
                 telemetry.addData("Left Axle", LEFTAXLE.getPower());
                 telemetry.addData("Right Axle", RIGHTAXLE.getPower());
                 telemetry.addData("ELBOW1",ELBOW1.getPosition() );
-                telemetry.addData("ELBOW2",ELBOW1.getPosition() );
+                telemetry.addData("ELBOW2",ELBOW2.getPosition() );
+                telemetry.addData("WRIST",WRIST.getPosition() );
                 telemetry.update();
             }
         }
     }
 }
-
