@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-@Autonomous()
+@Autonomous(name="Test", group= "Auto")
 public class PixelDetector extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
@@ -38,6 +38,8 @@ public class PixelDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input){
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+
+        //Color
         Scalar lowHSV = new Scalar(0,0,168);
         Scalar highHSV = new Scalar(172,111,255);
 
