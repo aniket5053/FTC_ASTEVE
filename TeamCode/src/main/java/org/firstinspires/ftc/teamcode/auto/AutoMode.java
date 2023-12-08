@@ -58,64 +58,33 @@ public class AutoMode extends LinearOpMode {
         switch (detector.getLocation()){
             case LEFT:
                 LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
-                LEFTDRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RIGHTDRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                LEFTDRIVE.setTargetPosition(100);
-                RIGHTDRIVE.setTargetPosition(0);
-                LEFTDRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RIGHTDRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                waitForStart();
-                LEFTDRIVE.setPower(0.8);
-                RIGHTDRIVE.setPower(0);
-                StartTimes = getRuntime();
-                while (opModeIsActive() && getRuntime() - StartTimes < 1.5) {
-                    // Put loop blocks here.
-                    telemetry.update();
-                }
+                LEFTDRIVE.setPower(-0.5);
+                RIGHTDRIVE.setPower(0.5);
+                sleep(750);
                 LEFTDRIVE.setPower(0);
                 RIGHTDRIVE.setPower(0);
-
                 break;
             case CENTER:
                 LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
-                LEFTDRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RIGHTDRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                LEFTDRIVE.setTargetPosition(100);
-                RIGHTDRIVE.setTargetPosition(100);
-                LEFTDRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RIGHTDRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                waitForStart();
-                LEFTDRIVE.setPower(0.8);
-                RIGHTDRIVE.setPower(0.8);
-                StartTimes = getRuntime();
-                while (opModeIsActive() && getRuntime() - StartTimes < 1.5) {
-                    // Put loop blocks here.
-                    telemetry.update();
-                }
+                LEFTDRIVE.setPower(1);
+                RIGHTDRIVE.setPower(1);
+                sleep(1000);
                 LEFTDRIVE.setPower(0);
                 RIGHTDRIVE.setPower(0);
                 break;
+
             case RIGHT:
                 LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
-                LEFTDRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RIGHTDRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                LEFTDRIVE.setTargetPosition(0);
-                RIGHTDRIVE.setTargetPosition(100);
-                LEFTDRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RIGHTDRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                waitForStart();
-                LEFTDRIVE.setPower(0);
-                RIGHTDRIVE.setPower(0.8);
-                StartTimes = getRuntime();
-                while (opModeIsActive() && getRuntime() - StartTimes < 1.5) {
-                    // Put loop blocks here.
-                    telemetry.update();
-                }
+                LEFTDRIVE.setPower(0.5);
+                RIGHTDRIVE.setPower(-0.5);
+                sleep(750);
                 LEFTDRIVE.setPower(0);
                 RIGHTDRIVE.setPower(0);
                 break;
+
             case NOT_FOUND:
-                //
+                LEFTDRIVE.setPower(0);
+                RIGHTDRIVE.setPower(0);
 
 
         }
