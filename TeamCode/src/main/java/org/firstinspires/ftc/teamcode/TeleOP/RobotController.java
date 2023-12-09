@@ -37,13 +37,15 @@ public class RobotController extends LinearOpMode {
         CLAWLEFT.setDirection(Servo.Direction.REVERSE);
 
 
-        ELBOW1.setPosition(0);
-        ELBOW2.setPosition(0);
+        ELBOW1.setPosition(1);
+        ELBOW2.setPosition(1);
 
         waitForStart();
         if (opModeIsActive()) {
-            LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            //LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
             while (opModeIsActive()) {
 
                 LEFTDRIVE.setPower(-gamepad1.left_stick_y);
@@ -59,7 +61,7 @@ public class RobotController extends LinearOpMode {
 
 
                 //home
-                if(gamepad2.x){
+                if(gamepad1.x){
                     WRIST1.setPosition(1);
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
@@ -72,21 +74,22 @@ public class RobotController extends LinearOpMode {
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LEFTAXLE.isBusy() || RIGHTAXLE.isBusy()) {/**/}
+                    while (LEFTAXLE.isBusy() && RIGHTAXLE.isBusy()) {
+                        LEFTDRIVE.setPower(-gamepad1.left_stick_y);
+                        RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
+                    }
                     LEFTAXLE.setPower(0);
                     RIGHTAXLE.setPower(0);
 
                 }
 
-
-                //floor
-                else if(gamepad2.a){
-                    //-320
+                //underbar crossing
+                if(gamepad2.x){
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
-                    WRIST1.setPosition(0);
+                    WRIST1.setPosition(0.5);
                     //move elevator down
-                    LEFTAXLE.setTargetPosition(250);
+                    LEFTAXLE.setTargetPosition(250);  //s/b -360
                     RIGHTAXLE.setTargetPosition(250);
                     LEFTAXLE.setPower(1);
                     RIGHTAXLE.setPower(1);
@@ -94,7 +97,35 @@ public class RobotController extends LinearOpMode {
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LEFTAXLE.isBusy() || RIGHTAXLE.isBusy()) {/**/}
+                    while (LEFTAXLE.isBusy() && RIGHTAXLE.isBusy()) {
+                        LEFTDRIVE.setPower(-gamepad1.left_stick_y);
+                        RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
+                    }
+                    LEFTAXLE.setPower(0);
+                    RIGHTAXLE.setPower(0);
+
+                }
+
+
+
+                //floor
+                else if(gamepad2.a){
+                    ELBOW1.setPosition(1);
+                    ELBOW2.setPosition(1);
+                    WRIST1.setPosition(0);
+                    //move elevator down
+                    LEFTAXLE.setTargetPosition(250);  //s/b -360
+                    RIGHTAXLE.setTargetPosition(250);
+                    LEFTAXLE.setPower(1);
+                    RIGHTAXLE.setPower(1);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    while (LEFTAXLE.isBusy() && RIGHTAXLE.isBusy()) {
+                        LEFTDRIVE.setPower(-gamepad1.left_stick_y);
+                        RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
+                    }
                     LEFTAXLE.setPower(0);
                     RIGHTAXLE.setPower(0);
 
@@ -103,7 +134,6 @@ public class RobotController extends LinearOpMode {
 
                 //score high
                 else if(gamepad2.y){
-                    //1024
                     ELBOW1.setPosition(0);
                     ELBOW2.setPosition(0);
                     WRIST1.setPosition(0.8);
@@ -116,11 +146,12 @@ public class RobotController extends LinearOpMode {
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LEFTAXLE.isBusy() || RIGHTAXLE.isBusy()) {/**/}
+                    while (LEFTAXLE.isBusy() && RIGHTAXLE.isBusy()) {
+                        LEFTDRIVE.setPower(-gamepad1.left_stick_y);
+                        RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
+                    }
                     LEFTAXLE.setPower(0);
                     RIGHTAXLE.setPower(0);
-
-
                 }
 
                 //score low
@@ -138,11 +169,12 @@ public class RobotController extends LinearOpMode {
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LEFTAXLE.isBusy() || RIGHTAXLE.isBusy()) {/**/}
+                    while (LEFTAXLE.isBusy() && RIGHTAXLE.isBusy()) {
+                        LEFTDRIVE.setPower(-gamepad1.left_stick_y);
+                        RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
+                    }
                     LEFTAXLE.setPower(0);
                     RIGHTAXLE.setPower(0);
-
-
                 }
 
                 if(gamepad2.left_bumper){
@@ -201,9 +233,7 @@ public class RobotController extends LinearOpMode {
 
 
 
-                //ELBOW1.setPosition(-gamepad2.right_stick_y);
-                //ELBOW2.setPosition(-gamepad2.right_stick_y);
-                //WRIST.setPosition(gamepad2.right_trigger);
+
                 telemetry.addData("Left Power", LEFTDRIVE.getPower());
                 telemetry.addData("Right Power", RIGHTDRIVE.getPower());
                 telemetry.addData("Left Axle", LEFTAXLE.getPower());
@@ -211,7 +241,7 @@ public class RobotController extends LinearOpMode {
                 telemetry.addData("ELBOW1",ELBOW1.getPosition() );
                 telemetry.addData("ELBOW2",ELBOW2.getPosition() );
                 telemetry.addData("WRIST",WRIST1.getPosition() );
-                telemetry.addData("Encoder Value",LEFTAXLE.getCurrentPosition());
+                telemetry.addData("Elevator Encoder Value",LEFTAXLE.getCurrentPosition());
                 telemetry.addData("Left Drive Encoder", LEFTDRIVE.getCurrentPosition());
                 telemetry.addData("RIGHT Drive Encoder", RIGHTDRIVE.getCurrentPosition());
 
