@@ -36,8 +36,8 @@ public class FunctionsTest extends LinearOpMode {
         ELBOW1 = hardwareMap.get(Servo.class, "ELBOW1");
         ELBOW2 = hardwareMap.get(Servo.class, "ELBOW2");
         WRIST1 = hardwareMap.get(Servo.class, "WRIST");
-        CLAWLEFT = hardwareMap.get(Servo.class, "CLAW LEFT");
-        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAW RIGHT");
+        CLAWLEFT = hardwareMap.get(Servo.class, "CLAWLEFT");
+        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
         LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
         LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
