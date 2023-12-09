@@ -127,7 +127,7 @@ public class RobotController extends LinearOpMode {
                     //wrist up
                     WRIST1.setPosition(1);
                 }
-                if(gamepad2.dpad_down){
+                if(gamepad2.dpad_right){
                     //wrist down
                     WRIST1.setPosition(0);
                 }
