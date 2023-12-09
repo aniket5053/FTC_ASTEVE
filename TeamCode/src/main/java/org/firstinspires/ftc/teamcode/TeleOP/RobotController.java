@@ -63,8 +63,9 @@ public class RobotController extends LinearOpMode {
                 //floor
                 else if(gamepad2.a){
                     ELBOW1.setPosition(1);
-                    ELBOW1.setPosition(1);
+                    ELBOW2.setPosition(1);
                     WRIST1.setPosition(0);
+                    //move elevator down
 
                 }
 
@@ -74,6 +75,7 @@ public class RobotController extends LinearOpMode {
                     ELBOW1.setPosition(0);
                     ELBOW2.setPosition(0);
                     WRIST1.setPosition(0.8);
+                    //move elevator up
 
                 }
 
@@ -87,7 +89,7 @@ public class RobotController extends LinearOpMode {
                     }
                 }
 
-                if(gamepad2.right_bumper){
+                else if(gamepad2.right_bumper){
                     //open claw
                     if(CLAWRIGHT.getPosition() == 1){
                         CLAWRIGHT.setPosition(0);
@@ -95,6 +97,18 @@ public class RobotController extends LinearOpMode {
                     else{
                         CLAWRIGHT.setPosition(1);
                     }
+                }
+                else if(gamepad2.right_bumper && gamepad2.left_bumper){
+                    if(CLAWRIGHT.getPosition() == 1){
+                        CLAWRIGHT.setPosition(0);
+                        CLAWLEFT.setPosition(0);
+                    }
+                    else{
+                        CLAWRIGHT.setPosition(1);
+                        CLAWLEFT.setPosition(1);
+
+                    }
+
                 }
 
 
