@@ -50,12 +50,25 @@ public class RobotController extends LinearOpMode {
                 LEFTAXLE.setPower(gamepad2.left_stick_y);
                 RIGHTAXLE.setPower(gamepad2.left_stick_y);
 
+                LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
                 //home
                 if(gamepad2.x){
                     WRIST1.setPosition(1);
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
                     //move elevator home here
+                    LEFTAXLE.setTargetPosition(1024);
+                    RIGHTAXLE.setTargetPosition(1024);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LEFTAXLE.setPower(1);
+                    RIGHTAXLE.setPower(1);
 
                 }
 
@@ -76,6 +89,7 @@ public class RobotController extends LinearOpMode {
                     ELBOW2.setPosition(0);
                     WRIST1.setPosition(0.8);
                     //move elevator up
+
 
                 }
 
@@ -145,6 +159,11 @@ public class RobotController extends LinearOpMode {
                 telemetry.addData("ELBOW1",ELBOW1.getPosition() );
                 telemetry.addData("ELBOW2",ELBOW2.getPosition() );
                 telemetry.addData("WRIST",WRIST1.getPosition() );
+                telemetry.addData("Encoder Value",LEFTAXLE.getCurrentPosition());
+                telemetry.addData("Left Drive Encoder", LEFTDRIVE.getCurrentPosition());
+                telemetry.addData("RIGHT Drive Encoder", RIGHTDRIVE.getCurrentPosition());
+
+
                 telemetry.update();
             }
         }
