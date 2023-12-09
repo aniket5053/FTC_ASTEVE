@@ -271,8 +271,8 @@ public class RedAuto extends LinearOpMode{
         double adjustedSleepTime = 1000 * movementsNeeded;
 
         // Set power to the motors for moving forward
-        LEFTDRIVE.setPower(0.5);
-        RIGHTDRIVE.setPower(0.5);
+        LEFTDRIVE.setPower(1);
+        RIGHTDRIVE.setPower(1);
 
         // Sleep for the adjusted time
         sleep((long) adjustedSleepTime);
@@ -291,8 +291,8 @@ public class RedAuto extends LinearOpMode{
         double adjustedSleepTime = 1000 * movementsNeeded;
 
         // Set power to the motors for moving backward
-        LEFTDRIVE.setPower(-0.5);
-        RIGHTDRIVE.setPower(-0.5);
+        LEFTDRIVE.setPower(-1);
+        RIGHTDRIVE.setPower(-1);
 
         // Sleep for the adjusted time
         sleep((long) adjustedSleepTime);
