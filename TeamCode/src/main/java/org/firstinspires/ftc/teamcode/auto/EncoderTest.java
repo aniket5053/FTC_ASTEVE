@@ -1,52 +1,65 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "EncoderTest")
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+@Autonomous(name="Encoder Test", group= "Auto")
 public class EncoderTest extends LinearOpMode {
 
-    /**
-     * This function is executed when this OpMode is selected from the Driver Station.
-     */
+    static final double FEET_PER_METER = 3.28084;
+
+    Robot robot = new Robot();
     @Override
-    public void runOpMode() {
-
-
-        DcMotor LEFTDRIVE = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
-        DcMotor RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
-        Servo ELBOW1     = hardwareMap.get(Servo.class, "ELBOW1");
-        Servo   ELBOW2     = hardwareMap.get(Servo.class, "ELBOW2");
-        LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
-        //LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
+    public void runOpMode() throws InterruptedException {
+        robot.initializeHardware();
 
         waitForStart();
+        // Move 3.5 ft forward (3.5 ft = 42 inches)
+        robot.moveForward(42);
 
-        //moves roughly 55 inches
-        LEFTDRIVE.setPower(1);
-        RIGHTDRIVE.setPower(1);
-        sleep(1000);
+        // Turn left 90 degrees
+        robot.turnLeft(90);
 
-        //stops
-        LEFTDRIVE.setPower(0);
-        RIGHTDRIVE.setPower(0);
-        sleep(500);
+        // move wrist down
+        robot.WRIST1.setPosition(0.5);
 
-        //left 90 degrees
-        LEFTDRIVE.setPower(-0.5);
-        RIGHTDRIVE.setPower(0.5);
-        sleep(650);
+        // open left claw
+        robot.CLAWLEFT.setPosition(1);
 
-        LEFTDRIVE.setPower(0.5);
-        RIGHTDRIVE.setPower(-0.5);
-        sleep(650);
+        // move wrist up
+        robot.WRIST1.setPosition(0.8);
 
-        LEFTDRIVE.setPower(0);
-        RIGHTDRIVE.setPower(0);
-        sleep(1000);
+        //move back 2.5 ft
+        robot.moveBackward(30);
+
+        //turn right 180
+        robot.turnRight(180);
+
+        //move forward 1 ft
+        robot.moveForward(12);
+
+        // Call score_low method
+        robot.score_low();
+
+        // Set clawright position to 1
+        robot.CLAWRIGHT.setPosition(1);
+
+
+
+        }
 
 
     }
-}
+
+
