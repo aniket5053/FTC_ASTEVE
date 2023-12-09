@@ -37,13 +37,13 @@ public class RIGHT_FRONT extends LinearOpMode {
                 robot.turnLeft(90);
 
                 // move wrist down
-                robot.WRIST1.setPosition(0);
+                robot.WRIST1.setPosition(0.5);
 
                 // open left claw
                 robot.CLAWLEFT.setPosition(1);
 
                 // move wrist up
-                robot.WRIST1.setPosition(1);
+                robot.WRIST1.setPosition(0.8);
 
               //move back 2.5 ft
                 robot.moveBackward(30);
@@ -67,13 +67,13 @@ public class RIGHT_FRONT extends LinearOpMode {
                 robot.moveForward(3.75);
 
                 // Put wrist down
-                robot.WRIST1.setPosition(0);
+                robot.WRIST1.setPosition(0.5);
 
                 // Open left claw
                 robot.CLAWLEFT.setPosition(1);
 
                 // Move wrist up
-                robot.WRIST1.setPosition(1);
+                robot.WRIST1.setPosition(0.8);
 
                 //move back 1 ft
                 robot.moveBackward(12);
@@ -103,13 +103,13 @@ public class RIGHT_FRONT extends LinearOpMode {
                 robot.turnRight(90);
 
                 // move wrist down
-                robot.WRIST1.setPosition(0);
+                robot.WRIST1.setPosition(0.5);
 
                 // open left claw
                 robot.CLAWLEFT.setPosition(1);
 
                 // Move wrist up
-                robot.WRIST1.setPosition(1);
+                robot.WRIST1.setPosition(0.8);
 
                 //move forward 1.5 ft
                 robot.moveForward(18);

@@ -37,8 +37,8 @@ public class RobotController extends LinearOpMode {
         CLAWLEFT.setDirection(Servo.Direction.REVERSE);
 
 
-        ELBOW1.setPosition(1);
-        ELBOW2.setPosition(1);
+        //ELBOW1.setPosition(1);
+        //ELBOW2.setPosition(1);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -87,10 +87,10 @@ public class RobotController extends LinearOpMode {
                 if(gamepad2.x){
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
-                    WRIST1.setPosition(0.5);
+                    WRIST1.setPosition(1);
                     //move elevator down
-                    LEFTAXLE.setTargetPosition(250);  //s/b -360
-                    RIGHTAXLE.setTargetPosition(250);
+                    LEFTAXLE.setTargetPosition(300);  //s/b -360
+                    RIGHTAXLE.setTargetPosition(300);
                     LEFTAXLE.setPower(1);
                     RIGHTAXLE.setPower(1);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -112,10 +112,10 @@ public class RobotController extends LinearOpMode {
                 else if(gamepad2.a){
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
-                    WRIST1.setPosition(0);
+                    WRIST1.setPosition(0.6);
                     //move elevator down
-                    LEFTAXLE.setTargetPosition(250);  //s/b -360
-                    RIGHTAXLE.setTargetPosition(250);
+                    LEFTAXLE.setTargetPosition(300);  //s/b -360
+                    RIGHTAXLE.setTargetPosition(300);
                     LEFTAXLE.setPower(1);
                     RIGHTAXLE.setPower(1);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -227,7 +227,7 @@ public class RobotController extends LinearOpMode {
                 }
                 if(gamepad2.dpad_right){
                     //wrist down
-                    WRIST1.setPosition(0);
+                    WRIST1.setPosition(0.5);
                 }
 
 
