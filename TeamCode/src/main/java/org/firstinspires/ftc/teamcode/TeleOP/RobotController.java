@@ -64,8 +64,8 @@ public class RobotController extends LinearOpMode {
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
                     //move elevator home here
-                    LEFTAXLE.setTargetPosition(1024);
-                    RIGHTAXLE.setTargetPosition(1024);
+                    LEFTAXLE.setTargetPosition(0);
+                    RIGHTAXLE.setTargetPosition(0);
                     LEFTAXLE.setPower(1);
                     RIGHTAXLE.setPower(1);
                     LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -81,20 +81,44 @@ public class RobotController extends LinearOpMode {
 
                 //floor
                 else if(gamepad2.a){
+                    //-320
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
                     WRIST1.setPosition(0);
                     //move elevator down
+                    LEFTAXLE.setTargetPosition(-320);
+                    RIGHTAXLE.setTargetPosition(-320);
+                    LEFTAXLE.setPower(1);
+                    RIGHTAXLE.setPower(1);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    while (LEFTAXLE.isBusy() || RIGHTAXLE.isBusy()) {/**/}
+                    LEFTAXLE.setPower(0);
+                    RIGHTAXLE.setPower(0);
 
                 }
 
 
                 //score
                 else if(gamepad2.y){
+                    //1024
                     ELBOW1.setPosition(0);
                     ELBOW2.setPosition(0);
                     WRIST1.setPosition(0.8);
                     //move elevator up
+                    LEFTAXLE.setTargetPosition(1024);
+                    RIGHTAXLE.setTargetPosition(1024);
+                    LEFTAXLE.setPower(1);
+                    RIGHTAXLE.setPower(1);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    while (LEFTAXLE.isBusy() || RIGHTAXLE.isBusy()) {/**/}
+                    LEFTAXLE.setPower(0);
+                    RIGHTAXLE.setPower(0);
 
 
                 }
