@@ -47,6 +47,9 @@ public class RobotController extends LinearOpMode {
                 LEFTDRIVE.setPower(-gamepad1.left_stick_y);
                 RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
 
+                LEFTAXLE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                RIGHTAXLE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
                 LEFTAXLE.setPower(gamepad2.left_stick_y);
                 RIGHTAXLE.setPower(gamepad2.left_stick_y);
 
@@ -69,6 +72,9 @@ public class RobotController extends LinearOpMode {
                     RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     LEFTAXLE.setPower(1);
                     RIGHTAXLE.setPower(1);
+                    LEFTAXLE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    RIGHTAXLE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
                 }
 
