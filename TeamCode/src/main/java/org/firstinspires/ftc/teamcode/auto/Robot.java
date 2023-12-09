@@ -275,4 +275,27 @@ public class Robot extends LinearOpMode {
         LEFTAXLE.setPower(0);
         RIGHTAXLE.setPower(0);
     }
+
+    void underbar_crossing(){
+        ELBOW1.setPosition(1);
+        ELBOW2.setPosition(1);
+        WRIST1.setPosition(0.5);
+        //move elevator down
+        LEFTAXLE.setTargetPosition(250);  //s/b -360
+        RIGHTAXLE.setTargetPosition(250);
+        LEFTAXLE.setPower(1);
+        RIGHTAXLE.setPower(1);
+        LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RIGHTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LEFTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RIGHTAXLE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (LEFTAXLE.isBusy() && RIGHTAXLE.isBusy()) {
+            LEFTDRIVE.setPower(-gamepad1.left_stick_y);
+            RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
+        }
+        LEFTAXLE.setPower(0);
+        RIGHTAXLE.setPower(0);
+
+    }
+
 }
