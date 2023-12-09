@@ -15,6 +15,8 @@ public class RobotController extends LinearOpMode {
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
+
+
     @Override
     public void runOpMode() {
         DcMotor LEFTDRIVE  = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
@@ -41,62 +43,79 @@ public class RobotController extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                boolean allowMotorControl = true;
 
                 LEFTDRIVE.setPower(-gamepad1.left_stick_y);
                 RIGHTDRIVE.setPower(-gamepad1.right_stick_y);
 
-                if (TOUCHSENSOR.isPressed()) {
-                    LEFTAXLE.setPower(0);
-                    RIGHTAXLE.setPower(0);
-                    allowMotorControl = false;
-                } else {
-                    allowMotorControl = true;
-                }
+                LEFTAXLE.setPower(gamepad2.left_stick_y);
+                RIGHTAXLE.setPower(gamepad2.left_stick_y);
 
-                if(allowMotorControl){
-                    LEFTAXLE.setPower(gamepad2.left_stick_y);
-                    RIGHTAXLE.setPower(gamepad2.left_stick_y);
+                //home
+                if(gamepad2.x){
+                    WRIST1.setPosition(1);
+                    ELBOW1.setPosition(1);
+                    ELBOW2.setPosition(1);
+                    //move elevator home here
 
                 }
 
 
+                //floor
+                else if(gamepad2.a){
+                    ELBOW1.setPosition(1);
+                    ELBOW1.setPosition(1);
+                    WRIST1.setPosition(0);
 
-                if(gamepad2.y) {
-                    // move to 0 degrees.
+                }
+
+
+                //score
+                else if(gamepad2.y){
                     ELBOW1.setPosition(0);
-                    ELBOW2.setPosition(0.6);
+                    ELBOW2.setPosition(0);
+                    WRIST1.setPosition(0.8);
+
                 }
-                else if(gamepad2.b) {
-                    // move to 90 degrees
+
+                if(gamepad2.left_bumper){
+                    //open claw
+                    if(CLAWLEFT.getPosition() == 1){
+                        CLAWLEFT.setPosition(0);
+                    }
+                    else{
+                        CLAWLEFT.setPosition(1);
+                    }
+                }
+
+                if(gamepad2.right_bumper){
+                    //open claw
+                    if(CLAWRIGHT.getPosition() == 1){
+                        CLAWRIGHT.setPosition(0);
+                    }
+                    else{
+                        CLAWRIGHT.setPosition(1);
+                    }
+                }
+
+
+                if(gamepad2.dpad_up){
+                    //elbow up
+                    ELBOW1.setPosition(0);
+                    ELBOW2.setPosition(0);
+
+                }
+                if(gamepad2.dpad_down){
+                    //elbow down
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
                 }
-                else if(gamepad2.a){
-                    WRIST1.setPosition(0.0);
+                if(gamepad2.dpad_left){
+                    //wrist up
+                    WRIST1.setPosition(1);
                 }
-                else if(gamepad2.x){
-                    WRIST1.setPosition(0.5);
-                }
-                else if(gamepad2.left_bumper){
-                    CLAWRIGHT.setPosition(0);
-                    CLAWLEFT.setPosition(0);
-                }
-                else if(gamepad2.right_bumper){
-                    CLAWRIGHT.setPosition(1);
-                    CLAWLEFT.setPosition(1);
-                }
-                else if (gamepad2.dpad_left) {
-                    CLAWLEFT.setPosition(0);
-                }
-                else if (gamepad2.dpad_right) {
-                    CLAWLEFT.setPosition(1);
-                }
-                else if (gamepad2.dpad_up) {
-                    CLAWRIGHT.setPosition(0);
-                }
-                else if (gamepad2.dpad_down) {
-                    CLAWRIGHT.setPosition(1);
+                if(gamepad2.dpad_down){
+                    //wrist down
+                    WRIST1.setPosition(0);
                 }
 
 

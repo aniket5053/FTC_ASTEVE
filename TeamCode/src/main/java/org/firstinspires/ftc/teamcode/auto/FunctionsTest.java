@@ -82,7 +82,7 @@ public class FunctionsTest extends LinearOpMode {
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
         LEFTDRIVE.setPower(-0.5);
-        RIGHTAXLE.setPower(0.5);
+        RIGHTDRIVE.setPower(0.5);
         sleep((long) adjustedSleepTime);
         LEFTDRIVE.setPower(0);
         RIGHTDRIVE.setPower(0);
@@ -96,7 +96,7 @@ public class FunctionsTest extends LinearOpMode {
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
         LEFTDRIVE.setPower(0.5);
-        RIGHTAXLE.setPower(-0.5);
+        RIGHTDRIVE.setPower(-0.5);
         sleep((long) adjustedSleepTime);
         LEFTDRIVE.setPower(0);
         RIGHTDRIVE.setPower(0);

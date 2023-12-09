@@ -125,7 +125,7 @@ public class RedAuto extends LinearOpMode{
 
         telemetry.setMsTransmissionInterval(50);
 
-        while (!isStarted() && !isStopRequested()) {
+        waitForStart(); {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if (currentDetections.size() != 0) {
@@ -243,7 +243,7 @@ public class RedAuto extends LinearOpMode{
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
         LEFTDRIVE.setPower(-0.5);
-        RIGHTAXLE.setPower(0.5);
+        RIGHTDRIVE.setPower(0.5);
         sleep((long) adjustedSleepTime);
         LEFTDRIVE.setPower(0);
         RIGHTDRIVE.setPower(0);
@@ -257,7 +257,7 @@ public class RedAuto extends LinearOpMode{
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
         LEFTDRIVE.setPower(0.5);
-        RIGHTAXLE.setPower(-0.5);
+        RIGHTDRIVE.setPower(-0.5);
         sleep((long) adjustedSleepTime);
         LEFTDRIVE.setPower(0);
         RIGHTDRIVE.setPower(0);

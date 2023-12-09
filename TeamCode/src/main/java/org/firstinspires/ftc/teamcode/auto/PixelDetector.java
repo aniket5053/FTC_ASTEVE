@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -12,7 +15,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-@Autonomous(name="Test", group= "Auto")
+@Autonomous()
 public class PixelDetector extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
@@ -34,8 +37,7 @@ public class PixelDetector extends OpenCvPipeline {
             new Point(300, 200));
     static double PERCENT_COLOR_THRESHOLD = 0.4;
     public PixelDetector(Telemetry t) {telemetry = t;}
-
-    @Override
+@Override
     public Mat processFrame(Mat input){
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
@@ -113,5 +115,9 @@ public class PixelDetector extends OpenCvPipeline {
 
     public Location getLocation() {
         return location;
+    }
+
+    public void runOpMode() throws InterruptedException {
+        //
     }
 }
