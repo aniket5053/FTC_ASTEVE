@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.auto.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -32,8 +31,8 @@ public class RedAuto extends LinearOpMode{
     private Servo ELBOW1;
     private Servo ELBOW2;
     private Servo WRIST1;
-    private Servo CLAW1;
-    private Servo CLAW2;
+    private Servo CLAWLEFT;
+    private Servo CLAWRIGHT;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     // Lens intrinsics
@@ -66,12 +65,14 @@ public class RedAuto extends LinearOpMode{
         RIGHTAXLE = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
         ELBOW1 = hardwareMap.get(Servo.class, "ELBOW1");
         ELBOW2 = hardwareMap.get(Servo.class, "ELBOW2");
-        WRIST1 = hardwareMap.get(Servo.class, "WRIST1");
-        CLAW1 = hardwareMap.get(Servo.class, "CLAW1");
-        CLAW2 = hardwareMap.get(Servo.class, "CLAW2");
+        WRIST1 = hardwareMap.get(Servo.class, "WRIST");
+        CLAWLEFT = hardwareMap.get(Servo.class, "CLAW LEFT");
+        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAW RIGHT");
 
         LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
         LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
+        ELBOW2.setDirection(Servo.Direction.REVERSE);
+        CLAWLEFT.setDirection(Servo.Direction.REVERSE);
 
 
 
@@ -190,7 +191,9 @@ public class RedAuto extends LinearOpMode{
                forward(42);
                turnLeft(90);
                //move elbow 1 down
+               elbowDegrees(0);
                //open left claw
+               CLAWLEFT.setPosition(0);
                //move elbow up
                turnRight(90);
                forward(30);
@@ -298,6 +301,32 @@ public class RedAuto extends LinearOpMode{
         LEFTDRIVE.setPower(0);
         RIGHTDRIVE.setPower(0);
         sleep(500);
+    }
+    private double degreesToPosition(double degrees) {
+        // Assuming your servo has a range of motion of 180 degrees
+        double minDegrees = 0.0;
+        double maxDegrees = 180.0;
+
+        // Convert degrees to the servo position scale (0 to 1)
+        return (degrees - minDegrees) / (maxDegrees - minDegrees);
+    }
+    private void elbowDegrees(double degrees) {
+        double position = degreesToPosition(degrees);
+
+        ELBOW1.setPosition(position);
+        ELBOW2.setPosition(position);
+
+        sleep(1000);
+    }
+
+    public void clawsDegrees(double degrees){
+        double position = degreesToPosition(degrees);
+
+        CLAWLEFT.setPosition(position);
+        CLAWRIGHT.setPosition(position);
+
+        sleep(1000);
+
     }
 
 
