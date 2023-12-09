@@ -55,10 +55,10 @@ public class Robot extends LinearOpMode {
         RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    void setupCamera(PixelDetector detector) {
+    void setupCamera(PixelDetector detector, String color) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        detector = new PixelDetector(telemetry);
+        detector = new PixelDetector(telemetry, color);
         webcam.setPipeline(detector);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override

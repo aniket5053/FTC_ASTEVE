@@ -13,8 +13,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Red Auto", group= "Auto")
-public class RedAuto extends LinearOpMode{
+@Autonomous(name="APRIL AUTO", group= "Auto")
+public class TESTFORAPRILAUTO extends LinearOpMode{
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -85,7 +85,7 @@ public class RedAuto extends LinearOpMode{
                         "id", hardwareMap.appContext.getPackageName());
         pixle_cam = OpenCvCameraFactory.getInstance().
                 createWebcam(hardwareMap.get(WebcamName.class, "pixle_cam"), pixelId);
-        PixelDetector detector = new PixelDetector(telemetry);
+        PixelDetector detector = new PixelDetector(telemetry, "red");
         pixle_cam.setPipeline(detector);
         pixle_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {

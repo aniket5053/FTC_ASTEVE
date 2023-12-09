@@ -20,12 +20,12 @@ public class RIGHT_BACK extends LinearOpMode {
     static final double FEET_PER_METER = 3.28084;
 
     Robot robot = new Robot();
-    PixelDetector detector = new PixelDetector(telemetry);
+    PixelDetector detector = new PixelDetector(telemetry, "red");
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initializeHardware();
 
-        robot.setupCamera(detector);
+        robot.setupCamera(detector, "red");
 
         waitForStart();
         switch (detector.getLocation()){

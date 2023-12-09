@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @Autonomous()
 public class PixelDetector extends OpenCvPipeline {
     Telemetry telemetry;
+    public String color;
     Mat mat = new Mat();
     public enum Location {
         LEFT,
@@ -36,14 +37,29 @@ public class PixelDetector extends OpenCvPipeline {
             new Point(220, 0),
             new Point(300, 200));
     static double PERCENT_COLOR_THRESHOLD = 0.4;
-    public PixelDetector(Telemetry t) {telemetry = t;}
+    public PixelDetector(Telemetry t, String targetColor)
+    {
+        telemetry = t;
+        color = targetColor;
+    }
 @Override
-    public Mat processFrame(Mat input){
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+    public Mat processFrame(Mat input) {
+    Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        //Color
-        Scalar lowHSV = new Scalar(0,0,168);
-        Scalar highHSV = new Scalar(172,111,255);
+
+    Scalar lowHSV = new Scalar(0, 0, 0);
+    Scalar highHSV = new Scalar(0, 0, 0);
+
+    if ("red".equals(color)) {
+        // Set HSV values for red color
+        lowHSV = new Scalar(0, 100, 100);
+        highHSV = new Scalar(10, 255, 255);
+    }
+    else if ("blue".equals(color)) {
+        // Set HSV values for blue color
+        lowHSV = new Scalar(100, 100, 100);
+        highHSV = new Scalar(120, 255, 255);
+    }
 
         Core.inRange(mat, lowHSV, highHSV, mat);
 
@@ -51,9 +67,9 @@ public class PixelDetector extends OpenCvPipeline {
         Mat center = mat.submat(Center_ROI);
         Mat right = mat.submat(Right_ROI);
 
-        double leftValue = Core.sumElems(left).val[0]/Left_ROI.area()/255;
-        double centerValue = Core.sumElems(center).val[0]/Center_ROI.area()/255;
-        double rightValue = Core.sumElems(right).val[0]/Right_ROI.area()/255;
+        double leftValue = Core.sumElems(left).val[0] / Left_ROI.area() / 255;
+        double centerValue = Core.sumElems(center).val[0] / Center_ROI.area() / 255;
+        double rightValue = Core.sumElems(right).val[0] / Right_ROI.area() / 255;
 
         left.release();
         center.release();
@@ -70,25 +86,21 @@ public class PixelDetector extends OpenCvPipeline {
         boolean pixelCenter = centerValue > PERCENT_COLOR_THRESHOLD;
         boolean pixelRight = rightValue > PERCENT_COLOR_THRESHOLD;
 
-        if ((pixelLeft && pixelCenter) || (pixelLeft && pixelRight) || (pixelRight && pixelCenter))
-        {
+        if ((pixelLeft && pixelCenter) || (pixelLeft && pixelRight) || (pixelRight && pixelCenter)) {
             //not found
             location = Location.NOT_FOUND;
             telemetry.addData("Pixel Location", "not found");
-        }
-        else if (pixelLeft){
+        } else if (pixelLeft) {
             //left
             location = Location.LEFT;
             telemetry.addData("Pixel Location", "left");
 
-        }
-        else if(pixelCenter){
+        } else if (pixelCenter) {
             //center
             location = Location.CENTER;
             telemetry.addData("Pixel Location", "center");
 
-        }
-        else if(pixelRight){
+        } else if (pixelRight) {
             //right
             location = Location.RIGHT;
             telemetry.addData("Pixel Location", "right");
@@ -97,21 +109,22 @@ public class PixelDetector extends OpenCvPipeline {
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGR);
 
-        Scalar leftZone = new Scalar(255,0,0);
-        Scalar centerZone = new Scalar(0,255,0);
-        Scalar rightZone = new Scalar(0,0,255);
+        Scalar leftZone = new Scalar(255, 0, 0);
+        Scalar centerZone = new Scalar(0, 255, 0);
+        Scalar rightZone = new Scalar(0, 0, 255);
 
-        Imgproc.rectangle(mat, Left_ROI, location == Location.LEFT? leftZone:centerZone);
-        Imgproc.rectangle(mat, Left_ROI, location == Location.LEFT? leftZone:rightZone);
+        Imgproc.rectangle(mat, Left_ROI, location == Location.LEFT ? leftZone : centerZone);
+        Imgproc.rectangle(mat, Left_ROI, location == Location.LEFT ? leftZone : rightZone);
 
-        Imgproc.rectangle(mat, Center_ROI, location == Location.CENTER? leftZone:centerZone);
-        Imgproc.rectangle(mat, Center_ROI, location == Location.CENTER? rightZone:centerZone);
+        Imgproc.rectangle(mat, Center_ROI, location == Location.CENTER ? leftZone : centerZone);
+        Imgproc.rectangle(mat, Center_ROI, location == Location.CENTER ? rightZone : centerZone);
 
-        Imgproc.rectangle(mat, Right_ROI, location == Location.RIGHT? leftZone:rightZone);
-        Imgproc.rectangle(mat, Right_ROI, location == Location.RIGHT? rightZone:centerZone);
+        Imgproc.rectangle(mat, Right_ROI, location == Location.RIGHT ? leftZone : rightZone);
+        Imgproc.rectangle(mat, Right_ROI, location == Location.RIGHT ? rightZone : centerZone);
 
         return mat;
     }
+
 
     public Location getLocation() {
         return location;
