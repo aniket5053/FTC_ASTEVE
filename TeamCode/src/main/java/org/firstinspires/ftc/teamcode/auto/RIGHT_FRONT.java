@@ -14,8 +14,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="RIGHT BACK", group= "Auto")
-public class RIGHT_BACK extends LinearOpMode {
+@Autonomous(name="RIGHT FRONT", group= "Auto")
+public class RIGHT_FRONT extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -45,31 +45,13 @@ public class RIGHT_BACK extends LinearOpMode {
                 // move wrist up
                 robot.WRIST1.setPosition(1);
 
-                // Turn right 90 degrees
-                robot.turnRight(90);
+              //move back 2.5 ft
+                robot.moveBackward(30);
 
-                // Move 2.5 ft forward (2.5 ft = 30 inches)
-                robot.moveForward(30);
+                //turn right 180
+                robot.turnRight(180);
 
-                // Turn right 90 degrees
-                robot.turnRight(90);
-
-                //setup robot to cross over
-                robot.underbar_crossing();
-
-                // Move forward 6 ft (6 ft = 72 inches)
-                robot.moveForward(72);
-
-                // Turn right 90 degrees
-                robot.turnRight(90);
-
-                // Move forward 1.25 ft (1.25 ft = 15 inches)
-                robot.moveForward(15);
-
-                //Turn left 90 degrees
-                robot.turnLeft(90);
-
-                // Move forward 1 ft (1 ft = 12 inches)
+                //move forward 1 ft
                 robot.moveForward(12);
 
                 // Call score_low method
@@ -77,6 +59,7 @@ public class RIGHT_BACK extends LinearOpMode {
 
                 // Set clawright position to 1
                 robot.CLAWRIGHT.setPosition(1);
+
 
                 break;
             case CENTER:
@@ -92,35 +75,22 @@ public class RIGHT_BACK extends LinearOpMode {
                 // Move wrist up
                 robot.WRIST1.setPosition(1);
 
-                // Move forward 1.25 inches
-                robot.moveForward(1.25);
+                //move back 1 ft
+                robot.moveBackward(12);
 
-                // Turn right 90 degrees
+                //turn right 90
                 robot.turnRight(90);
 
-                //setup robot to cross over
-                robot.underbar_crossing();
-
-                // Move forward 6 ft (6 ft = 72 inches)
-                robot.moveForward(72);
-
-                // Turn right 90 degrees
-                robot.turnRight(90);
-
-                // Move forward 1.5 ft (1.5 ft = 18 inches)
-                robot.moveForward(18);
-
-                //Turn left 90 degrees
-                robot.turnLeft(90);
-
-                // Move forward 1 ft (1 ft = 12 inches)
-                robot.moveForward(12);
+                //move forward 2 ft
+                robot.moveForward(24);
 
                 // Call score_low method
                 robot.score_low();
 
                 // Set clawright position to 1
                 robot.CLAWRIGHT.setPosition(1);
+
+
 
 
                 break;
@@ -138,41 +108,31 @@ public class RIGHT_BACK extends LinearOpMode {
                 // open left claw
                 robot.CLAWLEFT.setPosition(1);
 
-                // Move back 2 ft
-                robot.moveBackward(24);
+                // Move wrist up
+                robot.WRIST1.setPosition(1);
 
-                //setup robot to cross over
-                robot.underbar_crossing();
+                //move forward 1.5 ft
+                robot.moveForward(18);
 
-                // Turn left 90 degrees
-                robot.turnLeft(90);
-
-                // Move forward 2.5 ft
-                robot.moveForward(30);
-
-                // Turn right 90 degrees
+                //turn right 90
                 robot.turnRight(90);
 
-                // Move 6 ft forward
-                robot.moveForward(72);
-
-                // Turn right 90 degrees
-                robot.turnRight(90);
-
-                // Move forward 1.75 ft
-                robot.moveForward(21);
-
-                //Turn left 90 degrees
-                robot.turnLeft(90);
-
-                // Move forward 1 ft (1 ft = 12 inches)
+                //move forward 1 ft
                 robot.moveForward(12);
+
+                //turn left 90
+                robot.turnLeft(90);
+
+                //move forward 0.5 ft
+                robot.moveForward(6);
 
                 // Call score_low method
                 robot.score_low();
 
                 // Set clawright position to 1
                 robot.CLAWRIGHT.setPosition(1);
+
+
 
                 break;
             case NOT_FOUND:
