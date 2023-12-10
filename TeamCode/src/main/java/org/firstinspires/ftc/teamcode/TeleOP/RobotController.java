@@ -212,14 +212,14 @@ public class RobotController extends LinearOpMode {
 
                 if(gamepad2.dpad_up){
                     //elbow up
-                    ELBOW1.setPosition(0);
-                    ELBOW2.setPosition(0);
+                    ELBOW1.setPosition(0.1);
+                    ELBOW2.setPosition(0.1);
 
                 }
                 if(gamepad2.dpad_down){
                     //elbow down
-                    ELBOW1.setPosition(1);
-                    ELBOW2.setPosition(1);
+                    ELBOW1.setPosition(0.9);
+                    ELBOW2.setPosition(0.9);
                 }
                 if(gamepad2.dpad_left){
                     //wrist up

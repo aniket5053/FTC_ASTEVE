@@ -171,8 +171,8 @@ public class Robot extends LinearOpMode {
 
     void home() {
         WRIST1.setPosition(1);
-        ELBOW1.setPosition(1);
-        ELBOW2.setPosition(1);
+        ELBOW1.setPosition(0.9);
+        ELBOW2.setPosition(0.9);
         //move elevator home here
         LEFTAXLE.setTargetPosition(0);
         RIGHTAXLE.setTargetPosition(0);
@@ -192,8 +192,8 @@ public class Robot extends LinearOpMode {
     }
 
     void floor() {
-        ELBOW1.setPosition(1);
-        ELBOW2.setPosition(1);
+        ELBOW1.setPosition(0.9);
+        ELBOW2.setPosition(0.9);
         WRIST1.setPosition(0);
         //move elevator down
         LEFTAXLE.setTargetPosition(250);  //s/b -360
@@ -215,8 +215,8 @@ public class Robot extends LinearOpMode {
 
     void score_low()
     {
-        ELBOW1.setPosition(0);
-        ELBOW2.setPosition(0);
+        ELBOW1.setPosition(0.1);
+        ELBOW2.setPosition(0.1);
         WRIST1.setPosition(0.8);
         //move elevator up
         LEFTAXLE.setTargetPosition(-50);
@@ -236,8 +236,8 @@ public class Robot extends LinearOpMode {
 
     void score_high()
     {
-        ELBOW1.setPosition(0);
-        ELBOW2.setPosition(0);
+        ELBOW1.setPosition(0.1);
+        ELBOW2.setPosition(0.1);
         WRIST1.setPosition(0.8);
         //move elevator up
         LEFTAXLE.setTargetPosition(-700);
@@ -256,8 +256,8 @@ public class Robot extends LinearOpMode {
     }
 
     void underbar_crossing(){
-        ELBOW1.setPosition(1);
-        ELBOW2.setPosition(1);
+        ELBOW1.setPosition(0.9);
+        ELBOW2.setPosition(0.9);
         WRIST1.setPosition(0.5);
         //move elevator down
         LEFTAXLE.setTargetPosition(250);  //s/b -360

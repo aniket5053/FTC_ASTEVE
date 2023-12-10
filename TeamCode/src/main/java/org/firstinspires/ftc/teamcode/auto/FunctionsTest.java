@@ -65,7 +65,7 @@ public class FunctionsTest extends LinearOpMode {
         WRIST1.setPosition(degreesToPosition(180));
 
         //move elbow up
-        elbowDegrees(0);
+        elbowDegrees(0.1);
 
         //turn left 45
         turnLeft(45);
