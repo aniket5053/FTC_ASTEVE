@@ -103,8 +103,8 @@ public class RIGHT_FRONT extends LinearOpMode {
 
                 break;
             case CENTER:
-                // Move forward 3.75 inches
-                robot.moveForward(3.75);
+                // Move forward 3.75 ft
+                robot.moveForward(45);
 
                 // Put wrist down
                 robot.WRIST1.setPosition(0.5);
