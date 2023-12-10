@@ -29,7 +29,7 @@ public class RobotController extends LinearOpMode {
         Servo CLAWLEFT = hardwareMap.get(Servo.class, "CLAWLEFT");
         Servo CLAWRIGHT = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
-        TouchSensor TOUCHSENSOR = hardwareMap.get(TouchSensor.class, "TOUCH SENSOR");
+        //TouchSensor TOUCHSENSOR = hardwareMap.get(TouchSensor.class, "TOUCH SENSOR");
 
         LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
         LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
