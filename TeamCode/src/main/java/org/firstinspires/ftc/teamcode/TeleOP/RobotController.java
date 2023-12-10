@@ -85,8 +85,8 @@ public class RobotController extends LinearOpMode {
 
                 //underbar crossing
                 if(gamepad2.x){
-                    ELBOW1.setPosition(0.9);
-                    ELBOW2.setPosition(0.9);
+                    ELBOW1.setPosition(0.75);
+                    ELBOW2.setPosition(0.75);
                     WRIST1.setPosition(0.57);
                     //move elevator down
                     LEFTAXLE.setTargetPosition(300);  //s/b -360
