@@ -112,7 +112,7 @@ public class RobotController extends LinearOpMode {
                 else if(gamepad2.a){
                     ELBOW1.setPosition(1);
                     ELBOW2.setPosition(1);
-                    WRIST1.setPosition(0.6);
+                    WRIST1.setPosition(0.57);
                     //move elevator down
                     LEFTAXLE.setTargetPosition(300);  //s/b -360
                     RIGHTAXLE.setTargetPosition(300);
@@ -136,7 +136,7 @@ public class RobotController extends LinearOpMode {
                 else if(gamepad2.y){
                     ELBOW1.setPosition(0);
                     ELBOW2.setPosition(0);
-                    WRIST1.setPosition(0.8);
+                    WRIST1.setPosition(0.2);
                     //move elevator up
                     LEFTAXLE.setTargetPosition(-700);
                     RIGHTAXLE.setTargetPosition(-700);
@@ -159,7 +159,7 @@ public class RobotController extends LinearOpMode {
                     //1024
                     ELBOW1.setPosition(0);
                     ELBOW2.setPosition(0);
-                    WRIST1.setPosition(0.8);
+                    WRIST1.setPosition(.2);
                     //move elevator up
                     LEFTAXLE.setTargetPosition(-50);
                     RIGHTAXLE.setTargetPosition(-50);
@@ -227,7 +227,7 @@ public class RobotController extends LinearOpMode {
                 }
                 if(gamepad2.dpad_right){
                     //wrist down
-                    WRIST1.setPosition(0.5);
+                    WRIST1.setPosition(0.56);
                 }
 
 
