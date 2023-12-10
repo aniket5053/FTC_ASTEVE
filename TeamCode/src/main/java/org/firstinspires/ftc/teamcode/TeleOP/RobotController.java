@@ -43,8 +43,8 @@ public class RobotController extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
 
-            LEFTAXLE.setPower(0);
-            RIGHTAXLE.setPower(0);
+            LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             while (opModeIsActive()) {
 
