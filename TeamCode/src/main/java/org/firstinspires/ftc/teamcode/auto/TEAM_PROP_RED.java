@@ -110,6 +110,15 @@ public class TEAM_PROP_RED extends LinearOpMode {
 
                 break;
             case NOT_FOUND:
+                // Move forward 3.75 ft
+                robot.moveForward(45);
+
+                // Put wrist down
+                robot.WRIST1.setPosition(0.25);
+
+                // Open left claw
+                robot.CLAWLEFT.setPosition(1);
+
 
 
 
