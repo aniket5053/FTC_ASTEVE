@@ -170,7 +170,7 @@ public class Robot extends LinearOpMode {
     }
 
     void home() {
-        WRIST1.setPosition(1);
+        WRIST1.setPosition(0.9);
         ELBOW1.setPosition(0.9);
         ELBOW2.setPosition(0.9);
         //move elevator home here
@@ -192,7 +192,7 @@ public class Robot extends LinearOpMode {
     }
 
     void floor() {
-        ELBOW1.setPosition(0.9);
+        ELBOW1.setPosition(0.25);
         ELBOW2.setPosition(0.9);
         WRIST1.setPosition(0.57);
         //move elevator down
