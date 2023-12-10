@@ -18,14 +18,55 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class RIGHT_BACK extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
+    DcMotor LEFTDRIVE;
+    DcMotor RIGHTDRIVE;
+    DcMotor LEFTAXLE;
+    DcMotor RIGHTAXLE;
+    Servo ELBOW1;
+    Servo ELBOW2;
+    Servo WRIST1;
+    Servo CLAWLEFT;
+
+    Servo CLAWRIGHT;
 
     Robot robot = new Robot();
     PixelDetector detector = new PixelDetector(telemetry, "red");
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.initializeHardware();
+        LEFTDRIVE = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
+        RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
+        LEFTAXLE = hardwareMap.get(DcMotor.class, "LEFT AXLE");
+        RIGHTAXLE = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
+        ELBOW1 = hardwareMap.get(Servo.class, "ELBOW1");
+        ELBOW2 = hardwareMap.get(Servo.class, "ELBOW2");
+        WRIST1 = hardwareMap.get(Servo.class, "WRIST");
+        CLAWLEFT = hardwareMap.get(Servo.class, "CLAWLEFT");
+        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAWRIGHT");
 
-        robot.setupCamera(detector, "red");
+        LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
+        LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
+        ELBOW2.setDirection(Servo.Direction.REVERSE);
+        CLAWLEFT.setDirection(Servo.Direction.REVERSE);
+
+        LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        OpenCvCamera webcam;
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        detector = new PixelDetector(telemetry, "red");
+        webcam.setPipeline(detector);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                // Handle error
+            }
+        });
 
         waitForStart();
         switch (detector.getLocation()){
@@ -37,10 +78,10 @@ public class RIGHT_BACK extends LinearOpMode {
                 robot.turnLeft(90);
 
                 // move wrist down
-                robot.WRIST1.setPosition(0.5);
+                robot.WRIST1.setPosition(0.56);
 
                 // open left claw
-                robot.CLAWLEFT.setPosition(1);
+                robot.CLAWLEFT.setPosition(0.5);
 
                 // move wrist up
                 robot.WRIST1.setPosition(0.8);

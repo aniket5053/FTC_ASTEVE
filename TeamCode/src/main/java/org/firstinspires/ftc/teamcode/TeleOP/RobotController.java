@@ -196,15 +196,13 @@ public class RobotController extends LinearOpMode {
                 }
 
                 if(gamepad2.right_bumper && gamepad2.left_bumper){
-                    if(CLAWRIGHT.getPosition() == 1){
-                        CLAWRIGHT.setPosition(0.5);
-                        CLAWLEFT.setPosition(0.5);
-                    }
-                    else{
-                        CLAWRIGHT.setPosition(1);
-                        CLAWLEFT.setPosition(1);
+                    CLAWLEFT.setPosition(0.5);
+                    CLAWRIGHT.setPosition(0.5);
 
-                    }
+                }
+                if(gamepad2.right_trigger > 0.33 && gamepad2.left_trigger > 0.33){
+                    CLAWLEFT.setPosition(1);
+                    CLAWRIGHT.setPosition(1);
 
                 }
 
