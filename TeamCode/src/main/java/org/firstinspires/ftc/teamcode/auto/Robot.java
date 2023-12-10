@@ -194,10 +194,10 @@ public class Robot extends LinearOpMode {
     void floor() {
         ELBOW1.setPosition(0.9);
         ELBOW2.setPosition(0.9);
-        WRIST1.setPosition(0);
+        WRIST1.setPosition(0.57);
         //move elevator down
-        LEFTAXLE.setTargetPosition(250);  //s/b -360
-        RIGHTAXLE.setTargetPosition(250);
+        LEFTAXLE.setTargetPosition(300);  //s/b -360
+        RIGHTAXLE.setTargetPosition(300);
         LEFTAXLE.setPower(1);
         RIGHTAXLE.setPower(1);
         LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -217,7 +217,7 @@ public class Robot extends LinearOpMode {
     {
         ELBOW1.setPosition(0.1);
         ELBOW2.setPosition(0.1);
-        WRIST1.setPosition(0.8);
+        WRIST1.setPosition(0.2);
         //move elevator up
         LEFTAXLE.setTargetPosition(-50);
         RIGHTAXLE.setTargetPosition(-50);
@@ -238,7 +238,7 @@ public class Robot extends LinearOpMode {
     {
         ELBOW1.setPosition(0.1);
         ELBOW2.setPosition(0.1);
-        WRIST1.setPosition(0.8);
+        WRIST1.setPosition(0.2);
         //move elevator up
         LEFTAXLE.setTargetPosition(-700);
         RIGHTAXLE.setTargetPosition(-700);
@@ -258,10 +258,10 @@ public class Robot extends LinearOpMode {
     void underbar_crossing(){
         ELBOW1.setPosition(0.9);
         ELBOW2.setPosition(0.9);
-        WRIST1.setPosition(0.5);
+        WRIST1.setPosition(0.57);
         //move elevator down
-        LEFTAXLE.setTargetPosition(250);  //s/b -360
-        RIGHTAXLE.setTargetPosition(250);
+        LEFTAXLE.setTargetPosition(300);  //s/b -360
+        RIGHTAXLE.setTargetPosition(300);
         LEFTAXLE.setPower(1);
         RIGHTAXLE.setPower(1);
         LEFTAXLE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

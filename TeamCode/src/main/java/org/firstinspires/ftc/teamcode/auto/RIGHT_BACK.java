@@ -83,7 +83,7 @@ public class RIGHT_BACK extends LinearOpMode {
                 robot.CLAWLEFT.setPosition(0.5);
 
                 // move wrist up
-                robot.WRIST1.setPosition(0.8);
+                robot.WRIST1.setPosition(1);
 
                 // Turn right 90 degrees
                 robot.turnRight(90);

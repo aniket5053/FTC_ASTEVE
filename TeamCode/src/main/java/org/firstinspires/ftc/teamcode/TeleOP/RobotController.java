@@ -63,8 +63,8 @@ public class RobotController extends LinearOpMode {
                 //home
                 if(gamepad1.x){
                     WRIST1.setPosition(1);
-                    ELBOW1.setPosition(1);
-                    ELBOW2.setPosition(1);
+                    ELBOW1.setPosition(0.9);
+                    ELBOW2.setPosition(0.9);
                     //move elevator home here
                     LEFTAXLE.setTargetPosition(0);
                     RIGHTAXLE.setTargetPosition(0);
@@ -85,9 +85,9 @@ public class RobotController extends LinearOpMode {
 
                 //underbar crossing
                 if(gamepad2.x){
-                    ELBOW1.setPosition(1);
-                    ELBOW2.setPosition(1);
-                    WRIST1.setPosition(1);
+                    ELBOW1.setPosition(0.9);
+                    ELBOW2.setPosition(0.9);
+                    WRIST1.setPosition(0.57);
                     //move elevator down
                     LEFTAXLE.setTargetPosition(300);  //s/b -360
                     RIGHTAXLE.setTargetPosition(300);
@@ -110,8 +110,8 @@ public class RobotController extends LinearOpMode {
 
                 //floor
                 else if(gamepad2.a){
-                    ELBOW1.setPosition(1);
-                    ELBOW2.setPosition(1);
+                    ELBOW1.setPosition(0.9);
+                    ELBOW2.setPosition(0.9);
                     WRIST1.setPosition(0.57);
                     //move elevator down
                     LEFTAXLE.setTargetPosition(300);  //s/b -360
@@ -157,8 +157,8 @@ public class RobotController extends LinearOpMode {
                 //score low
                 else if(gamepad2.b){
                     //1024
-                    ELBOW1.setPosition(0);
-                    ELBOW2.setPosition(0);
+                    ELBOW1.setPosition(0.1);
+                    ELBOW2.setPosition(0.1);
                     WRIST1.setPosition(.2);
                     //move elevator up
                     LEFTAXLE.setTargetPosition(-50);
