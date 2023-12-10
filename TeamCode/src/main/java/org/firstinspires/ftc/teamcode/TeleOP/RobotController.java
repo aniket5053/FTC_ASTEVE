@@ -178,27 +178,27 @@ public class RobotController extends LinearOpMode {
                 }
 
                 if(gamepad2.left_trigger > 0.33){
-                    //open claw
+                    //close claw
                     CLAWLEFT.setPosition(1);
                 }
                 else if(gamepad2.left_bumper){
                     //open claw
-                    CLAWLEFT.setPosition(0);
+                    CLAWLEFT.setPosition(0.5);
                 }
 
                 if(gamepad2.right_trigger > 0.33){
-                    //open claw
+                    //close claw
                     CLAWRIGHT.setPosition(1);
                 }
                 else if(gamepad2.right_bumper){
                     //open claw
-                    CLAWRIGHT.setPosition(0);
+                    CLAWRIGHT.setPosition(0.5);
                 }
 
                 if(gamepad2.right_bumper && gamepad2.left_bumper){
                     if(CLAWRIGHT.getPosition() == 1){
-                        CLAWRIGHT.setPosition(0);
-                        CLAWLEFT.setPosition(0);
+                        CLAWRIGHT.setPosition(0.5);
+                        CLAWLEFT.setPosition(0.5);
                     }
                     else{
                         CLAWRIGHT.setPosition(1);
@@ -222,7 +222,7 @@ public class RobotController extends LinearOpMode {
                 }
                 if(gamepad2.dpad_left){
                     //wrist up
-                    WRIST1.setPosition(1.5);
+                    WRIST1.setPosition(1);
                 }
                 if(gamepad2.dpad_right){
                     //wrist down
