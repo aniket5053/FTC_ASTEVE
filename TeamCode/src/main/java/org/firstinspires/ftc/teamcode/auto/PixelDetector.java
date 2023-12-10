@@ -28,15 +28,15 @@ public class PixelDetector extends OpenCvPipeline {
     }
     private Location location;
     static final Rect Left_ROI = new Rect(
-            new Point(20, 0),
-            new Point(100, 200));
+            new Point(0, 150),
+            new Point(100, 240));
     static final Rect Center_ROI = new Rect(
-            new Point(120, 0),
-            new Point(200, 200));
+            new Point(102, 150),
+            new Point(218, 240));
     static final Rect Right_ROI = new Rect(
-            new Point(220, 0),
-            new Point(300, 200));
-    static double PERCENT_COLOR_THRESHOLD = 0.4;
+            new Point(220, 150),
+            new Point(320, 240));
+    static double PERCENT_COLOR_THRESHOLD = 0.1;
     public PixelDetector(Telemetry t, String targetColor)
     {
         telemetry = t;
@@ -52,8 +52,8 @@ public class PixelDetector extends OpenCvPipeline {
 
     if ("red".equals(color)) {
         // Set HSV values for red color
-        lowHSV = new Scalar(13, 40, 100);
-        highHSV = new Scalar(50, 80, 255);
+        lowHSV = new Scalar(0, 50, 20);
+        highHSV = new Scalar(10, 255, 255);
     }
     else if ("blue".equals(color)) {
         // Set HSV values for blue color

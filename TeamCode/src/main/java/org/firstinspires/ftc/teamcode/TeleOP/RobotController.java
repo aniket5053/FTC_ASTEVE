@@ -43,8 +43,8 @@ public class RobotController extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
 
-            //LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            LEFTAXLE.setPower(0);
+            RIGHTAXLE.setPower(0);
 
             while (opModeIsActive()) {
 
@@ -215,8 +215,8 @@ public class RobotController extends LinearOpMode {
                 }
                 if(gamepad2.dpad_down){
                     //elbow down
-                    ELBOW1.setPosition(0.9);
-                    ELBOW2.setPosition(0.9);
+                    ELBOW1.setPosition(1);
+                    ELBOW2.setPosition(1);
                 }
                 if(gamepad2.dpad_left){
                     //wrist up
@@ -224,7 +224,7 @@ public class RobotController extends LinearOpMode {
                 }
                 if(gamepad2.dpad_right){
                     //wrist down
-                    WRIST1.setPosition(0.1);
+                    WRIST1.setPosition(0);
                 }
 
 
