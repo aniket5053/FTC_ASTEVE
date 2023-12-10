@@ -224,7 +224,7 @@ public class RobotController extends LinearOpMode {
                 }
                 if(gamepad2.dpad_right){
                     //wrist down
-                    WRIST1.setPosition(0);
+                    WRIST1.setPosition(0.05);
                 }
 
 
