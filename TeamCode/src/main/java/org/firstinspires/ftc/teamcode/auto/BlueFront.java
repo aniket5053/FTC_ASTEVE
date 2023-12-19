@@ -6,13 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-@Autonomous(name="BLUE Team Prop", group= "Auto")
-public class TEAM_PROP_BLUE extends LinearOpMode {
+@Autonomous(name="BlueFront", group= "Auto")
+public class BlueFront extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
     DcMotor frontLeftMotor;
@@ -57,89 +52,94 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
 
         leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        OpenCvCamera webcam;
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        webcam.setPipeline(detector);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                // Handle error
-            }
-        });
 
         waitForStart();
-        switch (detector.getLocation()){
-            case LEFT:
-                // Move 3.5 ft forward (3.5 ft = 42 inches)
-                robot.moveForward(42);
 
-                // Turn left 90 degrees
-                robot.turnLeft(90);
-
-                // move wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // open left claw
-                robot.leftClaw.setPosition(0.5);
+        leftClaw.setPosition(1);
+        rightClaw.setPosition(1);
+        sleep(1000);
 
 
-                break;
-            case CENTER:
-                // Move forward 3.75 ft
-                robot.moveForward(45);
+        // Move 4ft forward (2 ft = 24 inches)
+//        robot.moveForward(24);
+        forward(20);
 
-                // Put wrist down
-                robot.leftWrist.setPosition(0.25);
+        // Turn left 90 degrees
+        turnLeft(91);
 
-                // Open left claw
-                robot.leftClaw.setPosition(1);
+        // Move 4ft forward (3 ft = 36 inches)
+  //      robot.moveForward(36);
+        forward(35);
 
+        leftElbow.setPosition(0.1);
+        rightElbow.setPosition(0.1);
+        sleep(2000);
 
+             // open left claw
+        leftClaw.setPosition(0.5);
+        rightClaw.setPosition(0.5);
+        sleep(2000);
 
-                break;
-
-            case RIGHT:
-                // Move 3.5 ft forward
-                robot.moveForward(42); // convert feet to inches
-
-                // Turn right 90 degrees
-                robot.turnRight(90);
-
-                // move wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // open left claw
-                robot.leftClaw.setPosition(1);
-
-
-                break;
-            case NOT_FOUND:
-                // Move forward 3.75 ft
-                robot.moveForward(45);
-
-                // Put wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // Open left claw
-                robot.leftClaw.setPosition(1);
-
-
-
-
-        }
-        robot.webcam.stopStreaming();
-
+//        backward(35);
 
 
     }
 
 
+    void forward(double inches){
+        // Calculate the number of movements needed to reach the target distance
+        double movementsNeeded = Math.abs(inches / 55);
+
+        // Calculate the adjusted sleep time based on the target distance
+        double adjustedSleepTime = 1000 * movementsNeeded;
+
+        // Set power to the motors for moving forward
+        frontLeftMotor.setPower(1);
+        frontRightMotor.setPower(1);
+
+        // Sleep for the adjusted time
+        sleep((long) adjustedSleepTime);
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        sleep(500);
+    }
+
+
+    void backward(double inches){
+        // Calculate the number of movements needed to reach the target distance
+        double movementsNeeded = Math.abs(inches / 55);
+
+        // Calculate the adjusted sleep time based on the target distance
+        double adjustedSleepTime = 1000 * movementsNeeded;
+
+        // Set power to the motors for moving backward
+        frontLeftMotor.setPower(-1);
+        frontRightMotor.setPower(-1);
+
+        // Sleep for the adjusted time
+        sleep((long) adjustedSleepTime);
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        sleep(500);
+    }
+
+    void turnLeft(double angle){
+
+        // Calculate the number of movements needed to reach the target angle
+        double movementsNeeded = Math.abs(angle / 90);
+
+        // Calculate the adjusted sleep time based on the target angle
+        double adjustedSleepTime = 650 * movementsNeeded;
+        frontLeftMotor.setPower(-0.5);
+        frontRightMotor.setPower(0.5);
+        sleep((long) adjustedSleepTime);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        sleep(500);
+    }
 
 }

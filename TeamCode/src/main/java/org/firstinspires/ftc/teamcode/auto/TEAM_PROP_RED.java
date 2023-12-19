@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -14,38 +15,48 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class TEAM_PROP_RED extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
-    DcMotor LEFTDRIVE;
-    DcMotor RIGHTDRIVE;
-    DcMotor LEFTAXLE;
-    DcMotor RIGHTAXLE;
-    Servo ELBOW1;
-    Servo ELBOW2;
-    Servo WRIST1;
-    Servo CLAWLEFT;
+    DcMotor frontLeftMotor;
+    DcMotor frontRightMotor;
+    DcMotor leftElevator;
+    DcMotor rightElevator;
+    Servo leftElbow;
+    Servo rightElbow;
+    Servo leftWrist;
+    Servo leftClaw;
 
-    Servo CLAWRIGHT;
+    Servo rightClaw;
 
     Robot robot = new Robot();
     PixelDetector detector = new PixelDetector(telemetry, "red");
     @Override
     public void runOpMode() throws InterruptedException {
-        LEFTDRIVE = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
-        RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
-        LEFTAXLE = hardwareMap.get(DcMotor.class, "LEFT AXLE");
-        RIGHTAXLE = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
-        ELBOW1 = hardwareMap.get(Servo.class, "ELBOW1");
-        ELBOW2 = hardwareMap.get(Servo.class, "ELBOW2");
-        WRIST1 = hardwareMap.get(Servo.class, "WRIST");
-        CLAWLEFT = hardwareMap.get(Servo.class, "CLAWLEFT");
-        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAWRIGHT");
+        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
+        // TA TODO: Configure HW so that names match
+        DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
+        DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
+        Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
+        Servo   rightElbow = hardwareMap.get(Servo.class, "RtElbow");
+        Servo   leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
+//        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
+        Servo   leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
+        Servo   rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
 
-        LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
-        LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
-        ELBOW2.setDirection(Servo.Direction.REVERSE);
-        CLAWLEFT.setDirection(Servo.Direction.REVERSE);
+        // Reverse the right side motors. This may be wrong for your setup.
+        // If your robot moves backwards when commanded to go forwards,
+        // reverse the left side instead.
+        // See the note about this earlier on this page.
+        // TA TODO: test out directions - esp Elevator - it was different in teleop and Auto
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftElevator.setDirection(DcMotor.Direction.REVERSE);
+        rightElbow.setDirection(Servo.Direction.REVERSE);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
 
-        LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         OpenCvCamera webcam;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -73,10 +84,10 @@ public class TEAM_PROP_RED extends LinearOpMode {
                 robot.turnLeft(90);
 
                 // move wrist down
-                robot.WRIST1.setPosition(0.25);
+                robot.leftWrist.setPosition(0.25);
 
                 // open left claw
-                robot.CLAWLEFT.setPosition(0.5);
+                robot.leftClaw.setPosition(0.5);
 
 
                 break;
@@ -85,10 +96,10 @@ public class TEAM_PROP_RED extends LinearOpMode {
                 robot.moveForward(45);
 
                 // Put wrist down
-                robot.WRIST1.setPosition(0.25);
+                robot.leftWrist.setPosition(0.25);
 
                 // Open left claw
-                robot.CLAWLEFT.setPosition(1);
+                robot.leftClaw.setPosition(1);
 
 
 
@@ -102,10 +113,10 @@ public class TEAM_PROP_RED extends LinearOpMode {
                 robot.turnRight(90);
 
                 // move wrist down
-                robot.WRIST1.setPosition(0.25);
+                robot.leftWrist.setPosition(0.25);
 
                 // open left claw
-                robot.CLAWLEFT.setPosition(1);
+                robot.leftClaw.setPosition(1);
 
 
                 break;
@@ -114,10 +125,10 @@ public class TEAM_PROP_RED extends LinearOpMode {
                 robot.moveForward(45);
 
                 // Put wrist down
-                robot.WRIST1.setPosition(0.25);
+                robot.leftWrist.setPosition(0.25);
 
                 // Open left claw
-                robot.CLAWLEFT.setPosition(1);
+                robot.leftClaw.setPosition(1);
 
 
 

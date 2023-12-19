@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.ArrayList;
@@ -13,15 +14,15 @@ public class FunctionsTest extends LinearOpMode {
     static final double FEET_PER_METER = 3.28084;
 
     static final long MS_PER_INCH = 18;
-    private DcMotor LEFTDRIVE;
-    private DcMotor RIGHTDRIVE;
-    private DcMotor LEFTAXLE;
-    private DcMotor RIGHTAXLE;
-    private Servo ELBOW1;
-    private Servo ELBOW2;
-    private Servo WRIST1;
-    private Servo CLAWLEFT;
-    private Servo CLAWRIGHT;
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor leftElevator;
+    private DcMotor rightElevator;
+    private Servo leftElbow;
+    private Servo rightElbow;
+    private Servo leftWrist;
+    private Servo leftClaw;
+    private Servo rightClaw;
 
 
     /**
@@ -29,20 +30,30 @@ public class FunctionsTest extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        LEFTDRIVE = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
-        RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
-        LEFTAXLE = hardwareMap.get(DcMotor.class, "LEFT AXLE");
-        RIGHTAXLE = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
-        ELBOW1 = hardwareMap.get(Servo.class, "ELBOW1");
-        ELBOW2 = hardwareMap.get(Servo.class, "ELBOW2");
-        WRIST1 = hardwareMap.get(Servo.class, "WRIST");
-        CLAWLEFT = hardwareMap.get(Servo.class, "CLAWLEFT");
-        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAWRIGHT");
+        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
+        // TA TODO: Configure HW so that names match
+        DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
+        DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
+        Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
+        Servo   rightElbow = hardwareMap.get(Servo.class, "RtElbow");
+        Servo   leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
+//        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
+        Servo   leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
+        Servo   rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
 
-        LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
-        LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
-        ELBOW2.setDirection(Servo.Direction.REVERSE);
-        CLAWLEFT.setDirection(Servo.Direction.REVERSE);
+        // Reverse the right side motors. This may be wrong for your setup.
+        // If your robot moves backwards when commanded to go forwards,
+        // reverse the left side instead.
+        // See the note about this earlier on this page.
+        // TA TODO: test out directions - esp Elevator - it was different in teleop and Auto
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftElevator.setDirection(DcMotor.Direction.REVERSE);
+        rightElbow.setDirection(Servo.Direction.REVERSE);
+        leftClaw.setDirection(Servo.Direction.REVERSE);
 
 
 
@@ -56,13 +67,13 @@ public class FunctionsTest extends LinearOpMode {
 
 
         //move wrist to drop pixel
-        WRIST1.setPosition(degreesToPosition(0));
+        leftWrist.setPosition(degreesToPosition(0));
 
         //open both claws
         clawsDegrees(0);
 
         //bring wrist back up
-        WRIST1.setPosition(degreesToPosition(180));
+        leftWrist.setPosition(degreesToPosition(180));
 
         //move elbow up
         elbowDegrees(0.1);
@@ -70,6 +81,8 @@ public class FunctionsTest extends LinearOpMode {
         //turn left 45
         turnLeft(45);
 
+
+        sleep(3000);
 
     }
 
@@ -81,11 +94,11 @@ public class FunctionsTest extends LinearOpMode {
 
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
-        LEFTDRIVE.setPower(-0.5);
-        RIGHTDRIVE.setPower(0.5);
+        frontLeftMotor.setPower(-0.5);
+        frontRightMotor.setPower(0.5);
         sleep((long) adjustedSleepTime);
-        LEFTDRIVE.setPower(0);
-        RIGHTDRIVE.setPower(0);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
         sleep(500);
     }
     void turnRight(double angle){
@@ -95,11 +108,11 @@ public class FunctionsTest extends LinearOpMode {
 
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
-        LEFTDRIVE.setPower(0.5);
-        RIGHTDRIVE.setPower(-0.5);
+        frontLeftMotor.setPower(0.5);
+        frontRightMotor.setPower(-0.5);
         sleep((long) adjustedSleepTime);
-        LEFTDRIVE.setPower(0);
-        RIGHTDRIVE.setPower(0);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
         sleep(500);
     }
     void forward(double inches){
@@ -110,15 +123,15 @@ public class FunctionsTest extends LinearOpMode {
         double adjustedSleepTime = 1000 * movementsNeeded;
 
         // Set power to the motors for moving forward
-        LEFTDRIVE.setPower(1);
-        RIGHTDRIVE.setPower(1);
+        frontLeftMotor.setPower(1);
+        frontRightMotor.setPower(1);
 
         // Sleep for the adjusted time
         sleep((long) adjustedSleepTime);
 
         // Stop the motors after the sleep
-        LEFTDRIVE.setPower(0);
-        RIGHTDRIVE.setPower(0);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
         sleep(500);
     }
 
@@ -130,15 +143,15 @@ public class FunctionsTest extends LinearOpMode {
         double adjustedSleepTime = 1000 * movementsNeeded;
 
         // Set power to the motors for moving backward
-        LEFTDRIVE.setPower(-1);
-        RIGHTDRIVE.setPower(-1);
+        frontLeftMotor.setPower(-1);
+        frontRightMotor.setPower(-1);
 
         // Sleep for the adjusted time
         sleep((long) adjustedSleepTime);
 
         // Stop the motors after the sleep
-        LEFTDRIVE.setPower(0);
-        RIGHTDRIVE.setPower(0);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
         sleep(500);
     }
 
@@ -153,8 +166,8 @@ public class FunctionsTest extends LinearOpMode {
     private void elbowDegrees(double degrees) {
         double position = degreesToPosition(degrees);
 
-        ELBOW1.setPosition(position);
-        ELBOW2.setPosition(position);
+        leftElbow.setPosition(position);
+        rightElbow.setPosition(position);
 
         sleep(1000);
     }
@@ -162,8 +175,8 @@ public class FunctionsTest extends LinearOpMode {
     public void clawsDegrees(double degrees){
         double position = degreesToPosition(degrees);
 
-        CLAWLEFT.setPosition(position);
-        CLAWRIGHT.setPosition(position);
+        leftClaw.setPosition(position);
+        rightClaw.setPosition(position);
 
         sleep(1000);
 

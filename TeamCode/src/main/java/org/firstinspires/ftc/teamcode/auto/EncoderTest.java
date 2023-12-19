@@ -32,13 +32,13 @@ public class EncoderTest extends LinearOpMode {
         robot.turnLeft(90);
 
         // move wrist down
-        robot.WRIST1.setPosition(0.5);
+        robot.leftWrist.setPosition(0.5);
 
         // open left claw
-        robot.CLAWLEFT.setPosition(1);
+        robot.leftClaw.setPosition(1);
 
         // move wrist up
-        robot.WRIST1.setPosition(0.8);
+        robot.leftWrist.setPosition(0.8);
 
         //move back 2.5 ft
         robot.moveBackward(30);
@@ -53,7 +53,7 @@ public class EncoderTest extends LinearOpMode {
         robot.score_low();
 
         // Set clawright position to 1
-        robot.CLAWRIGHT.setPosition(1);
+        robot.rightClaw.setPosition(1);
 
 
 

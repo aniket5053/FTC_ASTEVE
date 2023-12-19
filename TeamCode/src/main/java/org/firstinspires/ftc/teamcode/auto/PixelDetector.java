@@ -15,7 +15,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-@Autonomous()
+
 public class PixelDetector extends OpenCvPipeline {
     Telemetry telemetry;
     public String color;
