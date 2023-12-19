@@ -60,7 +60,7 @@ public class RobotController extends LinearOpMode {
 
         //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
 
-        // TA TODO: test out directions - esp Elevator - it was different in teleop and Auto
+        // TA TODO: test out directions - esp Elevator - it was different in teleOp and Auto
         rightElbow.setDirection(Servo.Direction.REVERSE);
         leftElevator.setDirection(DcMotor.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
