@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.TouchSensor;
 
+
+// AS TODO Fix issue: Robot cannot move
 @TeleOp(name = "RobotController")
 public class RobotController extends LinearOpMode {
 
@@ -30,9 +32,12 @@ public class RobotController extends LinearOpMode {
     static final double WRIST_FLOOR_PICKUP = 0.85;   //.9 too low
     static final double WRIST_SCORE_HIGH = 0.35;
     static final double WRIST_SCORE_LOW = 0.5;
-    static final int ELEV_FLOOR = 280;    static final int ELEV_HOME = 0;
+    static final int ELEV_FLOOR = 350;
+    static final int ELEV_HOME = 0;
     static final int ELEV_SCORE_LOW = -50;
-    static final int ELEV_TOP = -600;
+    static final int ELEV_TOP = -650;
+    static final double ELBOW_TOLERANCE = 0.02;
+    static final double ELBOW_SPEED = 0.6;
 
 
     @Override
@@ -248,39 +253,56 @@ public class RobotController extends LinearOpMode {
                     sleep(150);
                     //elbow down - elbow moves too fast and smashes, try a two step
                     if(leftElbow.getPosition() != ELBOW_DOWN) {
-                        leftElbow.setPosition(ELBOW_DOWN - .106);
-                        rightElbow.setPosition(ELBOW_DOWN - .106);
+                        leftElbow.setPosition(ELBOW_DOWN - .506);
+                        rightElbow.setPosition(ELBOW_DOWN - .506);
                         sleep(250);
+                        leftElbow.setPosition(ELBOW_DOWN - 0.306);
+                        rightElbow.setPosition(ELBOW_DOWN - 0.306);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_DOWN - 0.106);
+                        rightElbow.setPosition(ELBOW_DOWN - 0.106);
+                        sleep(300);
                         leftElbow.setPosition(ELBOW_DOWN);
                         rightElbow.setPosition(ELBOW_DOWN);
+                        sleep(250);
                     }
                  }
 
-                //floor
+//                //floor
                 if( (gamepad2.a)  ) {
                     leftWrist.setPosition(WRIST_HOME);
                     rightWrist.setPosition(WRIST_HOME);
                     sleep(150);
                     //elbow down - elbow moves too fast and smashes, try a two step
                     if(leftElbow.getPosition() != ELBOW_DOWN) {
-                        leftElbow.setPosition(ELBOW_DOWN - .106);
-                        rightElbow.setPosition(ELBOW_DOWN - .106);
+                        leftElbow.setPosition(ELBOW_DOWN - .506);
+                        rightElbow.setPosition(ELBOW_DOWN - .506);
                         sleep(250);
+                        leftElbow.setPosition(ELBOW_DOWN - 0.306);
+                        rightElbow.setPosition(ELBOW_DOWN - 0.306);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_DOWN - 0.106);
+                        rightElbow.setPosition(ELBOW_DOWN - 0.106);
+                        sleep(300);
                         leftElbow.setPosition(ELBOW_DOWN);
                         rightElbow.setPosition(ELBOW_DOWN);
-                        sleep(150);
+                        sleep(250);
                     }
                     leftWrist.setPosition(WRIST_FLOOR_PICKUP);
                     rightWrist.setPosition(WRIST_FLOOR_PICKUP);
                 }
 
 
+
                 //score high
                 if( (gamepad2.y)  ) {
                     //elbow up - elbow moves too fast and smashes, try a two step
                     if(leftElbow.getPosition() != ELBOW_UP) {
-                        leftElbow.setPosition(ELBOW_UP + 0.1);
-                        rightElbow.setPosition(ELBOW_UP + 0.1);
+                        leftElbow.setPosition(ELBOW_UP + 0.4);
+                        rightElbow.setPosition(ELBOW_UP + 0.4);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_UP + 0.2);
+                        rightElbow.setPosition(ELBOW_UP + 0.2);
                         sleep(250);
                         leftElbow.setPosition(ELBOW_UP);
                         rightElbow.setPosition(ELBOW_UP);
@@ -293,8 +315,11 @@ public class RobotController extends LinearOpMode {
                 if( (gamepad2.b) ) {
                     //elbow up - elbow moves too fast and smashes, try a two step
                     if(leftElbow.getPosition() != ELBOW_UP) {
-                        leftElbow.setPosition(ELBOW_UP + 0.1);
-                        rightElbow.setPosition(ELBOW_UP + 0.1);
+                        leftElbow.setPosition(ELBOW_UP + 0.4);
+                        rightElbow.setPosition(ELBOW_UP + 0.4);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_UP + 0.2);
+                        rightElbow.setPosition(ELBOW_UP + 0.2);
                         sleep(250);
                         leftElbow.setPosition(ELBOW_UP);
                         rightElbow.setPosition(ELBOW_UP);
@@ -368,7 +393,7 @@ public class RobotController extends LinearOpMode {
                 telemetry.addLine(String.format("Lt/Rt ElevEncdrs: %d, %d %f4.2",
                         leftElevator.getCurrentPosition(),rightElevator.getCurrentPosition(), gamepad2.right_stick_y));
 
- botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 telemetry.addLine(String.format("Heading / Error: %f5.1, %f5.1 ",
                         botHeading, deltaHeading));
 

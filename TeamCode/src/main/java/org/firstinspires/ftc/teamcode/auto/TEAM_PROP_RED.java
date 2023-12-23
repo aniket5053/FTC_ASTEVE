@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,52 +10,42 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="RED Team Prop", group= "Auto")
+@Autonomous(name="REDLUE Team Prop", group= "Auto")
 public class TEAM_PROP_RED extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
-    DcMotor frontLeftMotor;
-    DcMotor frontRightMotor;
-    DcMotor leftElevator;
-    DcMotor rightElevator;
-    Servo leftElbow;
-    Servo rightElbow;
-    Servo leftWrist;
-    Servo leftClaw;
+    DcMotor LEFTDRIVE;
+    DcMotor RIGHTDRIVE;
+    DcMotor LEFTAXLE;
+    DcMotor RIGHTAXLE;
+    Servo ELBOW1;
+    Servo ELBOW2;
+    Servo WRIST1;
+    Servo CLAWLEFT;
 
-    Servo rightClaw;
+    Servo CLAWRIGHT;
 
-    Robot robot = new Robot();
+
     PixelDetector detector = new PixelDetector(telemetry, "red");
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
-        // TA TODO: Configure HW so that names match
-        DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
-        DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
-        Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
-        Servo   rightElbow = hardwareMap.get(Servo.class, "RtElbow");
-        Servo   leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
-//        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
-        Servo   leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
-        Servo   rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
-
-        // Reverse the right side motors. This may be wrong for your setup.
-        // If your robot moves backwards when commanded to go forwards,
-        // reverse the left side instead.
-        // See the note about this earlier on this page.
-        // TA TODO: test out directions - esp Elevator - it was different in teleop and Auto
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftElevator.setDirection(DcMotor.Direction.REVERSE);
-        rightElbow.setDirection(Servo.Direction.REVERSE);
-        leftClaw.setDirection(Servo.Direction.REVERSE);
-
-        leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        LEFTDRIVE = hardwareMap.get(DcMotor.class, "LEFT DRIVE");
+//        RIGHTDRIVE = hardwareMap.get(DcMotor.class, "RIGHT DRIVE");
+//        LEFTAXLE = hardwareMap.get(DcMotor.class, "LEFT AXLE");
+//        RIGHTAXLE = hardwareMap.get(DcMotor.class, "RIGHT AXLE");
+//        ELBOW1 = hardwareMap.get(Servo.class, "ELBOW1");
+//        ELBOW2 = hardwareMap.get(Servo.class, "ELBOW2");
+//        WRIST1 = hardwareMap.get(Servo.class, "WRIST");
+//        CLAWLEFT = hardwareMap.get(Servo.class, "CLAWLEFT");
+//        CLAWRIGHT = hardwareMap.get(Servo.class, "CLAWRIGHT");
+//
+//        LEFTDRIVE.setDirection(DcMotor.Direction.REVERSE);
+//        LEFTAXLE.setDirection(DcMotor.Direction.REVERSE);
+//        ELBOW2.setDirection(Servo.Direction.REVERSE);
+//        CLAWLEFT.setDirection(Servo.Direction.REVERSE);
+//
+//        LEFTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        RIGHTAXLE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         OpenCvCamera webcam;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -65,7 +54,7 @@ public class TEAM_PROP_RED extends LinearOpMode {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -77,64 +66,28 @@ public class TEAM_PROP_RED extends LinearOpMode {
         waitForStart();
         switch (detector.getLocation()){
             case LEFT:
-                // Move 3.5 ft forward (3.5 ft = 42 inches)
-                robot.moveForward(42);
-
-                // Turn left 90 degrees
-                robot.turnLeft(90);
-
-                // move wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // open left claw
-                robot.leftClaw.setPosition(0.5);
 
 
                 break;
             case CENTER:
-                // Move forward 3.75 ft
-                robot.moveForward(45);
-
-                // Put wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // Open left claw
-                robot.leftClaw.setPosition(1);
 
 
 
                 break;
 
             case RIGHT:
-                // Move 3.5 ft forward
-                robot.moveForward(42); // convert feet to inches
 
-                // Turn right 90 degrees
-                robot.turnRight(90);
-
-                // move wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // open left claw
-                robot.leftClaw.setPosition(1);
 
 
                 break;
             case NOT_FOUND:
-                // Move forward 3.75 ft
-                robot.moveForward(45);
 
-                // Put wrist down
-                robot.leftWrist.setPosition(0.25);
-
-                // Open left claw
-                robot.leftClaw.setPosition(1);
 
 
 
 
         }
-        robot.webcam.stopStreaming();
+        webcam.stopStreaming();
 
 
 

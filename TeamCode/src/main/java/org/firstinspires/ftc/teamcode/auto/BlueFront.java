@@ -53,10 +53,6 @@ public class BlueFront extends LinearOpMode {
     Servo   leftClaw   ;
     Servo   rightClaw  ;
 
-    //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
-
-
-    Robot robot = new Robot();
     PixelDetector detector = new PixelDetector(telemetry, "blue");
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,10 +60,10 @@ public class BlueFront extends LinearOpMode {
         // Declare our motors
         // Make sure your ID's match your configuration
         // TA DONE: Configure HW so that names match
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
+        frontLeftMotor = hardwareMap.get(DcMotor.class,"FrtLtMtr");
+        backLeftMotor = hardwareMap.get(DcMotor.class,"BckLtMtr");
+        frontRightMotor = hardwareMap.get(DcMotor.class,"FrtRtMtr");
+        backRightMotor = hardwareMap.get(DcMotor.class,"BckRtMtr");
         // Retrieve the IMU from the hardware map
         // TA DONE: Configure HW so that names match
         IMU imu = hardwareMap.get(IMU.class, "IMU");
@@ -78,6 +74,7 @@ public class BlueFront extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
 
         // TA DONE: Configure HW so that names match
+
         DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
         DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
         Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
@@ -132,24 +129,24 @@ public class BlueFront extends LinearOpMode {
 
         // Move 4ft forward (2 ft = 24 inches)
 //        robot.moveForward(24);
-        forward(20);
+        forward(20.0);
 
         // Turn left 90 degrees
-        turnLeft(91);
+        //turnLeft(90);
 
         // Move 4ft forward (3 ft = 36 inches)
   //      robot.moveForward(36);
-        forward(35);
+        //forward(35.0);
 
 
-        leftElbow.setPosition(ELBOW_UP);
-        rightElbow.setPosition(ELBOW_UP);
-        sleep(2000);
-
-        // open left claw
-        leftClaw.setPosition(CLAW_OPEN);
-        rightClaw.setPosition(CLAW_OPEN);
-        sleep(1000);
+//        leftElbow.setPosition(ELBOW_UP);
+//        rightElbow.setPosition(ELBOW_UP);
+//        sleep(2000);
+//
+//        // open left claw
+//        leftClaw.setPosition(CLAW_OPEN);
+//        rightClaw.setPosition(CLAW_OPEN);
+//        sleep(1000);
 
 //        backward(35);
 
@@ -159,16 +156,16 @@ public class BlueFront extends LinearOpMode {
 
     void forward(double inches){
         // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 55);
+        double movementsNeeded = Math.abs(inches / 37);
 
         // Calculate the adjusted sleep time based on the target distance
         double adjustedSleepTime = 1000 * movementsNeeded;
 
         // Set power to the motors for moving forward
-        frontLeftMotor.setPower(0.66);
-        frontRightMotor.setPower(0.66);
-        backLeftMotor.setPower(0.66);
-        backRightMotor.setPower(0.66);
+        frontLeftMotor.setPower(1);
+        frontRightMotor.setPower(1);
+        backLeftMotor.setPower(1);
+        backRightMotor.setPower(1);
 
         // Sleep for the adjusted time
         sleep((long) adjustedSleepTime);
@@ -184,16 +181,16 @@ public class BlueFront extends LinearOpMode {
 
     void backward(double inches){
         // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 55);
+        double movementsNeeded = Math.abs(inches / 26.3);
 
         // Calculate the adjusted sleep time based on the target distance
         double adjustedSleepTime = 1000 * movementsNeeded;
 
         // Set power to the motors for moving backward
-        frontLeftMotor.setPower(-0.66);
-        frontRightMotor.setPower(-0.66);
-        backLeftMotor.setPower(-0.66);
-        backRightMotor.setPower(-0.66);
+        frontLeftMotor.setPower(-1);
+        frontRightMotor.setPower(-1);
+        backLeftMotor.setPower(-1);
+        backRightMotor.setPower(-1);
 
         // Sleep for the adjusted time
         sleep((long) adjustedSleepTime);
@@ -203,13 +200,13 @@ public class BlueFront extends LinearOpMode {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        sleep(500);
+        sleep(400);
     }
 
     void turnLeft(double angle){
 
         // Calculate the number of movements needed to reach the target angle
-        double movementsNeeded = Math.abs(angle / 90);
+        double movementsNeeded = Math.abs(angle /45);
 
         // Calculate the adjusted sleep time based on the target angle
         double adjustedSleepTime = 650 * movementsNeeded;
