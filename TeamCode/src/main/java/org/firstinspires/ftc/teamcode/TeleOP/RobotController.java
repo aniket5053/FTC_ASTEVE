@@ -18,58 +18,84 @@ public class RobotController extends LinearOpMode {
      * This function is executed when this OpMode is selected from the Driver Station.
      */
 
+    static final double CLAW_OPEN = 0.5;
+    static final double CLAW_CLOSED = 1.0;
+    static final double ELBOW_UP = 0.21;        //was .25 too little, .15 too much
+    static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
+    static final double ELBOW_HANG = 0.36;      //
+    static final double ELBOW_SCORE_LOW = ELBOW_UP;
+    static final double WRIST_HOME = 0.15;
+    static final double WRIST_OUT = 1.0;
+    static final double WRIST_IN = 0.05;
+    static final double WRIST_FLOOR_PICKUP = 0.85;   //.9 too low
+    static final double WRIST_SCORE_HIGH = 0.35;
+    static final double WRIST_SCORE_LOW = 0.5;
+    static final int ELEV_FLOOR = 280;    static final int ELEV_HOME = 0;
+    static final int ELEV_SCORE_LOW = -50;
+    static final int ELEV_TOP = -600;
+
+
     @Override
     public void runOpMode() {
 
         // Declare our motors
         // Make sure your ID's match your configuration
-        // TA TODO: Configure HW so that names match
+        // TA DONE: Configure HW so that names match
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
 
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
         // See the note about this earlier on this page.
-        // TA TODO: test out directions
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        // TA DONE: test out directions
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
-        // TA TODO: Configure HW so that names match
+        // TA DONE: Configure HW so that names match
         IMU imu = hardwareMap.get(IMU.class, "IMU");
         // Adjust the orientation parameters to match your robot
-        // TA TODO: Verify IMU orientation matches code below
+        // TA DONE: Verify IMU orientation matches code below
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        // TA TODO: Configure HW so that names match
+        // TA DONE: Configure HW so that names match
         DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
         DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
         Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
         Servo   rightElbow = hardwareMap.get(Servo.class, "RtElbow");
         Servo   leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
-//        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
+        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
         Servo   leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
         Servo   rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
 
         //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
 
         // TA TODO: test out directions - esp Elevator - it was different in teleop and Auto
-        rightElbow.setDirection(Servo.Direction.REVERSE);
+        //          FIXED FOR TELEOP - HAVE TO FIX AUTO
         leftElevator.setDirection(DcMotor.Direction.REVERSE);
+        leftElbow.setDirection(Servo.Direction.REVERSE);
+        leftWrist.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
-        leftWrist.setPosition(1);
-        leftElbow.setPosition(0.9);
-        rightElbow.setPosition(0.9);
-        leftClaw.setPosition(1);
-        rightClaw.setPosition(1);
+        leftWrist.setPosition(WRIST_HOME);
+        rightWrist.setPosition(WRIST_HOME);
+        leftElbow.setPosition(ELBOW_DOWN);
+        rightElbow.setPosition(ELBOW_DOWN);
+        leftClaw.setPosition(CLAW_CLOSED);
+        rightClaw.setPosition(CLAW_CLOSED);
 
 
 
@@ -78,6 +104,8 @@ public class RobotController extends LinearOpMode {
 
             leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             boolean isRotating;
             boolean firstTime = true;
@@ -95,11 +123,23 @@ public class RobotController extends LinearOpMode {
             int elevEncTolerance = 5;
             while (opModeIsActive()) {
 
-                // This button choice was made so that it is hard to hit on accident,
+                // These button choices were made so that it is hard to hit on accident,
                 // it can be freely changed based on preference.
                 // The equivalent button is start on Xbox-style controllers.
                 if (gamepad1.options) {
                     imu.resetYaw();
+                }
+
+                if (gamepad1.guide) {
+                    frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    sleep(50);
+                    frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
 
                 /////////////////////////////////////////////////////////////////////////
@@ -112,24 +152,27 @@ public class RobotController extends LinearOpMode {
                 //Set joystick dead bands
                 // TA TODO: test to optimize this empirical constant
                 double db = 0.10;
-                if( (y < db) && (y > -db) ) y = 0;
-                if( (x < db) && (x > -db) ) x = 0;
-                if( (rx < db) && (rx > -db) ) rx = 0;
+                if ((y < db) && (y > -db)) y = 0;
+                if ((x < db) && (x > -db)) x = 0;
+                if ((rx < db) && (rx > -db)) rx = 0;
 
                 // slow down for more accurate movement when triggers are depressed
-                if(gamepad1.right_trigger > 0.33 || gamepad1.left_trigger > 0.33) {
-                    y = y/2.0;
-                    x = x/2.0;
-                    rx = rx/2.0;
+                if (gamepad1.right_trigger > 0.33 || gamepad1.left_trigger > 0.33) {
+                    y = y / 2.0;
+                    x = x / 2.0;
+                    rx = rx / 2.0;
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////
                 // the code section below is correcting for robot rotation when it shouldn't happen
                 //////////////////////////////////////////////////////////////////////////////////
-                if(rx == 0.0) isRotating = false;
-                else { isRotating = true; firstTime = true; }
+                if (rx == 0.0) isRotating = false;
+                else {
+                    isRotating = true;
+                    firstTime = true;
+                }
 
-                if( (!isRotating) && (firstTime) ) {
+                if ((!isRotating) && (firstTime)) {
                     initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                     firstTime = false;
                 }
@@ -137,8 +180,17 @@ public class RobotController extends LinearOpMode {
                 double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                 double deltaHeading = botHeading - initialHeading;
                 // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
-                if( (!isRotating) && (Math.abs(deltaHeading) > 0.04) )//0.04 rads ~= 2 deg
-                {   rx = rx + deltaHeading; }
+
+                //*************************************************************************************
+                // TA TODO: UPDATE THIS SECTION WHEN imu FIX KNOWN !!!!
+                // IMU is not working reliably per FTC chat site (probably ESD issue) eliminate for now
+                botHeading = 0.0;
+                deltaHeading = 0.0;
+                //*************************************************************************************
+                if ((!isRotating) && (Math.abs(deltaHeading) > 0.04))//0.04 rads ~= 2 deg
+                {
+                    rx = rx + deltaHeading;
+                }
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
 
@@ -167,229 +219,158 @@ public class RobotController extends LinearOpMode {
                 /////////////////////////////////////////////////////////////////////////
                 // End of Mecanum Drive Section of Code
                 /////////////////////////////////////////////////////////////////////////
+//                leftElevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                rightElevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-                leftElevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightElevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                leftElevator.setPower(gamepad2.right_stick_y);
-                rightElevator.setPower(gamepad2.right_stick_y);
-
-
-                //home
-                if( (gamepad1.x) || !isMoveToHomeReady ) {
-                    isMoveToHomeReady = false;
-                    leftWrist.setPosition(1);
-                    leftElbow.setPosition(0.9);
-                    rightElbow.setPosition(0.9);
-                    //move elevator home here
-                    leftElevator.setTargetPosition(0);
-                    rightElevator.setTargetPosition(0);
-                    leftElevator.setPower(1);
-                    rightElevator.setPower(1);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    if( !rightElevator.isBusy() && !leftElevator.isBusy() ) {
-                        retryCount++;
-                        isInTolerance = (Math.abs(leftElevator.getCurrentPosition() - 0) <= elevEncTolerance)
-                                && (Math.abs(rightElevator.getCurrentPosition() - 0) <= elevEncTolerance);
-                        if( (retryCount > retryCountLimit) || (isInTolerance) ) {
-                            leftElevator.setPower(0);
-                            rightElevator.setPower(0);
-                            retryCount = 0;
-                            isMoveToHomeReady = true;
-                        }
-                    }
+                if ( ((gamepad2.left_stick_y > +db) && (leftElevator.getCurrentPosition() < ELEV_FLOOR))
+                  || ((gamepad2.left_stick_y < -db) && (leftElevator.getCurrentPosition() > ELEV_TOP)) ) {
+                    leftElevator.setPower(gamepad2.left_stick_y);
+                    rightElevator.setPower(gamepad2.left_stick_y);
+                }
+                else {
+                    leftElevator.setPower(0.0);
+                    rightElevator.setPower(0.0);
                 }
 
-                //under-bar crossing
-                else if( (gamepad2.x) || !isMoveUnderBarReady ) {
-                    isMoveUnderBarReady = false;
-                    leftElbow.setPosition(0.9);
-                    rightElbow.setPosition(0.9);
-                    leftWrist.setPosition(0.57);
-                    //move elevator down
-                    leftElevator.setTargetPosition(300);  //s/b -360
-                    rightElevator.setTargetPosition(300);
-                    leftElevator.setPower(1);
-                    rightElevator.setPower(1);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //HANG
+                if( (gamepad1.x)  ) {
+                    leftWrist.setPosition(WRIST_HOME);
+                    rightWrist.setPosition(WRIST_HOME);
+                    leftElbow.setPosition(ELBOW_HANG);
+                    rightElbow.setPosition(ELBOW_HANG);
+                    //move elevator home here
+                }
 
-                    if( !rightElevator.isBusy() && !leftElevator.isBusy() ) {
-                        retryCount++;
-                        isInTolerance = (Math.abs(leftElevator.getCurrentPosition() - 300) <= elevEncTolerance)
-                                && (Math.abs(rightElevator.getCurrentPosition() - 300) <= elevEncTolerance);
-                        if ((retryCount > retryCountLimit) || (isInTolerance)) {
-                            leftElevator.setPower(0);
-                            rightElevator.setPower(0);
-                            retryCount = 0;
-                            isMoveUnderBarReady = true;
-                        }
+                //home
+                if( (gamepad2.x)  ) {
+                    leftWrist.setPosition(WRIST_HOME);
+                    rightWrist.setPosition(WRIST_HOME);
+                    sleep(150);
+                    //elbow down - elbow moves too fast and smashes, try a two step
+                    if(leftElbow.getPosition() != ELBOW_DOWN) {
+                        leftElbow.setPosition(ELBOW_DOWN - .106);
+                        rightElbow.setPosition(ELBOW_DOWN - .106);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_DOWN);
+                        rightElbow.setPosition(ELBOW_DOWN);
                     }
                  }
 
                 //floor
-                else if( (gamepad2.a) || !isMoveToFloorReady ) {
-                    isMoveToFloorReady = false;
-                    leftElbow.setPosition(0.9);
-                    rightElbow.setPosition(0.9);
-                    leftWrist.setPosition(0.57);
-                    //move elevator down
-                    leftElevator.setTargetPosition(300);  //s/b -360
-                    rightElevator.setTargetPosition(300);
-                    leftElevator.setPower(1);
-                    rightElevator.setPower(1);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    if( !rightElevator.isBusy() && !leftElevator.isBusy() ) {
-                        retryCount++;
-                        isInTolerance = (Math.abs(leftElevator.getCurrentPosition() - 300) <= elevEncTolerance)
-                                && (Math.abs(rightElevator.getCurrentPosition() - 300) <= elevEncTolerance);
-                        if ((retryCount > retryCountLimit) || (isInTolerance)) {
-                            leftElevator.setPower(0);
-                            rightElevator.setPower(0);
-                            retryCount = 0;
-                            isMoveToFloorReady = true;
-                        }
+                if( (gamepad2.a)  ) {
+                    leftWrist.setPosition(WRIST_HOME);
+                    rightWrist.setPosition(WRIST_HOME);
+                    sleep(150);
+                    //elbow down - elbow moves too fast and smashes, try a two step
+                    if(leftElbow.getPosition() != ELBOW_DOWN) {
+                        leftElbow.setPosition(ELBOW_DOWN - .106);
+                        rightElbow.setPosition(ELBOW_DOWN - .106);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_DOWN);
+                        rightElbow.setPosition(ELBOW_DOWN);
+                        sleep(150);
                     }
+                    leftWrist.setPosition(WRIST_FLOOR_PICKUP);
+                    rightWrist.setPosition(WRIST_FLOOR_PICKUP);
                 }
 
 
                 //score high
-                else if( (gamepad2.y) || !isScoreHighReady ) {
-                    isScoreHighReady = false;
-                    leftElbow.setPosition(0);
-                    rightElbow.setPosition(0);
-                    leftWrist.setPosition(0.2);
-                    //move elevator up
-                    leftElevator.setTargetPosition(-700);
-                    rightElevator.setTargetPosition(-700);
-                    leftElevator.setPower(1);
-                    rightElevator.setPower(1);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    if( !rightElevator.isBusy() && !leftElevator.isBusy() ) {
-                        retryCount++;
-                        isInTolerance = (Math.abs(leftElevator.getCurrentPosition() - -700) <= elevEncTolerance)
-                                && (Math.abs(rightElevator.getCurrentPosition() - -700) <= elevEncTolerance);
-                        if ((retryCount > retryCountLimit) || (isInTolerance)) {
-                            leftElevator.setPower(0);
-                            rightElevator.setPower(0);
-                            retryCount = 0;
-                            isScoreHighReady = true;
-                        }
+                if( (gamepad2.y)  ) {
+                    //elbow up - elbow moves too fast and smashes, try a two step
+                    if(leftElbow.getPosition() != ELBOW_UP) {
+                        leftElbow.setPosition(ELBOW_UP + 0.1);
+                        rightElbow.setPosition(ELBOW_UP + 0.1);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_UP);
+                        rightElbow.setPosition(ELBOW_UP);
                     }
+                    leftWrist.setPosition(WRIST_SCORE_HIGH);
+                    rightWrist.setPosition(WRIST_SCORE_HIGH);
                 }
 
                 //score low
-                else if( (gamepad2.b) || !isScoreLowReady ) {
-                    isScoreLowReady = false;
-                    leftElbow.setPosition(0.1);
-                    rightElbow.setPosition(0.1);
-                    leftWrist.setPosition(.2);
-                    //move elevator up
-                    leftElevator.setTargetPosition(-50);
-                    rightElevator.setTargetPosition(-50);
-                    leftElevator.setPower(1);
-                    rightElevator.setPower(1);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    if( !rightElevator.isBusy() && !leftElevator.isBusy() ) {
-                        retryCount++;
-                        isInTolerance = (Math.abs(leftElevator.getCurrentPosition() - -50) <= elevEncTolerance)
-                                && (Math.abs(rightElevator.getCurrentPosition() - -50) <= elevEncTolerance);
-                        if ((retryCount > retryCountLimit) || (isInTolerance)) {
-                            leftElevator.setPower(0);
-                            rightElevator.setPower(0);
-                            retryCount = 0;
-                            isScoreLowReady = true;
-                        }
+                if( (gamepad2.b) ) {
+                    //elbow up - elbow moves too fast and smashes, try a two step
+                    if(leftElbow.getPosition() != ELBOW_UP) {
+                        leftElbow.setPosition(ELBOW_UP + 0.1);
+                        rightElbow.setPosition(ELBOW_UP + 0.1);
+                        sleep(250);
+                        leftElbow.setPosition(ELBOW_UP);
+                        rightElbow.setPosition(ELBOW_UP);
                     }
+                    leftWrist.setPosition(WRIST_SCORE_LOW);
+                    rightWrist.setPosition(WRIST_SCORE_LOW);
                 }
 
                 if(gamepad2.left_trigger > 0.33){
                     //close claw
-                    leftClaw.setPosition(1);
+                    leftClaw.setPosition(CLAW_CLOSED);
                 }
                 else if(gamepad2.left_bumper){
                     //open claw
-                    leftClaw.setPosition(0.5);
+                    leftClaw.setPosition(CLAW_OPEN);
                 }
 
                 if(gamepad2.right_trigger > 0.33){
                     //close claw
-                    rightClaw.setPosition(1);
+                    rightClaw.setPosition(CLAW_CLOSED);
                 }
                 else if(gamepad2.right_bumper){
                     //open claw
-                    rightClaw.setPosition(0.5);
+                    rightClaw.setPosition(CLAW_OPEN);
                 }
 
                 if(gamepad2.right_bumper && gamepad2.left_bumper){
-                    leftClaw.setPosition(0.5);
-                    rightClaw.setPosition(0.5);
+                    leftClaw.setPosition(CLAW_OPEN);
+                    rightClaw.setPosition(CLAW_OPEN);
 
                 }
                 if(gamepad2.right_trigger > 0.33 && gamepad2.left_trigger > 0.33){
-                    leftClaw.setPosition(1);
-                    rightClaw.setPosition(1);
+                    leftClaw.setPosition(CLAW_CLOSED);
+                    rightClaw.setPosition(CLAW_CLOSED);
 
                 }
 
 
                 if(gamepad2.dpad_up){
-                    //elbow up
-                    leftElbow.setPosition(0.1);
-                    rightElbow.setPosition(0.1);
-
                 }
                 if(gamepad2.dpad_down){
-                    //elbow down
-                    leftElbow.setPosition(1);
-                    rightElbow.setPosition(1);
                 }
                 if(gamepad2.dpad_left){
                     //wrist up
-                    leftWrist.setPosition(0.75);
+                    leftWrist.setPosition(WRIST_HOME);
+                    rightWrist.setPosition(WRIST_HOME);
                 }
                 if(gamepad2.dpad_right){
                     //wrist down
-                    leftWrist.setPosition(0.05);
+                    leftWrist.setPosition(WRIST_FLOOR_PICKUP);
+                    rightWrist.setPosition(WRIST_FLOOR_PICKUP);
                 }
 
+                telemetry.addLine(String.format("Lt/Rt Frt Mtrs: %f4.2, %f4.2 ",
+                        frontLeftMotor.getPower(),frontRightMotor.getPower()));
+                telemetry.addLine(String.format("Lt/Rt Bck Mtrs: %f4.2, %f4.2 ",
+                        backLeftMotor.getPower(),backRightMotor.getPower()));
+                telemetry.addLine(String.format("Lt/Rt ElevMtrs: %f4.2, %f4.2 ",
+                        leftElevator.getPower(),rightElevator.getPower()));
+                telemetry.addLine(String.format("Lt/Rt ElbowPos: %f4.0, %f4.0 ",
+                        leftElbow.getPosition(),rightElbow.getPosition()));
+                telemetry.addLine(String.format("Lt/Rt WristPos: %f4.0, %f4.0 ",
+                        leftWrist.getPosition(),rightWrist.getPosition()));
 
 
 
+                telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d, %d ",
+                        frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
+                telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d, %d ",
+                        backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
+                telemetry.addLine(String.format("Lt/Rt ElevEncdrs: %d, %d %f4.2",
+                        leftElevator.getCurrentPosition(),rightElevator.getCurrentPosition(), gamepad2.right_stick_y));
 
-                telemetry.addData("FrtLt Power", frontLeftMotor.getPower());
-                telemetry.addData("BckLt Power", backLeftMotor.getPower());
-                telemetry.addData("FrtRt Power", frontRightMotor.getPower());
-                telemetry.addData("BckRt Power", backRightMotor.getPower());
-                telemetry.addData("LeftEl", leftElevator.getPower());
-                telemetry.addData("RightEl", rightElevator.getPower());
-                telemetry.addData("leftElbow",leftElbow.getPosition() );
-                telemetry.addData("rightElbow",rightElbow.getPosition() );
-                telemetry.addData("LeftWrist",leftWrist.getPosition() );
-                telemetry.addData("RightWrist",leftWrist.getPosition() );
-                telemetry.addData("LeftEl Encoder",leftElevator.getCurrentPosition());
-                telemetry.addData("FrtLt Encoder", frontLeftMotor.getCurrentPosition());
-                telemetry.addData("BckRt Encoder", backRightMotor.getCurrentPosition());
-                telemetry.addData("Heading", botHeading);
+ botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                telemetry.addLine(String.format("Heading / Error: %f5.1, %f5.1 ",
+                        botHeading, deltaHeading));
 
 
                 telemetry.update();
