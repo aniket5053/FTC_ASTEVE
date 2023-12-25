@@ -76,10 +76,10 @@ public class PixelDetector extends OpenCvPipeline {
 //*******************************************************************//
 //** The two lines below are needed if doing HSV processing, but comment out for RGB processing **//
 //** The file is setup to do both!  **//
-//  Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-//  Core.inRange(mat, lowHSV, highHSV, mat);
+  Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+  Core.inRange(mat, lowHSV, highHSV, mat);
 
-  Core.inRange(mat, lowRGB, highRGB, mat);
+//  Core.inRange(mat, lowRGB, highRGB, mat);
 //** The one line above is needed if doing RGB processing, but comment out for HSV processing **//
 //*******************************************************************//
 

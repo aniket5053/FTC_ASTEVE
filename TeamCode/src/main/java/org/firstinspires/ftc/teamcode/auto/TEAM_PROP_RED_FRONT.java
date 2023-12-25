@@ -13,8 +13,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="BLUE Team Prop", group= "Auto")
-public class TEAM_PROP_BLUE extends LinearOpMode {
+@Autonomous(name="RED FRONT Team Prop", group= "Auto")
+public class TEAM_PROP_RED_FRONT extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -111,13 +111,6 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
         leftWrist.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
-        leftWrist.setPosition(WRIST_HOME);
-        rightWrist.setPosition(WRIST_HOME);
-        leftElbow.setPosition(ELBOW_DOWN);
-        rightElbow.setPosition(ELBOW_DOWN);
-        leftClaw.setPosition(CLAW_CLOSED);
-        rightClaw.setPosition(CLAW_CLOSED);
-
 
         OpenCvCamera webcam;
 
@@ -139,20 +132,47 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
         waitForStart();
         switch (detector.getLocation()){
             case LEFT:
-                forward(20);
+                forward(30);
                 turnLeft(90);
-
-
+                setWristOut();
+                //drops on left spike mark
+                leftClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+                backward(48);
+                score();
+                //drops on left area
+                rightClaw.setPosition(CLAW_OPEN);
 
                 break;
             case CENTER:
-
-
+                //start the robot backwards
+                backward(24);
+                setWristOut();
+                //drops on center spike mark
+                leftClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+                strafeLeft(18);
+                forward(14);
+                turnLeft(90);
+                score();
+                //drops on center area
+                rightClaw.setPosition(CLAW_OPEN);
 
                 break;
 
             case RIGHT:
-
+                strafeRight(20);
+                forward(24);
+                turnLeft(90);
+                setWristOut();
+                //drops on left Spike Mark
+                leftClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+                strafeLeft(12);
+                backward(12);
+                score();
+                //drops on left area
+                rightClaw.setPosition(CLAW_OPEN);
 
 
                 break;
@@ -173,7 +193,7 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
 
     void forward(double inches){
         // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 26.3);
+        double movementsNeeded = Math.abs(inches / 37);
 
         // Calculate the adjusted sleep time based on the target distance
         double adjustedSleepTime = 1000 * movementsNeeded;
@@ -198,7 +218,7 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
 
     void backward(double inches){
         // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 26.3);
+        double movementsNeeded = Math.abs(inches / 37);
 
         // Calculate the adjusted sleep time based on the target distance
         double adjustedSleepTime = 1000 * movementsNeeded;
@@ -261,17 +281,47 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
         backRightMotor.setPower(0);
         sleep(500);
     }
+    void strafeRight(double inches){
+        // Calculate the number of movements needed to reach the target distance
+        double movementsNeeded = Math.abs(inches / 37);
 
-    void setClawOpen(){
-        leftClaw.setPosition(CLAW_OPEN);
-        rightClaw.setPosition(CLAW_OPEN);
-        sleep(1000);
+        // Calculate the adjusted sleep time based on the target distance
+        double adjustedSleepTime = 1000 * movementsNeeded;
+
+        frontLeftMotor.setPower(1);
+        frontRightMotor.setPower(-1);
+        backLeftMotor.setPower(-1);
+        backRightMotor.setPower(1);
+
+        sleep((long) adjustedSleepTime);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(500);
+
     }
-    void setClawClosed(){
-        leftClaw.setPosition(CLAW_CLOSED);
-        rightClaw.setPosition(CLAW_CLOSED);
-        sleep(1000);
+    void strafeLeft(double inches){
+        // Calculate the number of movements needed to reach the target distance
+        double movementsNeeded = Math.abs(inches / 37);
+
+        // Calculate the adjusted sleep time based on the target distance
+        double adjustedSleepTime = 1000 * movementsNeeded;
+
+        frontLeftMotor.setPower(-1);
+        frontRightMotor.setPower(1);
+        backLeftMotor.setPower(1);
+        backRightMotor.setPower(-1);
+
+        sleep((long) adjustedSleepTime);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(500);
+
     }
+
 
     void setElbowUp(){
         leftElbow.setPosition(ELBOW_UP + 0.4);
@@ -317,6 +367,21 @@ public class TEAM_PROP_BLUE extends LinearOpMode {
     void setWristScoreLow(){
         leftWrist.setPosition(WRIST_SCORE_LOW);
         rightWrist.setPosition(WRIST_SCORE_LOW);
+    }
+
+    void score(){
+        if(leftElbow.getPosition() != ELBOW_UP) {
+            leftElbow.setPosition(ELBOW_UP + 0.4);
+            rightElbow.setPosition(ELBOW_UP + 0.4);
+            sleep(250);
+            leftElbow.setPosition(ELBOW_UP + 0.2);
+            rightElbow.setPosition(ELBOW_UP + 0.2);
+            sleep(250);
+            leftElbow.setPosition(ELBOW_UP);
+            rightElbow.setPosition(ELBOW_UP);
+        }
+        leftWrist.setPosition(WRIST_SCORE_HIGH);
+        rightWrist.setPosition(WRIST_SCORE_HIGH);
     }
 
 
