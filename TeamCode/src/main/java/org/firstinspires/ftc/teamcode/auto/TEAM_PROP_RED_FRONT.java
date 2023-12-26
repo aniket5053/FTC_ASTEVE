@@ -145,16 +145,14 @@ public class TEAM_PROP_RED_FRONT extends LinearOpMode {
 
                 break;
             case CENTER:
-                //TODO I AM AN IDIOT THIS WILL NOT WORK I WILL FIX THIS SOON
-                //start the robot backwards
-                backward(24);
+                forward(36);
                 setWristOut();
-                //drops on center spike mark
+                //drops on center Spike Mark
                 leftClaw.setPosition(CLAW_OPEN);
                 setWristIn();
-                strafeLeft(18);
-                forward(14);
+                backward(12);
                 turnLeft(90);
+                backward(24);
                 score();
                 //drops on center area
                 rightClaw.setPosition(CLAW_OPEN);
