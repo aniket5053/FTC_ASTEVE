@@ -147,6 +147,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
                 break;
             case CENTER:
+                //TODO I AM AN IDIOT THIS WILL NOT WORK I WILL FIX THIS SOON
                 //start the robot backwards
                 backward(24);
                 setWristOut();
