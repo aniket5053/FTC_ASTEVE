@@ -8,9 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="BlueFront", group= "Auto")
-public class BlueFront extends LinearOpMode {
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
+@Autonomous(name="BLUE FRONT Team Prop", group= "Auto")
+public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -29,9 +33,6 @@ public class BlueFront extends LinearOpMode {
     static final int ELEV_FLOOR = 280;    static final int ELEV_HOME = 0;
     static final int ELEV_SCORE_LOW = -50;
     static final int ELEV_TOP = -600;
-
-
-
     // Declare our motors
     // Make sure your ID's match your configuration
     // TA DONE: Configure HW so that names match
@@ -64,31 +65,6 @@ public class BlueFront extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class,"BckLtMtr");
         frontRightMotor = hardwareMap.get(DcMotor.class,"FrtRtMtr");
         backRightMotor = hardwareMap.get(DcMotor.class,"BckRtMtr");
-        // Retrieve the IMU from the hardware map
-        // TA DONE: Configure HW so that names match
-        IMU imu = hardwareMap.get(IMU.class, "IMU");
-        // Adjust the orientation parameters to match your robot
-        // TA DONE: Verify IMU orientation matches code below
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-
-        // TA DONE: Configure HW so that names match
-
-        DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
-        DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
-        Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
-        Servo   rightElbow = hardwareMap.get(Servo.class, "RtElbow");
-        Servo   leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
-        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
-        Servo   leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
-        Servo   rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
-
-        //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
-
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
-
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -104,54 +80,115 @@ public class BlueFront extends LinearOpMode {
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // Retrieve the IMU from the hardware map
+        // TA DONE: Configure HW so that names match
+        IMU imu = hardwareMap.get(IMU.class, "IMU");
+        // Adjust the orientation parameters to match your robot
+        // TA DONE: Verify IMU orientation matches code below
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
+        // TA DONE: Configure HW so that names match
 
-        // TA TODO: test out directions - esp Elevator - it was different in teleop and Auto
-        //          FIXED FOR TELEOP - HAVE TO FIX AUTO
+        leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
+        rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
+        leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
+        rightElbow = hardwareMap.get(Servo.class, "RtElbow");
+        leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
+        rightWrist = hardwareMap.get(Servo.class, "RtWrist");
+        leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
+        rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
+
+        //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
+
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
+
         leftElevator.setDirection(DcMotor.Direction.REVERSE);
         leftElbow.setDirection(Servo.Direction.REVERSE);
         leftWrist.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
-        leftWrist.setPosition(WRIST_HOME);
-        rightWrist.setPosition(WRIST_HOME);
-        leftElbow.setPosition(ELBOW_DOWN);
-        rightElbow.setPosition(ELBOW_DOWN);
-        leftClaw.setPosition(CLAW_CLOSED);
-        rightClaw.setPosition(CLAW_CLOSED);
 
+        OpenCvCamera webcam;
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webcam.setPipeline(detector);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                // Handle error
+            }
+        });
 
         waitForStart();
+        switch (detector.getLocation()){
+            case LEFT:
+                strafeLeft(20);
+                forward(24);
+                turnRight(90);
+                setWristOut();
+                //drops on left Spike Mark
+                leftClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+                strafeRight(12);
+                backward(12);
+                score();
+                //drops on left area
+                rightClaw.setPosition(CLAW_OPEN);
 
-        leftClaw.setPosition(CLAW_CLOSED);
-        rightClaw.setPosition(CLAW_CLOSED);
-        sleep(500);         // dont move until claw is closed
+                break;
+            case CENTER:
+                forward(36);
+                setWristOut();
+                //drops on center Spike Mark
+                leftClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+                backward(12);
+                turnRight(90);
+                backward(24);
+                score();
+                //drops on center area
+                rightClaw.setPosition(CLAW_OPEN);
 
 
-        // Move 4ft forward (2 ft = 24 inches)
-//        robot.moveForward(24);
-        strafeRight(30);
+                break;
 
-        // Turn left 90 degrees
-        //turnLeft(90);
+            case RIGHT:
+                forward(30);
+                turnRight(90);
+                setWristOut();
+                //drops on right spike mark
+                leftClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+                backward(48);
+                score();
+                //drops on right area
+                rightClaw.setPosition(CLAW_OPEN);
 
-        // Move 4ft forward (3 ft = 36 inches)
-  //      robot.moveForward(36);
-        //forward(35.0);
+
+                break;
+            case NOT_FOUND:
 
 
-//        leftElbow.setPosition(ELBOW_UP);
-//        rightElbow.setPosition(ELBOW_UP);
-//        sleep(2000);
-//
-//        // open left claw
-//        leftClaw.setPosition(CLAW_OPEN);
-//        rightClaw.setPosition(CLAW_OPEN);
-//        sleep(1000);
 
-//        backward(35);
+
+
+        }
+        webcam.stopStreaming();
+
 
 
     }
+
 
 
     void forward(double inches){
@@ -224,6 +261,26 @@ public class BlueFront extends LinearOpMode {
         sleep(500);
     }
 
+    void turnRight(double angle){
+
+        // Calculate the number of movements needed to reach the target angle
+        double movementsNeeded = Math.abs(angle /45);
+
+        // Calculate the adjusted sleep time based on the target angle
+        double adjustedSleepTime = 650 * movementsNeeded;
+
+        frontLeftMotor.setPower(0.5);
+        frontRightMotor.setPower(-0.5);
+        backLeftMotor.setPower(0.5);
+        backRightMotor.setPower(-0.5);
+
+        sleep((long) adjustedSleepTime);
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(500);
+    }
     void strafeRight(double inches){
         // Calculate the number of movements needed to reach the target distance
         double movementsNeeded = Math.abs(inches / 37);
@@ -265,4 +322,68 @@ public class BlueFront extends LinearOpMode {
 
     }
 
+
+    void setElbowUp(){
+        leftElbow.setPosition(ELBOW_UP + 0.4);
+        rightElbow.setPosition(ELBOW_UP + 0.4);
+        sleep(250);
+        leftElbow.setPosition(ELBOW_UP + 0.2);
+        rightElbow.setPosition(ELBOW_UP + 0.2);
+        sleep(250);
+        leftElbow.setPosition(ELBOW_UP);
+        rightElbow.setPosition(ELBOW_UP);
+    }
+
+    void setElbowDown(){
+        leftElbow.setPosition(ELBOW_DOWN - .506);
+        rightElbow.setPosition(ELBOW_DOWN - .506);
+        sleep(250);
+        leftElbow.setPosition(ELBOW_DOWN - 0.306);
+        rightElbow.setPosition(ELBOW_DOWN - 0.306);
+        sleep(250);
+        leftElbow.setPosition(ELBOW_DOWN - 0.106);
+        rightElbow.setPosition(ELBOW_DOWN - 0.106);
+        sleep(300);
+        leftElbow.setPosition(ELBOW_DOWN);
+        rightElbow.setPosition(ELBOW_DOWN);
+        sleep(250);
+    }
+
+    void setWristOut(){
+        leftWrist.setPosition(WRIST_OUT);
+        rightWrist.setPosition(WRIST_OUT);
+    }
+    void setWristIn(){
+        leftWrist.setPosition(WRIST_IN);
+        rightWrist.setPosition(WRIST_IN);
+    }
+
+    void setWristScoreHigh(){
+        leftWrist.setPosition(WRIST_SCORE_HIGH);
+        rightWrist.setPosition(WRIST_SCORE_HIGH);
+    }
+
+
+    void setWristScoreLow(){
+        leftWrist.setPosition(WRIST_SCORE_LOW);
+        rightWrist.setPosition(WRIST_SCORE_LOW);
+    }
+
+    void score(){
+        if(leftElbow.getPosition() != ELBOW_UP) {
+            leftElbow.setPosition(ELBOW_UP + 0.4);
+            rightElbow.setPosition(ELBOW_UP + 0.4);
+            sleep(250);
+            leftElbow.setPosition(ELBOW_UP + 0.2);
+            rightElbow.setPosition(ELBOW_UP + 0.2);
+            sleep(250);
+            leftElbow.setPosition(ELBOW_UP);
+            rightElbow.setPosition(ELBOW_UP);
+        }
+        leftWrist.setPosition(WRIST_SCORE_HIGH);
+        rightWrist.setPosition(WRIST_SCORE_HIGH);
+    }
+
+
 }
+
