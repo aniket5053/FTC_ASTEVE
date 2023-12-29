@@ -20,12 +20,12 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
-    static final double ELBOW_UP = 0.25;        //was .25 too little, .15 too much
+    static final double ELBOW_UP = 0.15;        //was .25 too little, .15 too much
     static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
     static final double ELBOW_HANG = 0.36;      //
     static final double ELBOW_SCORE_LOW = ELBOW_UP;
     static final double WRIST_HOME = 0.15;
-    static final double WRIST_OUT = 1.0;
+    static final double WRIST_OUT = 0.86;
     static final double WRIST_IN = 0.05;
     static final double WRIST_FLOOR_PICKUP = 0.85;   //.9 too low
     static final double WRIST_SCORE_HIGH = 0.57;
@@ -140,23 +140,23 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
                 sleep(250);
                 rightClaw.setPosition(CLAW_CLOSED);
                 sleep(250);
-                forward(25);
-                turnLeft(90);
+                strafeLeft(38);
+                forward(24);
+                turnRight(90);
                 setWristOut();
-                //drops on left Spike Mark
+                forward(7);
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(250);
                 setWristIn();
-                strafeLeft(20);
-                turnLeft(180);
-                backward(30);
+                sleep(250);
                 score();
-                backward(8);
-                //drops on left area
+                backward(15);
                 rightClaw.setPosition(CLAW_OPEN + 0.2);
                 sleep(250);
                 home();
-                strafeLeft(15);
+                strafeRight(24);
+
+
                 break;
 
             case CENTER:
@@ -164,23 +164,26 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
                 sleep(250);
                 rightClaw.setPosition(CLAW_CLOSED);
                 sleep(250);
-                forward(35);
-                backward(12);
                 setWristOut();
+                sleep(100);
+                forward(24);
+                //backward(12);
+                //setWristOut();
                 //drops on center Spike Mark
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(250);
                 setWristIn();
-                backward(10);
+                backward(5);
                 turnRight(90);
-                backward(30);
+                backward(33);
                 score();
-                backward(8);
+                backward(6);
+                strafeLeft(13);
                 //drops on center area
                 rightClaw.setPosition(CLAW_OPEN + 0.2);
                 sleep(250);
                 home();
-                strafeLeft(24);
+                strafeRight(24);
 
 
                 break;
