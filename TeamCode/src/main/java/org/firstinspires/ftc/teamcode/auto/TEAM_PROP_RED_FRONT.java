@@ -349,8 +349,6 @@ public class TEAM_PROP_RED_FRONT extends LinearOpMode {
         sleep(500);
 
     }
-
-
     void setElbowUp(){
         leftElbow.setPosition(ELBOW_UP + 0.4);
         rightElbow.setPosition(ELBOW_UP + 0.4);

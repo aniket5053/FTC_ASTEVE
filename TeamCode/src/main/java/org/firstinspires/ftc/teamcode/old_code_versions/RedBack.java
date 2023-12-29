@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.old_code_versions;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="RedFront", group= "Auto")
-public class RedFront extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.auto.PixelDetector;
+
+@Autonomous(name="RedBack", group= "Auto")
+public class RedBack extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
     DcMotor frontLeftMotor;
@@ -60,16 +62,22 @@ public class RedFront extends LinearOpMode {
         sleep(1000);
 
 
-        // Move 4ft forward (2 ft = 24 inches)
-//        robot.moveForward(24);
-        forward(20);
+        // Move 4ft forward (4 ft = 48 inches)
+//        robot.moveForward(48);
+        forward(48);
 
         // Turn left 90 degrees
-        turnRight(91);
+        turnRight(92);
 
-        // Move 4ft forward (3 ft = 36 inches)
-        //      robot.moveForward(36);
-        forward(35);
+        // Move 4ft forward (6 ft = 72 inches)
+        //       robot.moveForward(72);
+        forward(90);
+
+
+        // Turn left 90 degrees
+        turnRight(45);
+
+
 
         leftElbow.setPosition(0.1);
         rightElbow.setPosition(0.1);
@@ -80,11 +88,7 @@ public class RedFront extends LinearOpMode {
         rightClaw.setPosition(0.5);
         sleep(2000);
 
-//        backward(35);
-
-
     }
-
 
     void forward(double inches){
         // Calculate the number of movements needed to reach the target distance
@@ -104,30 +108,7 @@ public class RedFront extends LinearOpMode {
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         sleep(500);
-        
     }
-
-
-    void backward(double inches){
-        // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 55);
-
-        // Calculate the adjusted sleep time based on the target distance
-        double adjustedSleepTime = 1000 * movementsNeeded;
-
-        // Set power to the motors for moving backward
-        frontLeftMotor.setPower(-1);
-        frontRightMotor.setPower(-1);
-
-        // Sleep for the adjusted time
-        sleep((long) adjustedSleepTime);
-
-        // Stop the motors after the sleep
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        sleep(500);
-    }
-
 
     void turnRight(double angle){
 
