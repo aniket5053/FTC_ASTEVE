@@ -20,7 +20,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
-    static final double ELBOW_UP = 0.21;        //was .25 too little, .15 too much
+    static final double ELBOW_UP = 0.25;        //was .25 too little, .15 too much
     static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
     static final double ELBOW_HANG = 0.36;      //
     static final double ELBOW_SCORE_LOW = ELBOW_UP;
@@ -28,7 +28,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
     static final double WRIST_OUT = 1.0;
     static final double WRIST_IN = 0.05;
     static final double WRIST_FLOOR_PICKUP = 0.85;   //.9 too low
-    static final double WRIST_SCORE_HIGH = 0.35;
+    static final double WRIST_SCORE_HIGH = 0.57;
     static final double WRIST_SCORE_LOW = 0.5;
     static final int ELEV_FLOOR = 280;    static final int ELEV_HOME = 0;
     static final int ELEV_SCORE_LOW = -50;
@@ -128,54 +128,84 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
                 // Handle error
             }
         });
+        leftClaw.setPosition(CLAW_CLOSED);
+        sleep(250);
+        rightClaw.setPosition(CLAW_CLOSED);
+        sleep(250);
 
         waitForStart();
         switch (detector.getLocation()){
             case LEFT:
-                strafeLeft(20);
-                forward(24);
-                turnRight(90);
+                leftClaw.setPosition(CLAW_CLOSED);
+                sleep(250);
+                rightClaw.setPosition(CLAW_CLOSED);
+                sleep(250);
+                forward(25);
+                turnLeft(90);
                 setWristOut();
                 //drops on left Spike Mark
                 leftClaw.setPosition(CLAW_OPEN);
+                sleep(250);
                 setWristIn();
-                strafeRight(12);
-                backward(12);
+                strafeLeft(20);
+                turnLeft(180);
+                backward(30);
                 score();
+                backward(8);
                 //drops on left area
-                rightClaw.setPosition(CLAW_OPEN);
-
+                rightClaw.setPosition(CLAW_OPEN + 0.2);
+                sleep(250);
+                home();
+                strafeLeft(15);
                 break;
+
             case CENTER:
-                forward(36);
+                leftClaw.setPosition(CLAW_CLOSED);
+                sleep(250);
+                rightClaw.setPosition(CLAW_CLOSED);
+                sleep(250);
+                forward(35);
+                backward(12);
                 setWristOut();
                 //drops on center Spike Mark
                 leftClaw.setPosition(CLAW_OPEN);
+                sleep(250);
                 setWristIn();
-                backward(12);
+                backward(10);
                 turnRight(90);
-                backward(24);
+                backward(30);
                 score();
+                backward(8);
                 //drops on center area
-                rightClaw.setPosition(CLAW_OPEN);
+                rightClaw.setPosition(CLAW_OPEN + 0.2);
+                sleep(250);
+                home();
+                strafeLeft(24);
 
 
                 break;
 
             case RIGHT:
+                leftClaw.setPosition(CLAW_CLOSED);
+                sleep(250);
+                rightClaw.setPosition(CLAW_CLOSED);
+                sleep(250);
                 forward(30);
                 turnRight(90);
                 setWristOut();
                 //drops on right spike mark
                 leftClaw.setPosition(CLAW_OPEN);
                 setWristIn();
-                backward(48);
+                backward(35);
                 score();
+                backward(8);
                 //drops on right area
-                rightClaw.setPosition(CLAW_OPEN);
-
-
+                rightClaw.setPosition(CLAW_OPEN + 0.2);
+                sleep(250);
+                home();
+                strafeRight(15);
                 break;
+
             case NOT_FOUND:
 
 
@@ -212,7 +242,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        sleep(500);
+        sleep(1000);
     }
 
 
@@ -237,7 +267,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        sleep(400);
+        sleep(1000);
     }
 
     void turnLeft(double angle){
@@ -352,10 +382,12 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
     void setWristOut(){
         leftWrist.setPosition(WRIST_OUT);
         rightWrist.setPosition(WRIST_OUT);
+        sleep(1000);
     }
     void setWristIn(){
         leftWrist.setPosition(WRIST_IN);
         rightWrist.setPosition(WRIST_IN);
+        sleep(1000);
     }
 
     void setWristScoreHigh(){
@@ -382,7 +414,31 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         }
         leftWrist.setPosition(WRIST_SCORE_HIGH);
         rightWrist.setPosition(WRIST_SCORE_HIGH);
+        sleep(2000);
     }
+
+    void home(){
+        leftWrist.setPosition(WRIST_HOME);
+        rightWrist.setPosition(WRIST_HOME);
+        sleep(150);
+        //elbow down - elbow moves too fast and smashes, try a two step
+        if(leftElbow.getPosition() != ELBOW_DOWN) {
+            leftElbow.setPosition(ELBOW_DOWN - .506);
+            rightElbow.setPosition(ELBOW_DOWN - .506);
+            sleep(250);
+            leftElbow.setPosition(ELBOW_DOWN - 0.306);
+            rightElbow.setPosition(ELBOW_DOWN - 0.306);
+            sleep(250);
+            leftElbow.setPosition(ELBOW_DOWN - 0.106);
+            rightElbow.setPosition(ELBOW_DOWN - 0.106);
+            sleep(300);
+            leftElbow.setPosition(ELBOW_DOWN);
+            rightElbow.setPosition(ELBOW_DOWN);
+            sleep(250);
+        }
+        sleep(1500);
+    }
+
 
 
 }
