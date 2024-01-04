@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.old_code_versions;
+package org.firstinspires.ftc.teamcode.auto;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "FunctionsTest")
@@ -52,6 +54,20 @@ public class FunctionsTest extends LinearOpMode {
         leftElevator.setDirection(DcMotor.Direction.REVERSE);
         rightElbow.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
+
+
+        // Retrieve the IMU from the hardware map
+        // TA DONE: Configure HW so that names match
+        IMU imu = hardwareMap.get(IMU.class, "IMU");
+        // Adjust the orientation parameters to match your robot
+        // TA DONE: Verify IMU orientation matches code below
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
+        double botHeading = 0.0;
+        double deltaHeading = 0.0;
 
 
 

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.old_code_versions.RIGHT_BACK;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,23 +21,37 @@ public class RobotController extends LinearOpMode {
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
+    // Lt and Rt claw servo positions are slightly offset therefore correct via SW
+    static final int ELEV_BOT = 340;
+    static final int ELEV_FLOOR_PICKUP = 325;
+    static final int ELEV_HOME = 300;           // NEED TO GET UNDER TRUSS
+    static final int ELEV_START = 0;
+    static final int ELEV_HANG = -550;
+    static final int ELEV_SCORE_LOW = 300;
+    static final int ELEV_SCORE_MED = 0;
+    static final int ELEV_SCORE_HIGH = -550;
+    static final int ELEV_SCORE_VERYHIGH = -600;
+    static final int ELEV_TOP = -600;
 
-    static final double CLAW_OPEN = 0.5;
-    static final double CLAW_CLOSED = 1.0;
-    static final double ELBOW_UP = 0.21;        //was .25 too little, .15 too much
+    static final double ELBOW_UP = 0.11;        //
     static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
     static final double ELBOW_HANG = 0.36;      //
-    static final double ELBOW_SCORE_LOW = ELBOW_UP;
+    static final double ELBOW_SCORE_LOW = 0.17;        //
+    static final double ELBOW_SCORE_MED = 0.22;        //
+    static final double ELBOW_SCORE_HIGH = 0.25;        //
+    static final double ELBOW_SCORE_VERYHIGH = 0.27;        //
+
     static final double WRIST_HOME = 0.15;
-    static final double WRIST_OUT = 1.0;
-    static final double WRIST_IN = 0.05;
-    static final double WRIST_FLOOR_PICKUP = 0.85;   //.9 too low
+    static final double WRIST_FLOOR_PICKUP = 0.9;   //.9 too low
+    static final double WRIST_SCORE_LOW = 0.44;
+    static final double WRIST_SCORE_MED = 0.50;
     static final double WRIST_SCORE_HIGH = 0.35;
-    static final double WRIST_SCORE_LOW = 0.5;
-    static final int ELEV_FLOOR = 280;
-    static final int ELEV_HOME = 0;
-    static final int ELEV_SCORE_LOW = -50;
-    static final int ELEV_TOP = -600;
+    static final double WRIST_SCORE_VERYHIGH = 0.50;
+
+    static final double LEFT_CLAW_OPEN = 0.45;
+    static final double LEFT_CLAW_CLOSED = .78;
+    static final double RIGHT_CLAW_OPEN = 0.5;
+    static final double RIGHT_CLAW_CLOSED = .9;
 
 
     @Override
@@ -64,6 +79,7 @@ public class RobotController extends LinearOpMode {
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         // Retrieve the IMU from the hardware map
         // TA DONE: Configure HW so that names match
         IMU imu = hardwareMap.get(IMU.class, "IMU");
@@ -74,6 +90,8 @@ public class RobotController extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+        double botHeading = 0.0;
+        double deltaHeading = 0.0;
 
         // TA DONE: Configure HW so that names match
         DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
@@ -94,22 +112,30 @@ public class RobotController extends LinearOpMode {
         leftWrist.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
 
-        leftWrist.setPosition(WRIST_HOME);
-        rightWrist.setPosition(WRIST_HOME);
+        leftElevator.setPower(0.0);
+        rightElevator.setPower(0.0);
+        int elevTragetPos = 0;
+        boolean startEvelCmd = false;
+        int elevEncCloseTolerance = 20;
+        int elevEncStopTolerance = 3;
+
         leftElbow.setPosition(ELBOW_DOWN);
         rightElbow.setPosition(ELBOW_DOWN);
-        leftClaw.setPosition(CLAW_CLOSED);
-        rightClaw.setPosition(CLAW_CLOSED);
-
+        double elbowTargetPos = ELBOW_DOWN;
+        double prevElbowTargetPos = ELBOW_DOWN;
+        double deltaElbowPos = 0.0;
         ElapsedTime myStopwatch = new ElapsedTime();
         myStopwatch.reset();
+        double delayTime = 1000;
         int currentState = 0;
-        int iteration;
-        double deltaPos;
-        boolean xMoving = false;
-        boolean yMoving = false;
-        boolean aMoving = false;
-        boolean bMoving = false;
+
+        leftWrist.setPosition(WRIST_HOME);
+        rightWrist.setPosition(WRIST_HOME);
+
+        leftClaw.setPosition(LEFT_CLAW_CLOSED);
+        rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+
+
         waitForStart();
         if (opModeIsActive()) {
 
@@ -122,16 +148,6 @@ public class RobotController extends LinearOpMode {
             boolean firstTime = true;
             double initialHeading = 0.0;
 
-            boolean isScoreLowReady = true;
-            boolean isScoreHighReady = true;
-            boolean isMoveToFloorReady = true;
-            boolean isMoveUnderBarReady = true;
-            boolean isMoveToHomeReady = true;
-            boolean isInTolerance;
-            int retryCount = 0;
-            // TA TODO: Test these empirical constants
-            int retryCountLimit = 3;
-            int elevEncCloselerance = 50;
             while (opModeIsActive()) {
 
                 // These button choices were made so that it is hard to hit on accident,
@@ -139,6 +155,8 @@ public class RobotController extends LinearOpMode {
                 // The equivalent button is start on Xbox-style controllers.
                 if (gamepad1.options) {
                     imu.resetYaw();
+                    initialHeading = 0.0;
+                    botHeading = 0.0;
                 }
 
                 if (gamepad1.guide) {
@@ -184,34 +202,37 @@ public class RobotController extends LinearOpMode {
                 }
 
                 if ((!isRotating) && (firstTime)) {
-                    initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                    initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                     firstTime = false;
                 }
 
-                double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-                double deltaHeading = botHeading - initialHeading;
+                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                deltaHeading = botHeading - initialHeading;
+                if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
+                if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
                 // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
 
                 //*************************************************************************************
                 // TA TODO: UPDATE THIS SECTION WHEN imu FIX KNOWN !!!!
                 // IMU is not working reliably per FTC chat site (probably ESD issue) eliminate for now
-                botHeading = 0.0;
-                deltaHeading = 0.0;
+                //botHeading = 0.0;
+                //deltaHeading = 0.0;
                 //*************************************************************************************
-                if ((!isRotating) && (Math.abs(deltaHeading) > 0.04))//0.04 rads ~= 2 deg
+                if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
                 {
-                    rx = rx + deltaHeading;
+                    rx = rx + deltaHeading * .02;
                 }
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
 
 
                 // Rotate the movement direction counter to the robot's rotation
+                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                 double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
                 double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
                 // TA TODO: test to optimize this empirical constant
-                rotX = rotX * 1.1;  // Counteract imperfect strafing
+                //rotX = rotX * 1.1;  // Counteract imperfect strafing
 
                 // Denominator is the largest motor power (absolute value) or 1
                 // This ensures all the powers maintain the same ratio,
@@ -230,39 +251,125 @@ public class RobotController extends LinearOpMode {
                 /////////////////////////////////////////////////////////////////////////
                 // End of Mecanum Drive Section of Code
                 /////////////////////////////////////////////////////////////////////////
-//                leftElevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                rightElevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                if ( ((gamepad2.left_stick_y > +db) && (leftElevator.getCurrentPosition() < ELEV_FLOOR))
-                  || ((gamepad2.left_stick_y < -db) && (leftElevator.getCurrentPosition() > ELEV_TOP)) ) {
-                    leftElevator.setPower(gamepad2.left_stick_y);
-                    rightElevator.setPower(gamepad2.left_stick_y);
-                }
-                else if(!xMoving && !yMoving && !aMoving && !bMoving){
-                    leftElevator.setPower(0.0);
-                    rightElevator.setPower(0.0);
+                /////////////////////////////////////////////////////////////////////////
+                // OPERATOR INPUTS - Determines movement of Elevator, Elbow, Wrist and Claws
+                /////////////////////////////////////////////////////////////////////////
+
+                //HOME
+                if( (gamepad2.x)  ) {
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_HOME;
+                    elbowTargetPos = ELBOW_DOWN;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_HOME);
+                    rightWrist.setPosition(WRIST_HOME);
+                    // no claw movement
                 }
 
                 //HANG
-                if( (gamepad1.x)  ) {
+                if( (gamepad2.y)  ) {
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_HANG;
+                    elbowTargetPos = ELBOW_HANG;
+                    currentState = 0;
                     leftWrist.setPosition(WRIST_HOME);
                     rightWrist.setPosition(WRIST_HOME);
-                    leftElbow.setPosition(ELBOW_HANG);
-                    rightElbow.setPosition(ELBOW_HANG);
-                    //move elevator home here
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                 }
 
-                //home
-                // elbow moves too fast, so move in 3 steps with delays
-                if( (gamepad2.x) || xMoving ) {
-                    xMoving = true;
+                //FLOOR PICKUP
+                if( (gamepad2.a)  ) {
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_FLOOR_PICKUP;
+                    elbowTargetPos = ELBOW_DOWN;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_FLOOR_PICKUP);
+                    rightWrist.setPosition(WRIST_FLOOR_PICKUP);
+                    leftClaw.setPosition(LEFT_CLAW_OPEN);
+                    rightClaw.setPosition(RIGHT_CLAW_OPEN);
+                }
+
+                //STARTING POSITION
+                if( (gamepad2.b)  ) {
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_START;
+                    elbowTargetPos = ELBOW_DOWN;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_HOME);
+                    rightWrist.setPosition(WRIST_HOME);
+                    // no claw movement
+                }
+
+                //Use DPAD for 4 scoring positions
+                 // DPAD DOWN = Score Low
+                if(gamepad2.dpad_down){
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_SCORE_LOW;
+                    elbowTargetPos = ELBOW_SCORE_LOW;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_SCORE_LOW);
+                    rightWrist.setPosition(WRIST_SCORE_LOW);
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                }
+
+                //DPAD LEFT = Score Med
+                if(gamepad2.dpad_left){
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_SCORE_MED;
+                    elbowTargetPos = ELBOW_SCORE_MED;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_SCORE_MED);
+                    rightWrist.setPosition(WRIST_SCORE_MED);
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                }
+
+                // DPAD UP = Score High
+                if(gamepad2.dpad_up){
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_SCORE_HIGH;
+                    elbowTargetPos = ELBOW_SCORE_HIGH;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_SCORE_HIGH);
+                    rightWrist.setPosition(WRIST_SCORE_HIGH);
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                }
+                // DPAD RIGHT = Score Very High
+                if(gamepad2.dpad_right){
+                    startEvelCmd = true;
+                    elevTragetPos = ELEV_SCORE_VERYHIGH;
+                    elbowTargetPos = ELBOW_SCORE_VERYHIGH;
+                    currentState = 0;
+                    leftWrist.setPosition(WRIST_SCORE_VERYHIGH);
+                    rightWrist.setPosition(WRIST_SCORE_VERYHIGH);
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                }
+
+
+                /////////////////////////////////////////////////////////////////////////
+                // Elevator Movement Control
+                /////////////////////////////////////////////////////////////////////////
+                // MANUAL CONTROL OF ELEVATOR OVERRIDES AUTOMATIC CONTROL
+                if ( ((gamepad2.left_stick_y > +db) && (leftElevator.getCurrentPosition() < ELEV_BOT))
+                  || ((gamepad2.left_stick_y < -db) && (leftElevator.getCurrentPosition() > ELEV_TOP)) ) {
+                    leftElevator.setPower(gamepad2.left_stick_y);
+                    rightElevator.setPower(gamepad2.left_stick_y);
+                    startEvelCmd = false;
+                }
+                else if(startEvelCmd)
+                {
                     double flip = 1;
-                    if(leftElevator.getCurrentPosition() > ELEV_HOME) flip = -1.0;
-                    if(Math.abs(leftElevator.getCurrentPosition() - ELEV_HOME) > elevEncCloselerance) {
+                    if(leftElevator.getCurrentPosition() > elevTragetPos) flip = -1.0;
+                    if(Math.abs(leftElevator.getCurrentPosition() - elevTragetPos) > elevEncCloseTolerance) {
                         leftElevator.setPower(flip);
                         rightElevator.setPower(flip);
                     }
-                    else if(Math.abs(leftElevator.getCurrentPosition() - ELEV_HOME) > elevEncCloselerance/10.){  // slow down when close
+                    else if(Math.abs(leftElevator.getCurrentPosition() - elevTragetPos) > elevEncStopTolerance){  // slow down when close
                         leftElevator.setPower(0.33*flip);
                         rightElevator.setPower(0.33*flip);
                     }
@@ -270,279 +377,128 @@ public class RobotController extends LinearOpMode {
                         leftElevator.setPower(0.0);
                         rightElevator.setPower(0.0);
                     }
+                }
+                else {
+                    leftElevator.setPower(0.0);
+                    rightElevator.setPower(0.0);
+                }
+
+
+                /////////////////////////////////////////////////////////////////////////
+                // Elbow Movement Control
+                /////////////////////////////////////////////////////////////////////////
+
+                if( elbowTargetPos != prevElbowTargetPos )
+                {
                     switch (currentState) {
                         case 0:
-                            leftWrist.setPosition(WRIST_HOME);
-                            rightWrist.setPosition(WRIST_HOME);
-                            if(leftElbow.getPosition() != ELBOW_DOWN) {
-                                leftElbow.setPosition(ELBOW_DOWN - .40);
-                                rightElbow.setPosition(ELBOW_DOWN - .40);
-                                currentState = 1;
-                                myStopwatch.reset();
-                            }
-                            else {
-                                currentState = 99;
-                            }
+                            deltaElbowPos = elbowTargetPos - prevElbowTargetPos;
+                            leftElbow.setPosition(elbowTargetPos - deltaElbowPos/2);
+                            rightElbow.setPosition(elbowTargetPos - deltaElbowPos/2);
+                            currentState = 1;
+                            delayTime = Math.abs(deltaElbowPos) *1000;
+                            myStopwatch.reset();
                             break;
                         case 1:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_DOWN - .20);
-                                rightElbow.setPosition(ELBOW_DOWN - .20);
+                            if (myStopwatch.time(TimeUnit.MILLISECONDS) >= delayTime) {
+                                leftElbow.setPosition(elbowTargetPos - deltaElbowPos/4);
+                                rightElbow.setPosition(elbowTargetPos - deltaElbowPos/4);
                                 myStopwatch.reset();
                                 currentState = 2;
                             }
                             break;
                         case 2:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_DOWN - .10 );
-                                rightElbow.setPosition(ELBOW_DOWN - .10);
+                            if (myStopwatch.time(TimeUnit.MILLISECONDS) >= delayTime/2) {
+                                leftElbow.setPosition(elbowTargetPos - deltaElbowPos/8);
+                                rightElbow.setPosition(elbowTargetPos - deltaElbowPos/8);
                                 myStopwatch.reset();
                                 currentState = 3;
                             }
                             break;
                         case 3:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_DOWN );
-                                rightElbow.setPosition(ELBOW_DOWN );
+                            if (myStopwatch.time(TimeUnit.MILLISECONDS) >= delayTime/4) {
+                                leftElbow.setPosition(elbowTargetPos);
+                                rightElbow.setPosition(elbowTargetPos);
                                 myStopwatch.reset();
                                 currentState = 99;
                             }
                             break;
                         case 99:
-                            leftElevator.setPower(0.0);
-                            rightElevator.setPower(0.0);
-                            currentState = 0;
-                            xMoving = false;
+                            prevElbowTargetPos = elbowTargetPos;
                             break;
                     }
+
                 }
 
-
-                //floor
-                // elbow moves too fast, so move in 3 steps with delays
-                if( (gamepad2.a) || aMoving ) {
-                    aMoving = true;
-                    switch (currentState) {
-                        case 0:
-                            leftWrist.setPosition(WRIST_HOME);
-                            rightWrist.setPosition(WRIST_HOME);
-                            if(leftElbow.getPosition() != ELBOW_DOWN) {
-                                leftElbow.setPosition(ELBOW_DOWN - .35);
-                                rightElbow.setPosition(ELBOW_DOWN - .35);
-                                currentState = 1;
-                                myStopwatch.reset();
-                            }
-                            else {
-                                currentState = 99;
-                            }
-                            break;
-                        case 1:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_DOWN - .2);
-                                rightElbow.setPosition(ELBOW_DOWN - .2);
-                                myStopwatch.reset();
-                                currentState = 2;
-                            }
-                            break;
-                        case 2:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_DOWN-.1);
-                                rightElbow.setPosition(ELBOW_DOWN-.1);
-                                myStopwatch.reset();
-                                currentState = 3;
-                            }
-                            break;
-                        case 3:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_DOWN);
-                                rightElbow.setPosition(ELBOW_DOWN);
-                                myStopwatch.reset();
-                                currentState = 99;
-                            }
-                            break;
-                        case 99:
-                            leftWrist.setPosition(WRIST_FLOOR_PICKUP);
-                            rightWrist.setPosition(WRIST_FLOOR_PICKUP);
-                            currentState = 0;
-                            aMoving = false;
-                            break;
-                    }
-                }
-
-
-                //score high
-                // elbow moves too fast, so move in 3 steps with delays
-                if( (gamepad2.y) || yMoving ) {
-                    yMoving = true;
-                    switch (currentState) {
-                        case 0:
-                            if(Math.abs(leftElbow.getPosition() - ELBOW_UP) > .075 ){
-                                leftElbow.setPosition(ELBOW_UP + .35);
-                                rightElbow.setPosition(ELBOW_UP + .35);
-                                currentState = 1;
-                                myStopwatch.reset();
-                            }
-                            else {
-                                currentState = 99;
-                            }
-                            break;
-                        case 1:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_UP + .2);
-                                rightElbow.setPosition(ELBOW_UP + .2);
-                                myStopwatch.reset();
-                                currentState = 2;
-                            }
-                            break;
-                        case 2:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_UP+.1);
-                                rightElbow.setPosition(ELBOW_UP+.1);
-                                myStopwatch.reset();
-                                currentState = 3;
-                            }
-                            break;
-                        case 3:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_UP);
-                                rightElbow.setPosition(ELBOW_UP);
-                                myStopwatch.reset();
-                                currentState = 99;
-                            }
-                            break;
-                        case 99:
-                            leftWrist.setPosition(WRIST_SCORE_HIGH);
-                            rightWrist.setPosition(WRIST_SCORE_HIGH);
-                            currentState = 0;
-                            yMoving = false;
-                            break;
-                    }
-                }
-
-                //score low
-                // elbow moves too fast, so move in 3 steps with delays
-                if( (gamepad2.b) || bMoving ) {
-                    bMoving = true;
-                    switch (currentState) {
-                        case 0:
-                            if(Math.abs(leftElbow.getPosition() - ELBOW_UP) > .075 ){
-                                leftElbow.setPosition(ELBOW_UP + .4);
-                                rightElbow.setPosition(ELBOW_UP + .4);
-                                currentState = 1;
-                                myStopwatch.reset();
-                            }
-                            else {
-                                currentState = 99;
-                            }
-                            break;
-                        case 1:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_UP + .2);
-                                rightElbow.setPosition(ELBOW_UP + .2);
-                                myStopwatch.reset();
-                                currentState = 2;
-                            }
-                            break;
-                        case 2:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_UP+.1);
-                                rightElbow.setPosition(ELBOW_UP+.1);
-                                leftWrist.setPosition(WRIST_SCORE_LOW);
-                                rightWrist.setPosition(WRIST_SCORE_LOW);                               myStopwatch.reset();
-                                currentState = 3;
-                            }
-                            break;
-                        case 3:
-                            if(myStopwatch.time(TimeUnit.MILLISECONDS) >= 300) {
-                                leftElbow.setPosition(ELBOW_UP);
-                                rightElbow.setPosition(ELBOW_UP);
-                                leftWrist.setPosition(WRIST_SCORE_LOW);
-                                rightWrist.setPosition(WRIST_SCORE_LOW);                               myStopwatch.reset();
-                                currentState = 99;
-                            }
-                            break;
-                        case 99:
-                            leftWrist.setPosition(WRIST_SCORE_LOW);
-                            rightWrist.setPosition(WRIST_SCORE_LOW);                               myStopwatch.reset();
-                            currentState = 0;
-                            bMoving = false;
-                            break;
-                    }
-                }
-
+                /////////////////////////////////////////////////////////////////////////
+                // Lt / Rt Claw Movement Control
+                /////////////////////////////////////////////////////////////////////////
 
                 if(gamepad2.left_trigger > 0.33){
                     //close claw
-                    leftClaw.setPosition(CLAW_CLOSED);
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
                 }
                 else if(gamepad2.left_bumper){
                     //open claw
-                    leftClaw.setPosition(CLAW_OPEN);
+                    leftClaw.setPosition(LEFT_CLAW_OPEN);
                 }
 
                 if(gamepad2.right_trigger > 0.33){
                     //close claw
-                    rightClaw.setPosition(CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                 }
                 else if(gamepad2.right_bumper){
                     //open claw
-                    rightClaw.setPosition(CLAW_OPEN);
+                    rightClaw.setPosition(RIGHT_CLAW_OPEN);
                 }
 
                 if(gamepad2.right_bumper && gamepad2.left_bumper){
-                    leftClaw.setPosition(CLAW_OPEN);
-                    rightClaw.setPosition(CLAW_OPEN);
+                    leftClaw.setPosition(LEFT_CLAW_OPEN);
+                    rightClaw.setPosition(RIGHT_CLAW_OPEN);
 
                 }
                 if(gamepad2.right_trigger > 0.33 && gamepad2.left_trigger > 0.33){
-                    leftClaw.setPosition(CLAW_CLOSED);
-                    rightClaw.setPosition(CLAW_CLOSED);
+                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
+                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
 
                 }
 
 
-                if(gamepad2.dpad_up){
-                }
-                if(gamepad2.dpad_down){
-                }
-                if(gamepad2.dpad_left){
-                    //wrist up
-                    leftWrist.setPosition(WRIST_HOME);
-                    rightWrist.setPosition(WRIST_HOME);
-                }
-                if(gamepad2.dpad_right){
-                    //wrist down
-                    leftWrist.setPosition(WRIST_FLOOR_PICKUP);
-                    rightWrist.setPosition(WRIST_FLOOR_PICKUP);
-                }
+                /////////////////////////////////////////////////////////////////////////
+                // Telemetry
+                /////////////////////////////////////////////////////////////////////////
 
-                telemetry.addLine(String.format("Lt/Rt Frt Mtrs: %f4.2, %f4.2 ",
-                        frontLeftMotor.getPower(),frontRightMotor.getPower()));
-                telemetry.addLine(String.format("Lt/Rt Bck Mtrs: %f4.2, %f4.2 ",
-                        backLeftMotor.getPower(),backRightMotor.getPower()));
-                telemetry.addLine(String.format("Lt/Rt ElevMtrs: %f4.2, %f4.2 ",
-                        leftElevator.getPower(),rightElevator.getPower()));
-                telemetry.addLine(String.format("Lt/Rt ElbowPos: %f4.0, %f4.0 ",
+//                telemetry.addLine(String.format("Lt/Rt Frt Mtrs: %4.2f  /  %4.2f ",
+//                        frontLeftMotor.getPower(),frontRightMotor.getPower()));
+//                telemetry.addLine(String.format("Lt/Rt Bck Mtrs: %4.2f  /  %4.2f ",
+//                        backLeftMotor.getPower(),backRightMotor.getPower()));
+//                telemetry.addLine(String.format("Lt/Rt ElevMtrs: %4.2f /  %4.2f ",
+//                        leftElevator.getPower(),rightElevator.getPower()));
+                telemetry.addLine(String.format("Lt/Rt ElbowPos: %4.2f /  %4.2f ",
                         leftElbow.getPosition(),rightElbow.getPosition()));
-                telemetry.addLine(String.format("Lt/Rt WristPos: %f4.0, %f4.0 ",
+                telemetry.addLine(String.format("Lt/Rt WristPos: %4.2f /  %4.2f ",
                         leftWrist.getPosition(),rightWrist.getPosition()));
+                telemetry.addLine(String.format("Lt/Rt ClawPos: %4.2f /  %4.2f ",
+                        leftClaw.getPosition(),rightClaw.getPosition()));
+                telemetry.addLine();
+                telemetry.addLine();
 
-
-
-                telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d, %d ",
+                telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
                         frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
-                telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d, %d ",
+                telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
                         backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
-                telemetry.addLine(String.format("Lt/Rt ElevEncdrs: %d, %d %f4.2",
-                        leftElevator.getCurrentPosition(),rightElevator.getCurrentPosition(), gamepad2.right_stick_y));
+                telemetry.addLine();
+                telemetry.addLine(String.format("Lt/Rt ElevEncdrs: %d  /  %d  /  %4.2f",
+                        leftElevator.getCurrentPosition(),rightElevator.getCurrentPosition(),
+                        gamepad2.right_stick_y));
 
                 botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                telemetry.addLine(String.format("Heading / Error: %f5.1, %f5.1 ",
+                telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
                         botHeading, deltaHeading));
 
-
                 telemetry.update();
-            }
-        }
-    }
-}
+
+            }   // end of While - Opmode is active
+        }   // end of If Opmode is active
+    }   // end of runOpMode Methode
+}   // end of RobotController Class
