@@ -7,32 +7,44 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.concurrent.TimeUnit;
+
 @Autonomous(name="BLUE FRONT Team Prop", group= "Auto")
 public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
-    static final double FEET_PER_METER = 3.28084;
-
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
-    static final double ELBOW_UP = 0.15;        //was .25 too little, .15 too much
-    static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
-    static final double ELBOW_HANG = 0.36;      //
-    static final double ELBOW_SCORE_LOW = ELBOW_UP;
+    static final double ELBOW_UP = 0.17;
+    static final double ELBOW_DOWN = 0.79;
     static final double WRIST_HOME = 0.15;
     static final double WRIST_OUT = 0.86;
     static final double WRIST_IN = 0.05;
-    static final double WRIST_FLOOR_PICKUP = 0.85;   //.9 too low
-    static final double WRIST_SCORE_HIGH = 0.57;
-    static final double WRIST_SCORE_LOW = 0.5;
-    static final int ELEV_FLOOR = 280;    static final int ELEV_HOME = 0;
-    static final int ELEV_SCORE_LOW = -50;
-    static final int ELEV_TOP = -600;
+    static final double WRIST_SCORE = 0.44;
+    double botHeading = 0.0;
+    double deltaHeading = 0.0;
+    boolean isRotating;
+    boolean firstTime = true;
+    double initialHeading = 0.0;
+
+    // Vars for auto movement
+    double curAngle;
+    double deltaAngle, unsignedDelta;
+    int curPos = 0;
+    double countsPerRev =560;
+    double pi = 3.1415927;
+    double wheelDiameter = 3;
+    double countsPerInch = countsPerRev/(wheelDiameter*pi);
+    int encoderCounts ;
+    int deltaPos;
+    ElapsedTime myStopwatch = new ElapsedTime();
     // Declare our motors
     // Make sure your ID's match your configuration
     // TA DONE: Configure HW so that names match
@@ -82,14 +94,19 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
         // Retrieve the IMU from the hardware map
         // TA DONE: Configure HW so that names match
-        IMU imu = hardwareMap.get(IMU.class, "IMU");
+        imu = hardwareMap.get(IMU.class, "IMU");
         // Adjust the orientation parameters to match your robot
         // TA DONE: Verify IMU orientation matches code below
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+
+        double botHeading = 0.0;
+        double deltaHeading = 0.0;
+
         // TA DONE: Configure HW so that names match
 
         leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
@@ -102,9 +119,6 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
 
         //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
-
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
 
         leftElevator.setDirection(DcMotor.Direction.REVERSE);
         leftElbow.setDirection(Servo.Direction.REVERSE);
@@ -128,90 +142,137 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
                 // Handle error
             }
         });
+
+
         leftClaw.setPosition(CLAW_CLOSED);
         sleep(250);
         rightClaw.setPosition(CLAW_CLOSED);
         sleep(250);
 
         waitForStart();
+        imu.resetYaw();
         switch (detector.getLocation()){
             case LEFT:
-                leftClaw.setPosition(CLAW_CLOSED);
-                sleep(250);
-                rightClaw.setPosition(CLAW_CLOSED);
-                sleep(250);
-                strafeLeft(38);
-                forward(24);
-                turnRight(90);
+                //drive forward
+                driveStraight(12);
+                //strafe left 30 iches
+                strafe(-30);
+                //drive forward 24
+                driveStraight(26);
                 setWristOut();
-                forward(7);
-                leftClaw.setPosition(CLAW_OPEN);
-                sleep(250);
+                //turn Right 90
+                turnToAngle(-90);
+
+                //drive forward 9 inches
+                driveStraight(9);
+
+                rightClaw.setPosition(CLAW_OPEN);
+                sleep(500);
                 setWristIn();
                 sleep(250);
+
+                driveStraight(-7);
+                strafe(16);
                 score();
-                backward(15);
-                rightClaw.setPosition(CLAW_OPEN + 0.2);
-                sleep(250);
+                //drive back 9 inches
+                driveStraight(-9);
+
+                leftClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+                //move forward 4 inches
+                driveStraight(4);
+                //strafe right 12 inches
+                strafe(12);
                 home();
-                strafeRight(24);
 
 
                 break;
 
             case CENTER:
-                leftClaw.setPosition(CLAW_CLOSED);
-                sleep(250);
-                rightClaw.setPosition(CLAW_CLOSED);
-                sleep(250);
+
+                //set claw down
                 setWristOut();
                 sleep(100);
-                forward(24);
-                //backward(12);
-                //setWristOut();
+
+                //move forward 24 inches
+                driveStraight(25);
+
                 //drops on center Spike Mark
-                leftClaw.setPosition(CLAW_OPEN);
+                rightClaw.setPosition(CLAW_OPEN);
                 sleep(250);
                 setWristIn();
-                backward(5);
-                turnRight(90);
-                backward(33);
+
+                //move back 5 inches
+                driveStraight(-5);
+
+                //turn right 90
+                turnToAngle(-90);
+
+                //move back 33 inches
+                driveStraight(-33);
+
+                //strafe left 8 inches
+                strafe(-8);
+
                 score();
-                backward(6);
-                strafeLeft(13);
+
+                //move back 4 inches
+                driveStraight(-4);
+
+
                 //drops on center area
-                rightClaw.setPosition(CLAW_OPEN + 0.2);
+                leftClaw.setPosition(CLAW_OPEN );
                 sleep(250);
+                //move forward 4 inches
+                driveStraight(4);
+                //strafe right 24 inches
+                strafe(24);
                 home();
-                strafeRight(24);
+
+                //forward 8 ft
+                driveStraight(8);
+
+
+
 
 
                 break;
 
             case RIGHT:
-                leftClaw.setPosition(CLAW_CLOSED);
-                sleep(250);
-                rightClaw.setPosition(CLAW_CLOSED);
-                sleep(250);
-                forward(30);
-                turnRight(90);
+
+                //move forward 30 inches
+                driveStraight(30);
                 setWristOut();
+                //turn right 90
+                turnToAngle(-90);
+
+
                 //drops on right spike mark
-                leftClaw.setPosition(CLAW_OPEN);
+                rightClaw.setPosition(CLAW_OPEN);
                 setWristIn();
-                backward(35);
+
+                //move back 33 inches
+                driveStraight(-33);
+
                 score();
-                backward(8);
+
+                //move back 8 inches
+                driveStraight(-4);
+
                 //drops on right area
-                rightClaw.setPosition(CLAW_OPEN + 0.2);
+                leftClaw.setPosition(CLAW_OPEN);
                 sleep(250);
+
+                //move forward 4 inches
+                driveStraight(4);
+
+
+                //strafe right 15 inches
+                strafe(-15);
                 home();
-                strafeRight(15);
                 break;
 
             case NOT_FOUND:
-
-
 
 
 
@@ -222,164 +283,187 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
     }
 
+    void autoMec(double y, double x, double rx) {
+
+        telemetry.update();
 
 
-    void forward(double inches){
-        // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 37);
+        y=.95*y;
+        x=.55*x;
+        rx=.75*rx;
 
-        // Calculate the adjusted sleep time based on the target distance
-        double adjustedSleepTime = 1000 * movementsNeeded;
+        //////////////////////////////////////////////////////////////////////////////////
+        // the code section below is correcting for robot rotation when it shouldn't happen
+        //////////////////////////////////////////////////////////////////////////////////
+        if (rx == 0.0) isRotating = false;
+        else {
+            isRotating = true;
+            firstTime = true;
+        }
 
-        // Set power to the motors for moving forward
-        frontLeftMotor.setPower(1);
-        frontRightMotor.setPower(1);
-        backLeftMotor.setPower(1);
-        backRightMotor.setPower(1);
+        if ((!isRotating) && (firstTime)) {
+            initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            firstTime = false;
+        }
 
-        // Sleep for the adjusted time
-        sleep((long) adjustedSleepTime);
+        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaHeading = botHeading - initialHeading;
+        if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
+        if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
+        // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
+
+        //*************************************************************************************
+        // TA TODO: UPDATE THIS SECTION WHEN imu FIX KNOWN !!!!
+        // IMU is not working reliably per FTC chat site (probably ESD issue) eliminate for now
+        //botHeading = 0.0;
+        //deltaHeading = 0.0;
+        //*************************************************************************************
+        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+        {
+            rx = rx + deltaHeading * .02;
+        }
+        //////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////
+
+
+        // Rotate the movement direction counter to the robot's rotation
+//        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // autonomous is robot oriented not field oriented!!!!
+        botHeading = 0.0;
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        // TA TODO: test to optimize this empirical constant
+        //rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
+
+    }
+
+
+
+    void turnToAngle(double finalAngle){
+        double curTime;
+        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        myStopwatch.reset();
+
+        do  {
+            curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            deltaAngle = curAngle - finalAngle;
+            unsignedDelta = Math.abs(deltaAngle);
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
+            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
+            curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
+            //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
+        } while ( (unsignedDelta > 2.0) );
+
+        //Check to see if its worth trying again!!
+        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaAngle = (startAngle-finalAngle);
+        unsignedDelta = Math.abs(deltaAngle);
+        if (unsignedDelta > 2.0) {
+            autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
+            myStopwatch.reset();
+
+            do {
+                curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                deltaAngle = curAngle - finalAngle;
+                unsignedDelta = Math.abs(deltaAngle);
+                if (unsignedDelta > 10.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
+                else autoMec(0.0, 0.0, deltaAngle / 10.0);
+                curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
+                //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
+            } while ((unsignedDelta > 2.0) );
+        }
+
+
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+    void driveStraight(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, 0.0,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), 0.0, 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
 
         // Stop the motors after the sleep
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        sleep(1000);
+        sleep(100);
     }
 
 
-    void backward(double inches){
-        // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 37);
+    void strafe(double inches){
 
-        // Calculate the adjusted sleep time based on the target distance
-        double adjustedSleepTime = 1000 * movementsNeeded;
+        encoderCounts = (int)(countsPerInch * inches);
 
-        // Set power to the motors for moving backward
-        frontLeftMotor.setPower(-1);
-        frontRightMotor.setPower(-1);
-        backLeftMotor.setPower(-1);
-        backRightMotor.setPower(-1);
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Sleep for the adjusted time
-        sleep((long) adjustedSleepTime);
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            if (unsignedDelta > 10*countsPerInch) autoMec(0.0,(double) deltaPos/ unsignedDelta,   0.0 );
+            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/10*(double) countsPerInch,  0.0  );
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
 
         // Stop the motors after the sleep
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        sleep(1000);
-    }
-
-    void turnLeft(double angle){
-
-        // Calculate the number of movements needed to reach the target angle
-        double movementsNeeded = Math.abs(angle /45);
-
-        // Calculate the adjusted sleep time based on the target angle
-        double adjustedSleepTime = 650 * movementsNeeded;
-
-        frontLeftMotor.setPower(-0.5);
-        frontRightMotor.setPower(0.5);
-        backLeftMotor.setPower(-0.5);
-        backRightMotor.setPower(0.5);
-
-        sleep((long) adjustedSleepTime);
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(500);
-    }
-
-    void turnRight(double angle){
-
-        // Calculate the number of movements needed to reach the target angle
-        double movementsNeeded = Math.abs(angle /45);
-
-        // Calculate the adjusted sleep time based on the target angle
-        double adjustedSleepTime = 650 * movementsNeeded;
-
-        frontLeftMotor.setPower(0.5);
-        frontRightMotor.setPower(-0.5);
-        backLeftMotor.setPower(0.5);
-        backRightMotor.setPower(-0.5);
-
-        sleep((long) adjustedSleepTime);
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(500);
-    }
-    void strafeRight(double inches){
-        // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 37);
-
-        // Calculate the adjusted sleep time based on the target distance
-        double adjustedSleepTime = 1000 * movementsNeeded;
-
-        frontLeftMotor.setPower(1);
-        frontRightMotor.setPower(-1);
-        backLeftMotor.setPower(-1);
-        backRightMotor.setPower(1);
-
-        sleep((long) adjustedSleepTime);
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(500);
-
-    }
-    void strafeLeft(double inches){
-        // Calculate the number of movements needed to reach the target distance
-        double movementsNeeded = Math.abs(inches / 37);
-
-        // Calculate the adjusted sleep time based on the target distance
-        double adjustedSleepTime = 1000 * movementsNeeded;
-
-        frontLeftMotor.setPower(-1);
-        frontRightMotor.setPower(1);
-        backLeftMotor.setPower(1);
-        backRightMotor.setPower(-1);
-
-        sleep((long) adjustedSleepTime);
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(500);
-
-    }
-
-
-    void setElbowUp(){
-        leftElbow.setPosition(ELBOW_UP + 0.4);
-        rightElbow.setPosition(ELBOW_UP + 0.4);
-        sleep(250);
-        leftElbow.setPosition(ELBOW_UP + 0.2);
-        rightElbow.setPosition(ELBOW_UP + 0.2);
-        sleep(250);
-        leftElbow.setPosition(ELBOW_UP);
-        rightElbow.setPosition(ELBOW_UP);
-    }
-
-    void setElbowDown(){
-        leftElbow.setPosition(ELBOW_DOWN - .506);
-        rightElbow.setPosition(ELBOW_DOWN - .506);
-        sleep(250);
-        leftElbow.setPosition(ELBOW_DOWN - 0.306);
-        rightElbow.setPosition(ELBOW_DOWN - 0.306);
-        sleep(250);
-        leftElbow.setPosition(ELBOW_DOWN - 0.106);
-        rightElbow.setPosition(ELBOW_DOWN - 0.106);
-        sleep(300);
-        leftElbow.setPosition(ELBOW_DOWN);
-        rightElbow.setPosition(ELBOW_DOWN);
-        sleep(250);
+        sleep(100);
     }
 
     void setWristOut(){
@@ -393,16 +477,6 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         sleep(1000);
     }
 
-    void setWristScoreHigh(){
-        leftWrist.setPosition(WRIST_SCORE_HIGH);
-        rightWrist.setPosition(WRIST_SCORE_HIGH);
-    }
-
-
-    void setWristScoreLow(){
-        leftWrist.setPosition(WRIST_SCORE_LOW);
-        rightWrist.setPosition(WRIST_SCORE_LOW);
-    }
 
     void score(){
         if(leftElbow.getPosition() != ELBOW_UP) {
@@ -415,8 +489,8 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
             leftElbow.setPosition(ELBOW_UP);
             rightElbow.setPosition(ELBOW_UP);
         }
-        leftWrist.setPosition(WRIST_SCORE_HIGH);
-        rightWrist.setPosition(WRIST_SCORE_HIGH);
+        leftWrist.setPosition(WRIST_SCORE);
+        rightWrist.setPosition(WRIST_SCORE);
         sleep(2000);
     }
 
@@ -440,8 +514,26 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
             sleep(250);
         }
         sleep(1500);
-    }
+        /////////////////////////////////////////////////////////////////////////
+        // Telemetry
+        /////////////////////////////////////////////////////////////////////////
+        telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
+                frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
+        telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
+                backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
+        telemetry.addLine();
+        telemetry.addLine(String.format("Cur / Delta Enc: %d  /  %d ",
+                curPos,deltaPos));
+        telemetry.addLine();                telemetry.addLine();
+        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
+                botHeading, deltaHeading));
+        telemetry.addLine();
+        telemetry.addLine(String.format("Cur / Delta Ang: %5.1f  /  %5.1f ",
+                curAngle,deltaAngle));
 
+        telemetry.update();
+    }
 
 
 }
