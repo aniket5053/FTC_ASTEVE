@@ -171,7 +171,7 @@ public class BLUE_BACK extends LinearOpMode {
                 //move backwards
                 driveStraight(-84);
 
-                //strafe left
+                //strafe right
                 strafe(20);
 
                 score();
@@ -184,12 +184,49 @@ public class BLUE_BACK extends LinearOpMode {
                 //move forward 4 inches
                 driveStraight(4);
                 //strafe right 12 inches
-                strafe(-12);
+                strafe(12);
                 home();
 
                 break;
 
             case CENTER:
+                //move forward 12 inches
+                driveStraight(12);
+                //do a 180
+                turnToAngle(180);
+                setWristOut();
+
+                //move back 20 inches
+                driveStraight(-20);
+
+                //drops on center spike mark
+                rightClaw.setPosition(CLAW_OPEN);
+                setWristIn();
+
+                //turn left 90
+                turnToAngle(90);
+                //move backwards
+                driveStraight(-84);
+
+                //strafe right
+                strafe(16);
+
+                score();
+
+                //drive back 4 inches
+                driveStraight(-4);
+
+                leftClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+                //move forward 4 inches
+                driveStraight(4);
+                //strafe right 12 inches
+                strafe(12);
+                home();
+
+
+
+
 
                 break;
             case RIGHT:
@@ -206,13 +243,13 @@ public class BLUE_BACK extends LinearOpMode {
                 setWristIn();
 
                //strafe left
-                strafe(30);
+                strafe(-30);
 
                 //move backwards
                 driveStraight(-84);
 
-                //strafe left
-                strafe(20);
+                //strafe right
+                strafe(12);
 
                 score();
 
