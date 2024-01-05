@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.auto.PixelDetector;
 
-@Autonomous(name="RedBack", group= "Auto")
+//@Autonomous(name="RedBack", group= "Auto")
 public class RedBack extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;

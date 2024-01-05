@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.auto.PixelDetector;
 
-@Autonomous(name="BlueFront", group= "Auto")
+//@Autonomous(name="BlueFront", group= "Auto")
 public class BlueFront extends LinearOpMode {
 
 

@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="APRIL AUTO", group= "Auto")
+//@Autonomous(name="APRIL AUTO", group= "Auto")
 public class TESTFORAPRILAUTO extends LinearOpMode{
 
     static final double FEET_PER_METER = 3.28084;

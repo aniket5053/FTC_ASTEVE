@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="RIGHT BACK", group= "Auto")
+//@Autonomous(name="RIGHT BACK", group= "Auto")
 public class RIGHT_BACK extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
