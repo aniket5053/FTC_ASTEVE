@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "FunctionsTest")
+//@Autonomous(name = "FunctionsTest")
 public class FunctionsTest extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
