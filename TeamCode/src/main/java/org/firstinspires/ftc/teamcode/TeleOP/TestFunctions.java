@@ -163,23 +163,51 @@ public class TestFunctions extends LinearOpMode {
                 /////////////////////////////////////////////////////////////////////////
 
                 //HOME
+                if( (gamepad1.x)  ) {
+                    driveStraight(2);
+                }
+
+                //HANG
+                if( (gamepad1.y)  ) {
+                    driveStraight(6);
+                }
+
+                //FLOOR PICKUP
+                if( (gamepad1.a)  ) {
+                    driveStraight(-6);
+                }
+
+                //STARTING POSITION
+                if( (gamepad1.b)  ) {
+                    driveStraight(-2);
+                }
+
+
+                //HOME
                 if( (gamepad2.x)  ) {
                     strafe(-12);
                 }
 
                 //HANG
                 if( (gamepad2.y)  ) {
-                    driveStraight(24);
+                    driveStraight(12);
                 }
 
                 //FLOOR PICKUP
                 if( (gamepad2.a)  ) {
-                    driveStraight(36);
+                    driveStraight(-12);
                 }
 
                 //STARTING POSITION
                 if( (gamepad2.b)  ) {
                     strafe(12);
+                }
+
+                if(gamepad2.left_bumper){
+                    leftDiagnal(12);
+                }
+                if(gamepad2.right_bumper){
+                    rightDiagnal(12);
                 }
 
                 //Use DPAD for 4 scoring positions
@@ -237,8 +265,8 @@ public class TestFunctions extends LinearOpMode {
         telemetry.update();
 
 
-        y=.95*y;
-        x=.55*x;
+        y=.75*y;
+        x=.75*x;
         rx=.75*rx;
 
         //////////////////////////////////////////////////////////////////////////////////
@@ -402,7 +430,7 @@ public class TestFunctions extends LinearOpMode {
             deltaPos = encoderCounts - curPos ;
             unsignedDelta = Math.abs(deltaPos);
             if (unsignedDelta > 10*countsPerInch) autoMec(0.0,(double) deltaPos/ unsignedDelta,   0.0 );
-            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/10*(double) countsPerInch,  0.0  );
+            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/(double) (10*countsPerInch),  0.0  );
             else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
         } while (unsignedDelta > (double) countsPerInch/2);
 
@@ -415,6 +443,79 @@ public class TestFunctions extends LinearOpMode {
         sleep(100);
     }
 
+
+
+    void rightDiagnal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+
+    void leftDiagnal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontRightMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, -deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), -deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, -0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
 
 
 

@@ -18,6 +18,40 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name = "RobotController")
 public class RobotController extends LinearOpMode {
 
+    DcMotor frontLeftMotor;
+    DcMotor frontRightMotor;
+    DcMotor backLeftMotor;
+    DcMotor backRightMotor;
+    DcMotor leftElevator;
+    DcMotor rightElevator;
+    Servo leftElbow;
+    Servo rightElbow;
+    Servo leftWrist;
+    Servo leftClaw;
+    Servo rightClaw;
+    IMU imu;
+    double botHeading = 0.0;
+    double deltaHeading = 0.0;
+
+    boolean isRotating;
+    boolean firstTime = true;
+    double initialHeading = 0.0;
+
+    // Vars for auto movement
+    double curAngle;
+    double deltaAngle, unsignedDelta;
+    int curPos = 0;
+    double countsPerRev =560;
+    double pi = 3.1415927;
+    double wheelDiameter = 3;
+    double countsPerInch = countsPerRev/(wheelDiameter*pi);
+    int encoderCounts ;
+    int deltaPos;
+    ElapsedTime myStopwatch = new ElapsedTime();
+
+
+
+
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
@@ -60,10 +94,10 @@ public class RobotController extends LinearOpMode {
         // Declare our motors
         // Make sure your ID's match your configuration
         // TA DONE: Configure HW so that names match
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
+        frontLeftMotor = hardwareMap.dcMotor.get("FrtLtMtr");
+        backLeftMotor = hardwareMap.dcMotor.get("BckLtMtr");
+        frontRightMotor = hardwareMap.dcMotor.get("FrtRtMtr");
+        backRightMotor = hardwareMap.dcMotor.get("BckRtMtr");
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -82,7 +116,7 @@ public class RobotController extends LinearOpMode {
 
         // Retrieve the IMU from the hardware map
         // TA DONE: Configure HW so that names match
-        IMU imu = hardwareMap.get(IMU.class, "IMU");
+        imu = hardwareMap.get(IMU.class, "IMU");
         // Adjust the orientation parameters to match your robot
         // TA DONE: Verify IMU orientation matches code below
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -128,7 +162,7 @@ public class RobotController extends LinearOpMode {
         myStopwatch.reset();
         double delayTime = 1000;
         int currentState = 0;
-
+        boolean moveBack = false;
         leftWrist.setPosition(WRIST_HOME);
         rightWrist.setPosition(WRIST_HOME);
 
@@ -170,6 +204,18 @@ public class RobotController extends LinearOpMode {
                     backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
+
+                //small forward move
+                if( (gamepad1.y)  ) {
+                    driveStraight(-3);
+                }
+
+                //small backward move
+                if( (gamepad1.a)  ) {
+                    driveStraight(3);
+                }
+
+
 
                 /////////////////////////////////////////////////////////////////////////
                 // Start of Mecanum Drive Section of Code
@@ -286,7 +332,8 @@ public class RobotController extends LinearOpMode {
                     elbowTargetPos = ELBOW_DOWN;
                     currentState = 0;
                     leftWrist.setPosition(WRIST_FLOOR_PICKUP);
-                    rightWrist.setPosition(WRIST_FLOOR_PICKUP);
+                    //TA TODO: right side is higher in the air - try to push down a little w/ .02 offset
+                    rightWrist.setPosition(WRIST_FLOOR_PICKUP+.02);
                     leftClaw.setPosition(LEFT_CLAW_OPEN);
                     rightClaw.setPosition(RIGHT_CLAW_OPEN);
                 }
@@ -305,6 +352,7 @@ public class RobotController extends LinearOpMode {
                 //Use DPAD for 4 scoring positions
                  // DPAD DOWN = Score Low
                 if(gamepad2.dpad_down){
+                    driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_LOW;
                     elbowTargetPos = ELBOW_SCORE_LOW;
@@ -313,10 +361,12 @@ public class RobotController extends LinearOpMode {
                     rightWrist.setPosition(WRIST_SCORE_LOW);
                     leftClaw.setPosition(LEFT_CLAW_CLOSED);
                     rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                    moveBack = true;
                 }
 
                 //DPAD LEFT = Score Med
                 if(gamepad2.dpad_left){
+                    driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_MED;
                     elbowTargetPos = ELBOW_SCORE_MED;
@@ -325,10 +375,12 @@ public class RobotController extends LinearOpMode {
                     rightWrist.setPosition(WRIST_SCORE_MED);
                     leftClaw.setPosition(LEFT_CLAW_CLOSED);
                     rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                    moveBack = true;
                 }
 
                 // DPAD UP = Score High
                 if(gamepad2.dpad_up){
+                    driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_HIGH;
                     elbowTargetPos = ELBOW_SCORE_HIGH;
@@ -337,9 +389,11 @@ public class RobotController extends LinearOpMode {
                     rightWrist.setPosition(WRIST_SCORE_HIGH);
                     leftClaw.setPosition(LEFT_CLAW_CLOSED);
                     rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                    moveBack = true;
                 }
                 // DPAD RIGHT = Score Very High
                 if(gamepad2.dpad_right){
+                    driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_VERYHIGH;
                     elbowTargetPos = ELBOW_SCORE_VERYHIGH;
@@ -348,7 +402,15 @@ public class RobotController extends LinearOpMode {
                     rightWrist.setPosition(WRIST_SCORE_VERYHIGH);
                     leftClaw.setPosition(LEFT_CLAW_CLOSED);
                     rightClaw.setPosition(RIGHT_CLAW_CLOSED);
+                    moveBack = true;
                 }
+
+                if (moveBack == true) {
+                    if (currentState == 3) driveStraight(-3);;
+                    if (currentState == 99) {driveStraight(-3); moveBack = false;}
+                }
+
+
 
 
                 /////////////////////////////////////////////////////////////////////////
@@ -501,4 +563,277 @@ public class RobotController extends LinearOpMode {
             }   // end of While - Opmode is active
         }   // end of If Opmode is active
     }   // end of runOpMode Methode
+
+
+///////////////////////////////////////////////////////////////////////////
+// automated driving functions
+///////////////////////////////////////////////////////////////////////////
+
+
+
+
+    void autoMec(double y, double x, double rx) {
+
+        telemetry.update();
+
+
+        y=.75*y;
+        x=.75*x;
+        rx=.75*rx;
+
+        //////////////////////////////////////////////////////////////////////////////////
+        // the code section below is correcting for robot rotation when it shouldn't happen
+        //////////////////////////////////////////////////////////////////////////////////
+        if (rx == 0.0) isRotating = false;
+        else {
+            isRotating = true;
+            firstTime = true;
+        }
+
+        if ((!isRotating) && (firstTime)) {
+            initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            firstTime = false;
+        }
+
+        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaHeading = botHeading - initialHeading;
+        if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
+        if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
+        // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
+
+        //*************************************************************************************
+        // TA TODO: UPDATE THIS SECTION WHEN imu FIX KNOWN !!!!
+        // IMU is not working reliably per FTC chat site (probably ESD issue) eliminate for now
+        //botHeading = 0.0;
+        //deltaHeading = 0.0;
+        //*************************************************************************************
+        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+        {
+            rx = rx + deltaHeading * .02;
+        }
+        //////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////
+
+
+        // Rotate the movement direction counter to the robot's rotation
+//        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // autonomous is robot oriented not field oriented!!!!
+        botHeading = 0.0;
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        // TA TODO: test to optimize this empirical constant
+        //rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
+
+    }
+
+
+
+    void turnToAngle(double finalAngle){
+        double curTime;
+        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        myStopwatch.reset();
+
+        do  {
+            curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            deltaAngle = curAngle - finalAngle;
+            unsignedDelta = Math.abs(deltaAngle);
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
+            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
+            curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
+            //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
+        } while ( (unsignedDelta > 2.0) );
+
+        //Check to see if its worth trying again!!
+        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaAngle = (startAngle-finalAngle);
+        unsignedDelta = Math.abs(deltaAngle);
+        if (unsignedDelta > 2.0) {
+            autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
+            myStopwatch.reset();
+
+            do {
+                curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                deltaAngle = curAngle - finalAngle;
+                unsignedDelta = Math.abs(deltaAngle);
+                if (unsignedDelta > 10.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
+                else autoMec(0.0, 0.0, deltaAngle / 10.0);
+                curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
+                //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
+            } while ((unsignedDelta > 2.0) );
+        }
+
+
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+    void driveStraight(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, 0.0,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), 0.0, 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+    void strafe(double inches){
+
+        encoderCounts = (int)(countsPerInch * inches);
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            if (unsignedDelta > 10*countsPerInch) autoMec(0.0,(double) deltaPos/ unsignedDelta,   0.0 );
+            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/(double) (10*countsPerInch),  0.0  );
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+
+    void rightDiagnal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+
+    void leftDiagnal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontRightMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, -deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), -deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, -0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+
+
+
+
+
+
+
 }   // end of RobotController Class
