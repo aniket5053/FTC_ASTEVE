@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.auto.PixelDetector;
 
-@Autonomous(name="BlueBack", group= "Auto")
+//@Autonomous(name="BlueBack", group= "Auto")
 public class BlueBack extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;

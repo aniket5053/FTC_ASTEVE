@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="BLUE FRONT Team Prop", group= "Auto")
-public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
+@Autonomous(name = "RED FRONT Team Prop", group = "Auto")
+public class RED_FRONT extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
@@ -38,45 +38,46 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
     double curAngle;
     double deltaAngle, unsignedDelta;
     int curPos = 0;
-    double countsPerRev =560;
+    double countsPerRev = 560;
     double pi = 3.1415927;
     double wheelDiameter = 3;
-    double countsPerInch = countsPerRev/(wheelDiameter*pi);
-    int encoderCounts ;
+    double countsPerInch = countsPerRev / (wheelDiameter * pi);
+    int encoderCounts;
     int deltaPos;
     ElapsedTime myStopwatch = new ElapsedTime();
     // Declare our motors
     // Make sure your ID's match your configuration
     // TA DONE: Configure HW so that names match
-    DcMotor frontLeftMotor ;
-    DcMotor backLeftMotor ;
+    DcMotor frontLeftMotor;
+    DcMotor backLeftMotor;
     DcMotor frontRightMotor;
-    DcMotor backRightMotor ;
+    DcMotor backRightMotor;
     // Retrieve the IMU from the hardware map
     // TA DONE: Configure HW so that names match
-    IMU imu ;
+    IMU imu;
 
     // TA DONE: Configure HW so that names match
-    DcMotor leftElevator ;
-    DcMotor rightElevator  ;
-    Servo   leftElbow  ;
-    Servo   rightElbow;
-    Servo   leftWrist  ;
-    Servo   rightWrist ;
-    Servo   leftClaw   ;
-    Servo   rightClaw  ;
+    DcMotor leftElevator;
+    DcMotor rightElevator;
+    Servo leftElbow;
+    Servo rightElbow;
+    Servo leftWrist;
+    Servo rightWrist;
+    Servo leftClaw;
+    Servo rightClaw;
 
-    PixelDetector detector = new PixelDetector(telemetry, "blue");
+    PixelDetector detector = new PixelDetector(telemetry, "red");
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         // Declare our motors
         // Make sure your ID's match your configuration
         // TA DONE: Configure HW so that names match
-        frontLeftMotor = hardwareMap.get(DcMotor.class,"FrtLtMtr");
-        backLeftMotor = hardwareMap.get(DcMotor.class,"BckLtMtr");
-        frontRightMotor = hardwareMap.get(DcMotor.class,"FrtRtMtr");
-        backRightMotor = hardwareMap.get(DcMotor.class,"BckRtMtr");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "FrtLtMtr");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "BckLtMtr");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "FrtRtMtr");
+        backRightMotor = hardwareMap.get(DcMotor.class, "BckRtMtr");
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -104,19 +105,16 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        double botHeading = 0.0;
-        double deltaHeading = 0.0;
-
         // TA DONE: Configure HW so that names match
 
-        leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
-        rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
-        leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
+        leftElevator = hardwareMap.get(DcMotor.class, "LtElevator");
+        rightElevator = hardwareMap.get(DcMotor.class, "RtElevator");
+        leftElbow = hardwareMap.get(Servo.class, "LtElbow");
         rightElbow = hardwareMap.get(Servo.class, "RtElbow");
-        leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
+        leftWrist = hardwareMap.get(Servo.class, "LtWrist");
         rightWrist = hardwareMap.get(Servo.class, "RtWrist");
-        leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
-        rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
+        leftClaw = hardwareMap.get(Servo.class, "LtClaw");
+        rightClaw = hardwareMap.get(Servo.class, "RtClaw");
 
         //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
 
@@ -151,100 +149,13 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
         waitForStart();
         imu.resetYaw();
-        switch (detector.getLocation()){
+        switch (detector.getLocation()) {
             case LEFT:
-                //drive forward
-                driveStraight(12);
-                //strafe left 30 iches
-                strafe(-30);
-                //drive forward 24
-                driveStraight(26);
-                setWristOut();
-                //turn Right 90
-                turnToAngle(-90);
-
-                //drive forward 9 inches
-                driveStraight(9);
-
-                rightClaw.setPosition(CLAW_OPEN);
-                sleep(500);
-                setWristIn();
-                sleep(250);
-
-                driveStraight(-7);
-                strafe(16);
-                score();
-                //drive back 9 inches
-                driveStraight(-9);
-
-                leftClaw.setPosition(CLAW_OPEN);
-                sleep(750);
-                //move forward 4 inches
-                driveStraight(4);
-                //strafe right 12 inches
-                strafe(12);
-                home();
-
-
-                break;
-
-            case CENTER:
-
-                //set claw down
-                setWristOut();
-                sleep(100);
-
-                //move forward 24 inches
-                driveStraight(25);
-
-                //drops on center Spike Mark
-                rightClaw.setPosition(CLAW_OPEN);
-                sleep(250);
-                setWristIn();
-
-                //move back 5 inches
-                driveStraight(-5);
-
-                //turn right 90
-                turnToAngle(-90);
-
-                //move back 33 inches
-                driveStraight(-33);
-
-                //strafe left 8 inches
-                strafe(-8);
-
-                score();
-
-                //move back 4 inches
-                driveStraight(-4);
-
-
-                //drops on center area
-                leftClaw.setPosition(CLAW_OPEN );
-                sleep(250);
-                //move forward 4 inches
-                driveStraight(4);
-                //strafe right 24 inches
-                strafe(24);
-                home();
-
-                //forward 8 ft
-                driveStraight(8);
-
-
-
-
-
-                break;
-
-            case RIGHT:
-
                 //move forward 30 inches
                 driveStraight(30);
                 setWristOut();
-                //turn right 90
-                turnToAngle(-90);
+                //turn left 90
+                turnToAngle(90);
 
 
                 //drops on right spike mark
@@ -272,13 +183,97 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
                 home();
                 break;
 
-            case NOT_FOUND:
 
+            case CENTER:
+
+                //set claw down
+                setWristOut();
+                sleep(100);
+
+                //move forward 24 inches
+                driveStraight(25);
+
+                //drops on center Spike Mark
+                rightClaw.setPosition(CLAW_OPEN);
+                sleep(250);
+                setWristIn();
+
+                //move back 5 inches
+                driveStraight(-5);
+
+                //turn left 90
+                turnToAngle(90);
+
+                //move back 33 inches
+                driveStraight(-33);
+
+                //strafe left 8 inches
+                strafe(-8);
+
+                score();
+
+                //move back 4 inches
+                driveStraight(-4);
+
+
+                //drops on center area
+                leftClaw.setPosition(CLAW_OPEN);
+                sleep(250);
+                //move forward 4 inches
+                driveStraight(4);
+                //strafe right 24 inches
+                strafe(24);
+                home();
+
+                //forward 8 ft
+                //driveStraight(8);
+
+
+                break;
+
+            case RIGHT:
+                //drive forward
+                driveStraight(12);
+                //strafe right 30 iches
+                strafe(30);
+                //drive forward 24
+                driveStraight(26);
+                setWristOut();
+                //turn left 90
+                turnToAngle(90);
+
+                //drive forward 9 inches
+                driveStraight(9);
+
+                rightClaw.setPosition(CLAW_OPEN);
+                sleep(500);
+                setWristIn();
+                sleep(250);
+
+                driveStraight(-7);
+                strafe(-16);
+                score();
+                //drive back 9 inches
+                driveStraight(-9);
+
+                leftClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+                //move forward 4 inches
+                driveStraight(4);
+                //strafe right 12 inches
+                strafe(12);
+                home();
+
+
+                break;
+
+
+
+            case NOT_FOUND:
 
 
         }
         webcam.stopStreaming();
-
 
 
     }
@@ -288,9 +283,9 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         telemetry.update();
 
 
-        y=.95*y;
-        x=.55*x;
-        rx=.75*rx;
+        y = .95 * y;
+        x = .55 * x;
+        rx = .75 * rx;
 
         //////////////////////////////////////////////////////////////////////////////////
         // the code section below is correcting for robot rotation when it shouldn't happen
@@ -308,7 +303,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
 
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         deltaHeading = botHeading - initialHeading;
-        if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
+        if (deltaHeading > 340.0) deltaHeading = deltaHeading - 360;
         if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
         // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
 
@@ -354,25 +349,24 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
     }
 
 
-
-    void turnToAngle(double finalAngle){
+    void turnToAngle(double finalAngle) {
         double curTime;
-        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         myStopwatch.reset();
 
-        do  {
+        do {
             curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             deltaAngle = curAngle - finalAngle;
             unsignedDelta = Math.abs(deltaAngle);
-            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
-            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
+            else autoMec(0.0, 0.0, deltaAngle / 30.0);
             curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
             //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
-        } while ( (unsignedDelta > 2.0) );
+        } while ((unsignedDelta > 2.0));
 
         //Check to see if its worth trying again!!
-        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        deltaAngle = (startAngle-finalAngle);
+        startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaAngle = (startAngle - finalAngle);
         unsignedDelta = Math.abs(deltaAngle);
         if (unsignedDelta > 2.0) {
             autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
@@ -386,7 +380,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
                 else autoMec(0.0, 0.0, deltaAngle / 10.0);
                 curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
                 //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
-            } while ((unsignedDelta > 2.0) );
+            } while ((unsignedDelta > 2.0));
         }
 
 
@@ -398,7 +392,7 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
     }
 
 
-    void driveStraight(double inches){
+    void driveStraight(double inches) {
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -410,19 +404,22 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        encoderCounts = (int)(countsPerInch * inches);
+        encoderCounts = (int) (countsPerInch * inches);
 
-        do  {
-            curPos = frontLeftMotor.getCurrentPosition();;
-            deltaPos = encoderCounts - curPos ;
+        do {
+            curPos = frontLeftMotor.getCurrentPosition();
+            ;
+            deltaPos = encoderCounts - curPos;
             unsignedDelta = Math.abs(deltaPos);
             //full speed
-            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, 0.0,  0.0 );
+            if (unsignedDelta > 10 * countsPerInch)
+                autoMec((double) deltaPos / unsignedDelta, 0.0, 0.0);
                 // slow down last 10 inches
-            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), 0.0, 0.0  );
+            else if (unsignedDelta > 2 * countsPerInch)
+                autoMec((double) deltaPos / (double) (10 * countsPerInch), 0.0, 0.0);
                 // min speed of .2 when real close
-            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
-        } while (unsignedDelta > (double) countsPerInch/2);
+            else autoMec(0.2 * (double) deltaPos / unsignedDelta, 0.0, 0.0);
+        } while (unsignedDelta > (double) countsPerInch / 2);
 
 
         // Stop the motors after the sleep
@@ -434,9 +431,9 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
     }
 
 
-    void strafe(double inches){
+    void strafe(double inches) {
 
-        encoderCounts = (int)(countsPerInch * inches);
+        encoderCounts = (int) (countsPerInch * inches);
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -448,14 +445,17 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        do  {
-            curPos = frontLeftMotor.getCurrentPosition();;
-            deltaPos = encoderCounts - curPos ;
+        do {
+            curPos = frontLeftMotor.getCurrentPosition();
+            ;
+            deltaPos = encoderCounts - curPos;
             unsignedDelta = Math.abs(deltaPos);
-            if (unsignedDelta > 10*countsPerInch) autoMec(0.0,(double) deltaPos/ unsignedDelta,   0.0 );
-            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/10*(double) countsPerInch,  0.0  );
-            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
-        } while (unsignedDelta > (double) countsPerInch/2);
+            if (unsignedDelta > 10 * countsPerInch)
+                autoMec(0.0, (double) deltaPos / unsignedDelta, 0.0);
+            else if (unsignedDelta > 2 * countsPerInch)
+                autoMec(0.0, (double) deltaPos / 10 * (double) countsPerInch, 0.0);
+            else autoMec(0.2 * (double) deltaPos / unsignedDelta, 0.0, 0.0);
+        } while (unsignedDelta > (double) countsPerInch / 2);
 
 
         // Stop the motors after the sleep
@@ -466,20 +466,21 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         sleep(100);
     }
 
-    void setWristOut(){
+    void setWristOut() {
         leftWrist.setPosition(WRIST_OUT);
         rightWrist.setPosition(WRIST_OUT);
         sleep(1000);
     }
-    void setWristIn(){
+
+    void setWristIn() {
         leftWrist.setPosition(WRIST_IN);
         rightWrist.setPosition(WRIST_IN);
         sleep(1000);
     }
 
 
-    void score(){
-        if(leftElbow.getPosition() != ELBOW_UP) {
+    void score() {
+        if (leftElbow.getPosition() != ELBOW_UP) {
             leftElbow.setPosition(ELBOW_UP + 0.4);
             rightElbow.setPosition(ELBOW_UP + 0.4);
             sleep(250);
@@ -494,12 +495,12 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         sleep(2000);
     }
 
-    void home(){
+    void home() {
         leftWrist.setPosition(WRIST_HOME);
         rightWrist.setPosition(WRIST_HOME);
         sleep(150);
         //elbow down - elbow moves too fast and smashes, try a two step
-        if(leftElbow.getPosition() != ELBOW_DOWN) {
+        if (leftElbow.getPosition() != ELBOW_DOWN) {
             leftElbow.setPosition(ELBOW_DOWN - .506);
             rightElbow.setPosition(ELBOW_DOWN - .506);
             sleep(250);
@@ -518,19 +519,20 @@ public class TEAM_PROP_BLUE_FRONT extends LinearOpMode {
         // Telemetry
         /////////////////////////////////////////////////////////////////////////
         telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
-                frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
+                frontLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition()));
         telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
-                backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
+                backLeftMotor.getCurrentPosition(), backRightMotor.getCurrentPosition()));
         telemetry.addLine();
         telemetry.addLine(String.format("Cur / Delta Enc: %d  /  %d ",
-                curPos,deltaPos));
-        telemetry.addLine();                telemetry.addLine();
+                curPos, deltaPos));
+        telemetry.addLine();
+        telemetry.addLine();
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
                 botHeading, deltaHeading));
         telemetry.addLine();
         telemetry.addLine(String.format("Cur / Delta Ang: %5.1f  /  %5.1f ",
-                curAngle,deltaAngle));
+                curAngle, deltaAngle));
 
         telemetry.update();
     }

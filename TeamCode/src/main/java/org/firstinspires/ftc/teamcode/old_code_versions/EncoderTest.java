@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.old_code_versions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Encoder Test", group= "Auto")
+//@Autonomous(name="Encoder Test", group= "Auto")
 public class EncoderTest extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;

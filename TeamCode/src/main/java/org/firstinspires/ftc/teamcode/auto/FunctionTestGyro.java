@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous(name = "FunctionTestGyro")
+//@Autonomous(name = "FunctionTestGyro")
 public class FunctionTestGyro extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;

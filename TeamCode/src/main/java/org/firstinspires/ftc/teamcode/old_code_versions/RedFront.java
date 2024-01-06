@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.auto.PixelDetector;
 
-@Autonomous(name="RedFront", group= "Auto")
+//@Autonomous(name="RedFront", group= "Auto")
 public class RedFront extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.old_code_versions;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,12 +9,13 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.auto.PixelDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="RED FRONT Team Prop", group= "Auto")
-public class TEAM_PROP_RED_FRONT extends LinearOpMode {
+//@Autonomous(name="RED FRONT Team Prop", group= "Auto")
+public class TEAM_PROP_RED_FRONT_old extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 

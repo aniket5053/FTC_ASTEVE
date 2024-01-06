@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Robot", group= "Auto")
+//@Autonomous(name="Robot", group= "Auto")
 public class Robot extends LinearOpMode {
 
     private static final double FEET_PER_METER = 3.28084;
