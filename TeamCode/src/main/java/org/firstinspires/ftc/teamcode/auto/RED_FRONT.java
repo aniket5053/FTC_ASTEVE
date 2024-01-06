@@ -208,7 +208,7 @@ public class RED_FRONT extends LinearOpMode {
                 driveStraight(-33);
 
                 //strafe left 8 inches
-                strafe(-8);
+                strafe(8);
 
                 score();
 

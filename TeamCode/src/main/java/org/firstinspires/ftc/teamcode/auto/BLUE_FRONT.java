@@ -154,35 +154,29 @@ public class BLUE_FRONT extends LinearOpMode {
         imu.resetYaw();
         switch (detector.getLocation()) {
             case LEFT:
-                //drive forward
-                driveStraight(12);
-                //strafe left 30 iches
-                strafe(-30);
-                //drive forward 24
-                driveStraight(26);
-                setWristOut();
-                //turn Right 90
+                leftDiagnal(38);
                 turnToAngle(-90);
+                setWristOut();
 
-                //drive forward 9 inches
-                driveStraight(9);
+//                //drive forward
+                driveStraight(7);
 
-                rightClaw.setPosition(CLAW_OPEN);
+               rightClaw.setPosition(CLAW_OPEN);
                 sleep(500);
                 setWristIn();
-                sleep(250);
-
-                driveStraight(-7);
-                strafe(16);
+               sleep(250);
+//
+                driveStraight(-10);
+                strafe(18);
                 score();
-                //drive back 9 inches
-                driveStraight(-9);
-
+//                //drive back 9 inches
+                driveStraight(-7);
+//
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(750);
-                //move forward 4 inches
+//                //move forward 4 inches
                 driveStraight(4);
-                //strafe right 12 inches
+//                //strafe right 12 inches
                 strafe(12);
                 home();
 
@@ -250,7 +244,7 @@ public class BLUE_FRONT extends LinearOpMode {
                 setWristIn();
 
                 //move back 33 inches
-                driveStraight(-33);
+                driveStraight(-31);
 
                 score();
 
@@ -278,15 +272,14 @@ public class BLUE_FRONT extends LinearOpMode {
 
 
     }
-
     void autoMec(double y, double x, double rx) {
 
         telemetry.update();
 
 
-        y = .95 * y;
-        x = .55 * x;
-        rx = .75 * rx;
+        y=.75*y;
+        x=.75*x;
+        rx=.75*rx;
 
         //////////////////////////////////////////////////////////////////////////////////
         // the code section below is correcting for robot rotation when it shouldn't happen
@@ -304,7 +297,7 @@ public class BLUE_FRONT extends LinearOpMode {
 
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         deltaHeading = botHeading - initialHeading;
-        if (deltaHeading > 340.0) deltaHeading = deltaHeading - 360;
+        if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
         if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
         // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
 
@@ -350,24 +343,25 @@ public class BLUE_FRONT extends LinearOpMode {
     }
 
 
-    void turnToAngle(double finalAngle) {
+
+    void turnToAngle(double finalAngle){
         double curTime;
-        double startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         myStopwatch.reset();
 
-        do {
+        do  {
             curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             deltaAngle = curAngle - finalAngle;
             unsignedDelta = Math.abs(deltaAngle);
-            if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
-            else autoMec(0.0, 0.0, deltaAngle / 30.0);
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
+            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
             curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
             //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
-        } while ((unsignedDelta > 2.0));
+        } while ( (unsignedDelta > 2.0) );
 
         //Check to see if its worth trying again!!
-        startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        deltaAngle = (startAngle - finalAngle);
+        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaAngle = (startAngle-finalAngle);
         unsignedDelta = Math.abs(deltaAngle);
         if (unsignedDelta > 2.0) {
             autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
@@ -381,7 +375,7 @@ public class BLUE_FRONT extends LinearOpMode {
                 else autoMec(0.0, 0.0, deltaAngle / 10.0);
                 curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
                 //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
-            } while ((unsignedDelta > 2.0));
+            } while ((unsignedDelta > 2.0) );
         }
 
 
@@ -393,7 +387,7 @@ public class BLUE_FRONT extends LinearOpMode {
     }
 
 
-    void driveStraight(double inches) {
+    void driveStraight(double inches){
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -405,22 +399,19 @@ public class BLUE_FRONT extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        encoderCounts = (int) (countsPerInch * inches);
+        encoderCounts = (int)(countsPerInch * inches);
 
-        do {
-            curPos = frontLeftMotor.getCurrentPosition();
-            ;
-            deltaPos = encoderCounts - curPos;
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
             unsignedDelta = Math.abs(deltaPos);
             //full speed
-            if (unsignedDelta > 10 * countsPerInch)
-                autoMec((double) deltaPos / unsignedDelta, 0.0, 0.0);
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, 0.0,  0.0 );
                 // slow down last 10 inches
-            else if (unsignedDelta > 2 * countsPerInch)
-                autoMec((double) deltaPos / (double) (10 * countsPerInch), 0.0, 0.0);
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), 0.0, 0.0  );
                 // min speed of .2 when real close
-            else autoMec(0.2 * (double) deltaPos / unsignedDelta, 0.0, 0.0);
-        } while (unsignedDelta > (double) countsPerInch / 2);
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
 
 
         // Stop the motors after the sleep
@@ -432,9 +423,9 @@ public class BLUE_FRONT extends LinearOpMode {
     }
 
 
-    void strafe(double inches) {
+    void strafe(double inches){
 
-        encoderCounts = (int) (countsPerInch * inches);
+        encoderCounts = (int)(countsPerInch * inches);
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -446,17 +437,14 @@ public class BLUE_FRONT extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        do {
-            curPos = frontLeftMotor.getCurrentPosition();
-            ;
-            deltaPos = encoderCounts - curPos;
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
             unsignedDelta = Math.abs(deltaPos);
-            if (unsignedDelta > 10 * countsPerInch)
-                autoMec(0.0, (double) deltaPos / unsignedDelta, 0.0);
-            else if (unsignedDelta > 2 * countsPerInch)
-                autoMec(0.0, (double) deltaPos / 10 * (double) countsPerInch, 0.0);
-            else autoMec(0.2 * (double) deltaPos / unsignedDelta, 0.0, 0.0);
-        } while (unsignedDelta > (double) countsPerInch / 2);
+            if (unsignedDelta > 10*countsPerInch) autoMec(0.0,(double) deltaPos/ unsignedDelta,   0.0 );
+            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/(double) (10*countsPerInch),  0.0  );
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
 
 
         // Stop the motors after the sleep
@@ -466,6 +454,78 @@ public class BLUE_FRONT extends LinearOpMode {
         backRightMotor.setPower(0);
         sleep(100);
     }
+
+
+
+    void rightDiagnal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+    void leftDiagnal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontRightMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, -deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), -deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, -0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
 
     void setWristOut() {
         leftWrist.setPosition(WRIST_OUT);

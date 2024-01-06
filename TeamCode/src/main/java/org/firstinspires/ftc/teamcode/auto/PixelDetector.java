@@ -50,27 +50,13 @@ public class PixelDetector extends OpenCvPipeline {
 
     if ("red".equals(color)) {
         // Set HSV values for red color
-        lowHSV = new Scalar(0, 160, 70);
-        highHSV = new Scalar(180, 210, 175);
+        lowHSV = new Scalar(0, 80, 80);
+        highHSV = new Scalar(180, 230, 255);
     }
     else if ("blue".equals(color)) {
         // Set HSV values for blue color
         lowHSV = new Scalar(100, 160, 30);
         highHSV = new Scalar(120, 255, 205);
-    }
-// SETUP OF RGB PROCESSING
-    Scalar lowRGB = new Scalar(0, 0, 0);
-    Scalar highRGB = new Scalar(0, 0, 0);
-
-    if ("red".equals(color)) {
-        // Set rgb values for red color
-        lowRGB = new Scalar(120, 0, 0);
-        highRGB = new Scalar(255, 195, 122);
-    }
-    else if ("blue".equals(color)) {
-        // Set HSV values for blue color
-        lowRGB = new Scalar(0, 0, 95);
-        highRGB = new Scalar(210, 150, 255);
     }
 
 //*******************************************************************//
@@ -82,6 +68,7 @@ public class PixelDetector extends OpenCvPipeline {
 //  Core.inRange(mat, lowRGB, highRGB, mat);
 //** The one line above is needed if doing RGB processing, but comment out for HSV processing **//
 //*******************************************************************//
+
 
 
     Mat left = mat.submat(Left_ROI);
