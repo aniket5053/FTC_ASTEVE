@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "BLUE FRONT Team Prop", group = "Auto")
+@Autonomous(name = "BLUE FRONT", group = "Auto")
 public class BLUE_FRONT extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
@@ -154,32 +154,48 @@ public class BLUE_FRONT extends LinearOpMode {
         imu.resetYaw();
         switch (detector.getLocation()) {
             case LEFT:
-                leftDiagnal(38);
-                turnToAngle(-90);
+
+                //moves diagonally left 38 inches
+                leftDiagonal(38);
+
+                //turns right 90
+                turnRight(90);
+
+                //sets claw down
                 setWristOut();
 
-//                //drive forward
-                driveStraight(7);
+                //moves forward 7 inches
+                forward(7);
 
-               rightClaw.setPosition(CLAW_OPEN);
-                sleep(500);
+                //drops on left Spike Mark
+                rightClaw.setPosition(CLAW_OPEN);
+                sleep(750);
                 setWristIn();
-               sleep(250);
-//
-                driveStraight(-10);
-                strafe(18);
+
+                //moves back 10 inches
+                backwards(10);
+
+                //strafes right 17 inches
+                strafeRight(17);
+
+                //sets up low score
                 score();
-//                //drive back 9 inches
-                driveStraight(-7);
-//
+
+                //moves back 7 inches
+                backwards(7);
+
+                //drops on left area
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(750);
-//                //move forward 4 inches
-                driveStraight(4);
-//                //strafe right 12 inches
-                strafe(12);
-                home();
 
+                //move forward 4 inches
+                forward(4);
+
+                //strafe right 12 inches
+                strafeRight(12);
+
+                //resets back to original position
+                home();
 
                 break;
 
@@ -187,84 +203,132 @@ public class BLUE_FRONT extends LinearOpMode {
 
                 //set claw down
                 setWristOut();
-                sleep(100);
 
-                //move forward 24 inches
-                driveStraight(25);
+                //moves forward 25 inches
+                forward(25);
 
                 //drops on center Spike Mark
                 rightClaw.setPosition(CLAW_OPEN);
-                sleep(250);
+                sleep(750);
                 setWristIn();
 
                 //move back 5 inches
-                driveStraight(-5);
+                backwards(5);
 
                 //turn right 90
-                turnToAngle(-90);
+                turnRight(90);
 
                 //move back 33 inches
-                driveStraight(-33);
+                backwards(33);
 
                 //strafe left 8 inches
-                strafe(-8);
+                strafeLeft(8);
 
+                //set up low score
                 score();
 
                 //move back 4 inches
-                driveStraight(-4);
+                backwards(4);
 
 
                 //drops on center area
                 leftClaw.setPosition(CLAW_OPEN);
-                sleep(250);
+                sleep(750);
+
                 //move forward 4 inches
-                driveStraight(4);
+                forward(4);
+
                 //strafe right 24 inches
-                strafe(24);
+                strafeRight(24);
+
+                //resets back to original position
                 home();
-
-                //forward 8 ft
-                //driveStraight(8);
-
 
                 break;
 
             case RIGHT:
 
                 //move forward 30 inches
-                driveStraight(30);
-                setWristOut();
-                //turn right 90
-                turnToAngle(-90);
+                forward(30);
 
+                //sets claw out
+                setWristOut();
+
+                //turn right 90
+                turnRight(90);
 
                 //drops on right spike mark
                 rightClaw.setPosition(CLAW_OPEN);
                 setWristIn();
 
-                //move back 33 inches
-                driveStraight(-31);
+                //move back 31 inches
+                backwards(31);
 
+                //set up low score
                 score();
 
-                //move back 8 inches
-                driveStraight(-4);
+                //move back 4 inches
+                backwards(4);
 
                 //drops on right area
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(250);
 
                 //move forward 4 inches
-                driveStraight(4);
+                forward(4);
 
 
-                //strafe right 15 inches
-                strafe(-15);
+                //strafe left 15 inches
+                strafeLeft(15);
+
+                //resets back to original position
                 home();
                 break;
 
             case NOT_FOUND:
+                //set claw down
+                setWristOut();
+
+                //moves forward 25 inches
+                forward(25);
+
+                //drops on center Spike Mark
+                rightClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+                setWristIn();
+
+                //move back 5 inches
+                backwards(5);
+
+                //turn right 90
+                turnRight(90);
+
+                //move back 33 inches
+                backwards(33);
+
+                //strafe left 8 inches
+                strafeLeft(8);
+
+                //set up low score
+                score();
+
+                //move back 4 inches
+                backwards(4);
+
+
+                //drops on center area
+                leftClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+
+                //move forward 4 inches
+                forward(4);
+
+                //strafe right 24 inches
+                strafeRight(24);
+
+                //resets back to original position
+                home();
+
 
 
         }
@@ -457,7 +521,7 @@ public class BLUE_FRONT extends LinearOpMode {
 
 
 
-    void rightDiagnal(double inches){
+    void rightDiagonal(double inches){
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -491,7 +555,7 @@ public class BLUE_FRONT extends LinearOpMode {
         backRightMotor.setPower(0);
         sleep(100);
     }
-    void leftDiagnal(double inches){
+    void leftDiagonal(double inches){
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -526,17 +590,37 @@ public class BLUE_FRONT extends LinearOpMode {
         sleep(100);
     }
 
+    void forward(double inches){
+        driveStraight(inches);
+    }
+
+    void backwards(double inches){
+        driveStraight(-inches);
+    }
+    void turnRight(double inches){
+        turnToAngle(-inches);
+    }
+    void turnLeft(double inches){
+        turnToAngle(inches);
+    }
+    void strafeRight(double inches){
+        strafe(inches);
+    }
+    void strafeLeft(double inches){
+        strafe(-inches);
+    }
+
 
     void setWristOut() {
         leftWrist.setPosition(WRIST_OUT);
         rightWrist.setPosition(WRIST_OUT);
-        sleep(1000);
+        sleep(750);
     }
 
     void setWristIn() {
         leftWrist.setPosition(WRIST_IN);
         rightWrist.setPosition(WRIST_IN);
-        sleep(1000);
+        sleep(750);
     }
 
 
