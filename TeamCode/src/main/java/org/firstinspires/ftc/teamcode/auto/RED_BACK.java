@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "RED FRONT", group = "Auto")
-public class RED_FRONT extends LinearOpMode {
+@Autonomous(name = "RED BACK", group = "Auto")
+public class RED_BACK extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;

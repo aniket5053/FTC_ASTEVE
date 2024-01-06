@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "BLUE BACK Team Prop", group = "Auto")
+@Autonomous(name = "BLUE BACK", group = "Auto")
 public class BLUE_BACK extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
@@ -154,119 +154,181 @@ public class BLUE_BACK extends LinearOpMode {
         imu.resetYaw();
         switch (detector.getLocation()) {
             case LEFT:
-                driveStraight(30);
+
+                //moves diagonally left 38 inches
+                leftDiagonal(38);
+
+                //turns right 90
+                turnRight(90);
+
+                //sets claw down
                 setWristOut();
-                //turn left 90
-                turnToAngle(90);
-                //drops on right spike mark
+
+                //moves forward 7 inches
+                forward(7);
+
+                //drops on left Spike Mark
                 rightClaw.setPosition(CLAW_OPEN);
+                sleep(750);
                 setWristIn();
 
-                //strafe right
-                strafe(-30);
+                //moves back 10 inches
+                backwards(10);
 
-                //turn 180
-                turnToAngle(180);
+                //strafes right 17 inches
+                strafeRight(17);
 
-                //move backwards
-                driveStraight(-84);
-
-                //strafe right
-                strafe(20);
-
+                //sets up low score
                 score();
 
-                //drive back 4 inches
-                driveStraight(-4);
+                //moves back 7 inches
+                backwards(7);
 
+                //drops on left area
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(750);
+
                 //move forward 4 inches
-                driveStraight(4);
+                forward(4);
+
                 //strafe right 12 inches
-                strafe(12);
+                strafeRight(12);
+
+                //resets back to original position
                 home();
 
                 break;
 
             case CENTER:
-                //move forward 12 inches
-                driveStraight(12);
-                //do a 180
-                turnToAngle(180);
+
+                //set claw down
                 setWristOut();
 
-                //move back 20 inches
-                driveStraight(-20);
+                //moves forward 25 inches
+                forward(25);
 
-                //drops on center spike mark
+                //drops on center Spike Mark
                 rightClaw.setPosition(CLAW_OPEN);
+                sleep(750);
                 setWristIn();
 
-                //turn left 90
-                turnToAngle(90);
-                //move backwards
-                driveStraight(-84);
+                //move back 5 inches
+                backwards(5);
 
-                //strafe right
-                strafe(16);
+                //turn right 90
+                turnRight(90);
 
+                //move back 33 inches
+                backwards(33);
+
+                //strafe left 8 inches
+                strafeLeft(8);
+
+                //set up low score
                 score();
 
-                //drive back 4 inches
-                driveStraight(-4);
+                //move back 4 inches
+                backwards(4);
 
+
+                //drops on center area
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(750);
+
                 //move forward 4 inches
-                driveStraight(4);
-                //strafe right 12 inches
-                strafe(12);
+                forward(4);
+
+                //strafe right 24 inches
+                strafeRight(24);
+
+                //resets back to original position
                 home();
 
-
-
-
-
                 break;
+
             case RIGHT:
 
                 //move forward 30 inches
-                driveStraight(30);
-                setWristOut();
-                //turn right 90
-                turnToAngle(-90);
+                forward(30);
 
+                //sets claw out
+                setWristOut();
+
+                //turn right 90
+                turnRight(90);
 
                 //drops on right spike mark
                 rightClaw.setPosition(CLAW_OPEN);
                 setWristIn();
 
-               //strafe left
-                strafe(-30);
+                //move back 31 inches
+                backwards(31);
 
-                //move backwards
-                driveStraight(-84);
-
-                //strafe right
-                strafe(12);
-
+                //set up low score
                 score();
 
-                //drive back 4 inches
-                driveStraight(-4);
+                //move back 4 inches
+                backwards(4);
 
+                //drops on right area
                 leftClaw.setPosition(CLAW_OPEN);
-                sleep(750);
-                //move forward 4 inches
-                driveStraight(4);
-                //strafe right 12 inches
-                strafe(-12);
-                home();
+                sleep(250);
 
+                //move forward 4 inches
+                forward(4);
+
+
+                //strafe left 15 inches
+                strafeLeft(15);
+
+                //resets back to original position
+                home();
                 break;
 
             case NOT_FOUND:
+                //set claw down
+                setWristOut();
+
+                //moves forward 25 inches
+                forward(25);
+
+                //drops on center Spike Mark
+                rightClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+                setWristIn();
+
+                //move back 5 inches
+                backwards(5);
+
+                //turn right 90
+                turnRight(90);
+
+                //move back 33 inches
+                backwards(33);
+
+                //strafe left 8 inches
+                strafeLeft(8);
+
+                //set up low score
+                score();
+
+                //move back 4 inches
+                backwards(4);
+
+
+                //drops on center area
+                leftClaw.setPosition(CLAW_OPEN);
+                sleep(750);
+
+                //move forward 4 inches
+                forward(4);
+
+                //strafe right 24 inches
+                strafeRight(24);
+
+                //resets back to original position
+                home();
+
 
 
         }
@@ -274,15 +336,14 @@ public class BLUE_BACK extends LinearOpMode {
 
 
     }
-
     void autoMec(double y, double x, double rx) {
 
         telemetry.update();
 
 
-        y = .95 * y;
-        x = .55 * x;
-        rx = .75 * rx;
+        y=.75*y;
+        x=.75*x;
+        rx=.75*rx;
 
         //////////////////////////////////////////////////////////////////////////////////
         // the code section below is correcting for robot rotation when it shouldn't happen
@@ -300,7 +361,7 @@ public class BLUE_BACK extends LinearOpMode {
 
         botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         deltaHeading = botHeading - initialHeading;
-        if (deltaHeading > 340.0) deltaHeading = deltaHeading - 360;
+        if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
         if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
         // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
 
@@ -346,24 +407,25 @@ public class BLUE_BACK extends LinearOpMode {
     }
 
 
-    void turnToAngle(double finalAngle) {
+
+    void turnToAngle(double finalAngle){
         double curTime;
-        double startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         myStopwatch.reset();
 
-        do {
+        do  {
             curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             deltaAngle = curAngle - finalAngle;
             unsignedDelta = Math.abs(deltaAngle);
-            if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
-            else autoMec(0.0, 0.0, deltaAngle / 30.0);
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
+            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
             curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
             //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
-        } while ((unsignedDelta > 2.0));
+        } while ( (unsignedDelta > 2.0) );
 
         //Check to see if its worth trying again!!
-        startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        deltaAngle = (startAngle - finalAngle);
+        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        deltaAngle = (startAngle-finalAngle);
         unsignedDelta = Math.abs(deltaAngle);
         if (unsignedDelta > 2.0) {
             autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
@@ -377,7 +439,7 @@ public class BLUE_BACK extends LinearOpMode {
                 else autoMec(0.0, 0.0, deltaAngle / 10.0);
                 curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
                 //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
-            } while ((unsignedDelta > 2.0));
+            } while ((unsignedDelta > 2.0) );
         }
 
 
@@ -389,7 +451,7 @@ public class BLUE_BACK extends LinearOpMode {
     }
 
 
-    void driveStraight(double inches) {
+    void driveStraight(double inches){
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -401,22 +463,19 @@ public class BLUE_BACK extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        encoderCounts = (int) (countsPerInch * inches);
+        encoderCounts = (int)(countsPerInch * inches);
 
-        do {
-            curPos = frontLeftMotor.getCurrentPosition();
-            ;
-            deltaPos = encoderCounts - curPos;
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
             unsignedDelta = Math.abs(deltaPos);
             //full speed
-            if (unsignedDelta > 10 * countsPerInch)
-                autoMec((double) deltaPos / unsignedDelta, 0.0, 0.0);
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, 0.0,  0.0 );
                 // slow down last 10 inches
-            else if (unsignedDelta > 2 * countsPerInch)
-                autoMec((double) deltaPos / (double) (10 * countsPerInch), 0.0, 0.0);
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), 0.0, 0.0  );
                 // min speed of .2 when real close
-            else autoMec(0.2 * (double) deltaPos / unsignedDelta, 0.0, 0.0);
-        } while (unsignedDelta > (double) countsPerInch / 2);
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
 
 
         // Stop the motors after the sleep
@@ -428,9 +487,9 @@ public class BLUE_BACK extends LinearOpMode {
     }
 
 
-    void strafe(double inches) {
+    void strafe(double inches){
 
-        encoderCounts = (int) (countsPerInch * inches);
+        encoderCounts = (int)(countsPerInch * inches);
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -442,17 +501,14 @@ public class BLUE_BACK extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        do {
-            curPos = frontLeftMotor.getCurrentPosition();
-            ;
-            deltaPos = encoderCounts - curPos;
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
             unsignedDelta = Math.abs(deltaPos);
-            if (unsignedDelta > 10 * countsPerInch)
-                autoMec(0.0, (double) deltaPos / unsignedDelta, 0.0);
-            else if (unsignedDelta > 2 * countsPerInch)
-                autoMec(0.0, (double) deltaPos / 10 * (double) countsPerInch, 0.0);
-            else autoMec(0.2 * (double) deltaPos / unsignedDelta, 0.0, 0.0);
-        } while (unsignedDelta > (double) countsPerInch / 2);
+            if (unsignedDelta > 10*countsPerInch) autoMec(0.0,(double) deltaPos/ unsignedDelta,   0.0 );
+            else if (unsignedDelta > 2*countsPerInch) autoMec(0.0,(double) deltaPos/(double) (10*countsPerInch),  0.0  );
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.0, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
 
 
         // Stop the motors after the sleep
@@ -462,17 +518,109 @@ public class BLUE_BACK extends LinearOpMode {
         backRightMotor.setPower(0);
         sleep(100);
     }
+
+
+
+    void rightDiagonal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontLeftMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+    void leftDiagonal(double inches){
+
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sleep(50);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        encoderCounts = (int)(countsPerInch * inches *1.7);
+
+        do  {
+            curPos = frontRightMotor.getCurrentPosition();;
+            deltaPos = encoderCounts - curPos ;
+            unsignedDelta = Math.abs(deltaPos);
+            //full speed
+            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, -deltaPos / unsignedDelta,  0.0 );
+                // slow down last 10 inches
+            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), -deltaPos /(double) (10*countsPerInch), 0.0  );
+                // min speed of .2 when real close
+            else autoMec(0.2*(double) deltaPos/ unsignedDelta, -0.2*(double) deltaPos/ unsignedDelta, 0.0  );
+        } while (unsignedDelta > (double) countsPerInch/2);
+
+
+        // Stop the motors after the sleep
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        backRightMotor.setPower(0);
+        sleep(100);
+    }
+
+    void forward(double inches){
+        driveStraight(inches);
+    }
+
+    void backwards(double inches){
+        driveStraight(-inches);
+    }
+    void turnRight(double inches){
+        turnToAngle(-inches);
+    }
+    void turnLeft(double inches){
+        turnToAngle(inches);
+    }
+    void strafeRight(double inches){
+        strafe(inches);
+    }
+    void strafeLeft(double inches){
+        strafe(-inches);
+    }
+
 
     void setWristOut() {
         leftWrist.setPosition(WRIST_OUT);
         rightWrist.setPosition(WRIST_OUT);
-        sleep(1000);
+        sleep(750);
     }
 
     void setWristIn() {
         leftWrist.setPosition(WRIST_IN);
         rightWrist.setPosition(WRIST_IN);
-        sleep(1000);
+        sleep(750);
     }
 
 
@@ -512,26 +660,6 @@ public class BLUE_BACK extends LinearOpMode {
             sleep(250);
         }
         sleep(1500);
-        /////////////////////////////////////////////////////////////////////////
-        // Telemetry
-        /////////////////////////////////////////////////////////////////////////
-        telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
-                frontLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition()));
-        telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
-                backLeftMotor.getCurrentPosition(), backRightMotor.getCurrentPosition()));
-        telemetry.addLine();
-        telemetry.addLine(String.format("Cur / Delta Enc: %d  /  %d ",
-                curPos, deltaPos));
-        telemetry.addLine();
-        telemetry.addLine();
-        botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
-                botHeading, deltaHeading));
-        telemetry.addLine();
-        telemetry.addLine(String.format("Cur / Delta Ang: %5.1f  /  %5.1f ",
-                curAngle, deltaAngle));
-
-        telemetry.update();
     }
 
 
