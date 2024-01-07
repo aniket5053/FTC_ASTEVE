@@ -235,8 +235,8 @@ public class BLUE_FRONT extends LinearOpMode {
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(750);
 
-                //move forward 4 inches
-                forward(4);
+                //move forward 2 inches
+                forward(2);
 
                 //strafe right 24 inches
                 strafeRight(24);
@@ -256,6 +256,9 @@ public class BLUE_FRONT extends LinearOpMode {
 
                 //turn right 90
                 turnRight(90);
+
+                //move back 2 inches
+                backwards(2);
 
                 //drops on right spike mark
                 rightClaw.setPosition(CLAW_OPEN);

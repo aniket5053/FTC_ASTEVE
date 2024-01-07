@@ -31,6 +31,7 @@ public class TestFunctions extends LinearOpMode {
     Servo leftElbow;
     Servo rightElbow;
     Servo leftWrist;
+    Servo rightWrist;
     Servo leftClaw;
     Servo rightClaw;
     IMU imu;
@@ -69,6 +70,8 @@ public class TestFunctions extends LinearOpMode {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
 
         // Reverse the right side motors. This may be wrong for your setup.
@@ -120,15 +123,16 @@ public class TestFunctions extends LinearOpMode {
         leftElevator.setDirection(DcMotor.Direction.REVERSE);
         rightElbow.setDirection(Servo.Direction.REVERSE);
         leftClaw.setDirection(Servo.Direction.REVERSE);
+        leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
         waitForStart();
         if (opModeIsActive()) {
 
-            leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             boolean isRotating;
             boolean firstTime = true;
@@ -185,11 +189,30 @@ public class TestFunctions extends LinearOpMode {
 
                 //HOME
                 if( (gamepad2.x)  ) {
-                    strafe(-12);
+
+                    rightElevator.setTargetPosition(-200);
+                    leftElevator.setTargetPosition(-200);
+
+
+                    rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    rightElevator.setPower(0.5);
+                    leftElevator.setPower(0.5);
+
+                    driveStraight(20);
+
+
+                    rightElevator.setPower(0);
+                    leftElevator.setPower(0);
+
+
                 }
 
                 //HANG
                 if( (gamepad2.y)  ) {
+                    leftClaw.setPosition(0.5);
+                    sleep(100);
                     driveStraight(12);
                 }
 
@@ -238,6 +261,14 @@ public class TestFunctions extends LinearOpMode {
                 /////////////////////////////////////////////////////////////////////////
                 telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
                         frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
+                telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
+                        backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
+
+                telemetry.addLine(String.format("Lt Elevtator  %d ",
+                        leftElevator.getCurrentPosition()));
+
+                telemetry.addLine(String.format("Rt Elevtator  %d ",
+                        rightElevator.getCurrentPosition()));
                 telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
                         backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
                 telemetry.addLine();
@@ -441,6 +472,10 @@ public class TestFunctions extends LinearOpMode {
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
         sleep(100);
+    }
+    void setWristOut() {
+        leftWrist.setPosition(0.86);
+        rightWrist.setPosition(0.86);
     }
 
 

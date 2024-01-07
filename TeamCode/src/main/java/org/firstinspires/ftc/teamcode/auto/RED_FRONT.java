@@ -164,6 +164,9 @@ public class RED_FRONT extends LinearOpMode {
                 //turn left 90
                 turnLeft(90);
 
+                //move back 2 inchs
+                backwards(2);
+
                 //drops on right spike mark
                 rightClaw.setPosition(CLAW_OPEN);
                 setWristIn();
@@ -243,17 +246,24 @@ public class RED_FRONT extends LinearOpMode {
 
             case RIGHT:
 
-                //moves diagonally right 38 inches
-                rightDiagonal(38);
+                //move forward 12 inches
+                forward(12);
 
-                //turn left 90
-                turnLeft(90);
+                //strafe right 30 inches
+                strafeRight(30);
+
+                //move forward 20 inches
+                forward(20);
 
                 //sets claw down
                 setWristOut();
 
-                //moves forward 7 inches
-                forward(7);
+                //turn left 90
+                turnLeft(90);
+
+
+                //moves forward 4 inches
+                forward(4);
 
                 //drops on right Spike Mark
                 rightClaw.setPosition(CLAW_OPEN);
@@ -263,14 +273,14 @@ public class RED_FRONT extends LinearOpMode {
                 //moves back 10 inches
                 backwards(10);
 
-                //strafe left 17 inches
-                strafeLeft(17);
+                //strafe left 13 inches
+                strafeLeft(13);
 
                 //sets up low score
                 score();
 
-                //moves back 7 inches
-                backwards(7);
+                //moves back 4 inches
+                backwards(4);
 
                 //drops on right area
                 leftClaw.setPosition(CLAW_OPEN);
