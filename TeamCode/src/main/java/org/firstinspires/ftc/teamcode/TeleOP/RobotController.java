@@ -65,8 +65,8 @@ public class RobotController extends LinearOpMode {
     static final int ELEV_START = 0;
     static final int ELEV_HANG = -550;
     static final int ELEV_SCORE_LOW = 300;
-    static final int ELEV_SCORE_MED = 0;
-    static final int ELEV_SCORE_HIGH = -300;
+    static final int ELEV_SCORE_MED = 150;
+    static final int ELEV_SCORE_HIGH = 0;
     static final int ELEV_SCORE_VERYHIGH = -600;
     static final int ELEV_TOP = -600;
 
@@ -74,15 +74,15 @@ public class RobotController extends LinearOpMode {
     static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
     static final double ELBOW_HANG = 0.36;      //
     static final double ELBOW_SCORE_LOW = 0.17;        //
-    static final double ELBOW_SCORE_MED = 0.22;        //
-    static final double ELBOW_SCORE_HIGH = 0.25;        //
-    static final double ELBOW_SCORE_VERYHIGH = 0.27;        //
+    static final double ELBOW_SCORE_MED = 0.17;        //
+    static final double ELBOW_SCORE_HIGH = 0.21;        //
+    static final double ELBOW_SCORE_VERYHIGH = 0.25;        //
 
     static final double WRIST_HOME = 0.15;
     static final double WRIST_FLOOR_PICKUP = 0.9;   //.9 too low
-    static final double WRIST_SCORE_LOW = 0.44;
+    static final double WRIST_SCORE_LOW = 0.47;
     static final double WRIST_SCORE_MED = 0.50;
-    static final double WRIST_SCORE_HIGH = 0.35;
+    static final double WRIST_SCORE_HIGH = 0.5;  // was .35
     static final double WRIST_SCORE_VERYHIGH = 0.50;
 
     static final double LEFT_CLAW_OPEN = 0.45;
