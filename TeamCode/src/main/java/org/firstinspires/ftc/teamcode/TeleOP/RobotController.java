@@ -35,6 +35,9 @@ public class RobotController extends LinearOpMode {
 
     boolean isRotating;
     boolean firstTime = true;
+    boolean toggleswitch = false;
+    boolean firstGyro = true;
+    double yawOffset = 0.0;
     double initialHeading = 0.0;
 
     // Vars for auto movement
@@ -63,7 +66,7 @@ public class RobotController extends LinearOpMode {
     static final int ELEV_HANG = -550;
     static final int ELEV_SCORE_LOW = 300;
     static final int ELEV_SCORE_MED = 0;
-    static final int ELEV_SCORE_HIGH = -550;
+    static final int ELEV_SCORE_HIGH = -300;
     static final int ELEV_SCORE_VERYHIGH = -600;
     static final int ELEV_TOP = -600;
 
@@ -226,17 +229,10 @@ public class RobotController extends LinearOpMode {
 
                 //Set joystick dead bands
                 // TA TODO: test to optimize this empirical constant
-                double db = 0.10;
+                double db = 0.07;
                 if ((y < db) && (y > -db)) y = 0;
                 if ((x < db) && (x > -db)) x = 0;
                 if ((rx < db) && (rx > -db)) rx = 0;
-
-                // slow down for more accurate movement when triggers are depressed
-                if (gamepad1.right_trigger > 0.33 || gamepad1.left_trigger > 0.33) {
-                    y = y / 2.0;
-                    x = x / 2.0;
-                    rx = rx / 2.0;
-                }
 
                 //////////////////////////////////////////////////////////////////////////////////
                 // the code section below is correcting for robot rotation when it shouldn't happen
@@ -257,23 +253,51 @@ public class RobotController extends LinearOpMode {
                 if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
                 if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
                 // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
+                //////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////
 
-                //*************************************************************************************
-                // TA TODO: UPDATE THIS SECTION WHEN imu FIX KNOWN !!!!
-                // IMU is not working reliably per FTC chat site (probably ESD issue) eliminate for now
-                //botHeading = 0.0;
-                //deltaHeading = 0.0;
-                //*************************************************************************************
+                // Rotate the movement direction counter to the robot's rotation
+                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                //////////////////////////////////////////////////////////////////////////////////
+                // the code section below is for driver overrides of normal control
+                //////////////////////////////////////////////////////////////////////////////////
+
+
+                //  stay in field oriented mode but slow down for more accurate movement when a trigger is depressed
+                if (gamepad1.right_trigger > 0.33 || gamepad1.left_trigger > 0.33) {
+                    y = y / 2.0;
+                    x = x / 2.0;
+                    rx = rx / 2.0;
+                }
+
+                // switch to robot oriented (normally field oriented) and slow down
+                if(gamepad1.right_bumper) {
+                    botHeading = 0.0;
+                    deltaHeading =0.0;
+                    y = y / 2.0;
+                    x = x / 2.0;
+                    rx = rx / 2.0;                }
+
+                // switch to robot oriented (normally field oriented), slow down
+                // AND reverse all directions (the back of the robot is now the front)
+                if(gamepad1.left_bumper) {
+                    botHeading = 0.0;
+                    deltaHeading =0.0;
+                    y = -y / 2.0;
+                    x = -x / 2.0;
+                    rx = -rx / 2.0;
+                }
+
+
                 if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
                 {
                     rx = rx + deltaHeading * .02;
                 }
+
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
 
-
-                // Rotate the movement direction counter to the robot's rotation
-                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                 double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
                 double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
@@ -310,7 +334,6 @@ public class RobotController extends LinearOpMode {
                     currentState = 0;
                     leftWrist.setPosition(WRIST_HOME);
                     rightWrist.setPosition(WRIST_HOME);
-                    // no claw movement
                 }
 
                 //HANG
@@ -321,8 +344,6 @@ public class RobotController extends LinearOpMode {
                     currentState = 0;
                     leftWrist.setPosition(WRIST_HOME);
                     rightWrist.setPosition(WRIST_HOME);
-                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                 }
 
                 //FLOOR PICKUP
@@ -334,8 +355,6 @@ public class RobotController extends LinearOpMode {
                     leftWrist.setPosition(WRIST_FLOOR_PICKUP);
                     //TA TODO: right side is higher in the air - try to push down a little w/ .02 offset
                     rightWrist.setPosition(WRIST_FLOOR_PICKUP+.02);
-                    leftClaw.setPosition(LEFT_CLAW_OPEN);
-                    rightClaw.setPosition(RIGHT_CLAW_OPEN);
                 }
 
                 //STARTING POSITION
@@ -346,71 +365,62 @@ public class RobotController extends LinearOpMode {
                     currentState = 0;
                     leftWrist.setPosition(WRIST_HOME);
                     rightWrist.setPosition(WRIST_HOME);
-                    // no claw movement
                 }
 
                 //Use DPAD for 4 scoring positions
                  // DPAD DOWN = Score Low
                 if(gamepad2.dpad_down){
-                    driveStraight(3);
+    //                driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_LOW;
                     elbowTargetPos = ELBOW_SCORE_LOW;
                     currentState = 0;
                     leftWrist.setPosition(WRIST_SCORE_LOW);
                     rightWrist.setPosition(WRIST_SCORE_LOW);
-                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                     moveBack = true;
                 }
 
                 //DPAD LEFT = Score Med
                 if(gamepad2.dpad_left){
-                    driveStraight(3);
+  //                  driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_MED;
                     elbowTargetPos = ELBOW_SCORE_MED;
                     currentState = 0;
                     leftWrist.setPosition(WRIST_SCORE_MED);
                     rightWrist.setPosition(WRIST_SCORE_MED);
-                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                     moveBack = true;
                 }
 
                 // DPAD UP = Score High
                 if(gamepad2.dpad_up){
-                    driveStraight(3);
+//                    driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_HIGH;
                     elbowTargetPos = ELBOW_SCORE_HIGH;
                     currentState = 0;
                     leftWrist.setPosition(WRIST_SCORE_HIGH);
                     rightWrist.setPosition(WRIST_SCORE_HIGH);
-                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                     moveBack = true;
                 }
                 // DPAD RIGHT = Score Very High
                 if(gamepad2.dpad_right){
-                    driveStraight(3);
+//                    driveStraight(3);
                     startEvelCmd = true;
                     elevTragetPos = ELEV_SCORE_VERYHIGH;
                     elbowTargetPos = ELBOW_SCORE_VERYHIGH;
                     currentState = 0;
                     leftWrist.setPosition(WRIST_SCORE_VERYHIGH);
                     rightWrist.setPosition(WRIST_SCORE_VERYHIGH);
-                    leftClaw.setPosition(LEFT_CLAW_CLOSED);
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSED);
                     moveBack = true;
                 }
 
-                if (moveBack == true) {
-                    if (currentState == 3) driveStraight(-3);;
-                    if (currentState == 99) {driveStraight(-3); moveBack = false;}
-                }
-
-
+// the code segment below adjusts the robot position toward backboard automatically
+// NOT WANTED BY DRIVE TEAM RIGHT NOW, BUT KEEP JUST IN CASE NEEDED
+//                if (moveBack == true) {
+//                    if (currentState == 3) driveStraight(-3);;
+//                    if (currentState == 99) {driveStraight(-3); moveBack = false;}
+//                }
 
 
                 /////////////////////////////////////////////////////////////////////////
