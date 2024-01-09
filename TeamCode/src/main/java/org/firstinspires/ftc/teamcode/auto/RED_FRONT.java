@@ -167,7 +167,7 @@ public class RED_FRONT extends LinearOpMode {
                 //move back 2 inchs
                 backwards(2);
 
-                //drops on right spike mark
+                //drops on left spike mark
                 rightClaw.setPosition(CLAW_OPEN);
                 setWristIn();
 
@@ -180,7 +180,7 @@ public class RED_FRONT extends LinearOpMode {
                 //move back 4 inches
                 backwards(4);
 
-                //drops on right area
+                //drops on left area
                 leftClaw.setPosition(CLAW_OPEN);
                 sleep(250);
 

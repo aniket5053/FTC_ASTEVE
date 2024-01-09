@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import android.annotation.SuppressLint;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "BLUE FRONT sm", group = "Auto")
-public class BLUE_FRONT_sm extends LinearOpMode {
+@Autonomous(name = "RED FRONT sm", group = "Auto")
+public class RED_FRONT_sm extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
@@ -188,13 +186,14 @@ public class BLUE_FRONT_sm extends LinearOpMode {
         do {
             switch (step) {
                 case 0:
-                    //moves diagonally left 38 inches
                     resetDriveEncoders();
                     step = 10;
                     break;
 
                 case 10:
-                    stepComplete = leftDiagonal(38);
+                    //move forward 30 inches
+                    //sets claw out
+                    stepComplete = forward(30);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -205,7 +204,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 20:
-                    stepComplete = turnRight(startAngle, 90);
+                    //turn left 90
+                    stepComplete = turnLeft(startAngle, 90);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -215,7 +215,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 30:
-                    stepComplete = forward(7);
+                    //move back 2 inches
+                    stepComplete = backwards(2);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -233,7 +234,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 50:
-                    stepComplete = backwards(10);
+                    //move back 31 inches
+                    stepComplete = backwards(31);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -242,48 +244,43 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     }
                     break;
 
+
                 case 60:
-                    stepComplete = strafeRight(17);
-                    if (stepComplete) {
-                        stopDriveMotors();
-                        resetDriveEncoders();
-                        step = 70;
-                    }
+                    //sets up low score
+                    score();
+                    step = 70;
                     break;
 
                 case 70:
-                    //sets up low score
-                    score();
-                    step = 80;
-                    break;
-
-                case 80:
-                    stepComplete = backwards(7);
+                    //move back 4 inches
+                    stepComplete = backwards(4);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 90;
+                        step = 80;
                     }
                     break;
 
-                case 90:
+                case 80:
                     //drops on left area
                     leftClaw.setPosition(CLAW_OPEN);
                     sleep(750);
-                    step = 100;
+                    step = 90;
                     break;
 
-                case 100:
+                case 90:
+                    //move forward 4 inches
                     stepComplete = forward(4);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 110;
+                        step = 100;
                     }
                     break;
 
                 case 110:
-                    stepComplete = strafeRight(12);
+                    //strafe left 15 inches
+                    stepComplete = strafeLeft(15);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -292,6 +289,7 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 999:
+                    //resets back to original position
                     home();
                     step = 1000;
                     break;
@@ -303,7 +301,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
 
             updateTelemetry();
 
-        } while (step < 1000);
+        }
+        while (step < 1000);
 
     }
 
@@ -350,8 +349,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 40:
-                    //turn right 90
-                    stepComplete = turnRight(startAngle, 90);
+                    //turn left 90
+                    stepComplete = turnLeft(startAngle, 90);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -370,8 +369,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 60:
-                    //strafe left 8 inches
-                    stepComplete = strafeLeft(8);
+                    //strafe right 8 inches
+                    stepComplete = strafeRight(8);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -448,32 +447,30 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 10:
-                    //move forward 30 inches
-                    //sets claw out
-                    stepComplete = forward(30);
+                    //move forward 12 inches
+                    stepComplete = forward(12);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                        setWristOut();
                         step = 20;
                     }
                     break;
 
                 case 20:
-                    //turn right 90
-                    stepComplete = turnRight(startAngle, 90);
+                    //strafe right 30 inches
+                    stepComplete = strafeRight(30);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristOut();
                         step = 30;
                     }
                     break;
 
                 case 30:
-                    //move back 2 inches
-                    stepComplete = backwards(2);
+                    //move forward 20 inches
+                    //set claw out
+                    stepComplete = forward(20);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -483,61 +480,94 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 40:
-                    //drops on right Spike Mark
-                    rightClaw.setPosition(CLAW_OPEN);
-                    sleep(750);
-                    setWristIn();
-                    step = 50;
-                    break;
-
-                case 50:
-                    //move back 31 inches
-                    stepComplete = backwards(31);
+                    //turn left 90
+                    stepComplete = turnLeft(startAngle, 90);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
-                        step = 60;
+                        setWristOut();
+                        step = 50;
+                    }
+                    break;
+
+                case 50:
+                    //moves forward 4 inches
+                    stepComplete = forward(4);
+                    if (stepComplete) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        setWristOut();
+                        step = 50;
                     }
                     break;
 
 
                 case 60:
-                    //sets up low score
-                    score();
+                    //drops on right Spike Mark
+                    rightClaw.setPosition(CLAW_OPEN);
+                    sleep(750);
+                    setWristIn();
                     step = 70;
                     break;
 
                 case 70:
-                    //move back 4 inches
-                    stepComplete = backwards(4);
+                    //moves back 10 inches
+                    stepComplete = backwards(10);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
+                        setWristIn();
                         step = 80;
                     }
                     break;
 
                 case 80:
-                    //drops on right area
-                    leftClaw.setPosition(CLAW_OPEN);
-                    sleep(750);
-                    step = 90;
-                    break;
-
-                case 90:
-                    //move forward 4 inches
-                    stepComplete = forward(4);
+                    //strafe left 13 inches
+                    stepComplete = strafeLeft(13);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 100;
+                        step = 90;
+                    }
+                    break;
+
+                case 90:
+                    //sets up low score
+                    score();
+                    step = 100;
+                    break;
+
+                case 100:
+                    //moves back 4 inches
+                    stepComplete = backwards(4);
+                    if (stepComplete) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 110;
                     }
                     break;
 
                 case 110:
-                    //strafe left 15 inches
-                    stepComplete = strafeLeft(15);
+                    //drops on right area
+                    leftClaw.setPosition(CLAW_OPEN);
+                    sleep(750);
+                    step = 120;
+                    break;
+
+                case 120:
+                    //moves forward 4 inches
+                    stepComplete = forward(4);
+                    if (stepComplete) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 130;
+                    }
+                    break;
+
+
+                case 130:
+                    //strafe right 12 inches
+                    stepComplete = strafeRight(12);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -546,7 +576,6 @@ public class BLUE_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 999:
-                    //resets back to original position
                     home();
                     step = 1000;
                     break;
@@ -558,8 +587,8 @@ public class BLUE_FRONT_sm extends LinearOpMode {
 
             updateTelemetry();
 
-        }
-        while (step < 1000);
+        } while (step < 1000);
+
 
     }
 
@@ -827,7 +856,6 @@ public class BLUE_FRONT_sm extends LinearOpMode {
     /////////////////////////////////////////////////////////////////////////
     // Telemetry
     /////////////////////////////////////////////////////////////////////////
-    @SuppressLint({"SuspiciousIndentation", "DefaultLocale"})
     void updateTelemetry(){
 //                telemetry.addLine(String.format("Lt/Rt Frt Mtrs: %4.2f  /  %4.2f ",
 //                        frontLeftMotor.getPower(),frontRightMotor.getPower()));
@@ -835,32 +863,32 @@ public class BLUE_FRONT_sm extends LinearOpMode {
 //                        backLeftMotor.getPower(),backRightMotor.getPower()));
 //                telemetry.addLine(String.format("Lt/Rt ElevMtrs: %4.2f /  %4.2f ",
 //                        leftElevator.getPower(),rightElevator.getPower()));
-                telemetry.addLine(String.format("Lt/Rt ElbowPos: %4.2f /  %4.2f ",
-                        leftElbow.getPosition(),rightElbow.getPosition()));
-                telemetry.addLine(String.format("Lt/Rt WristPos: %4.2f /  %4.2f ",
-                        leftWrist.getPosition(),rightWrist.getPosition()));
-                telemetry.addLine(String.format("Lt/Rt ClawPos: %4.2f /  %4.2f ",
-                        leftClaw.getPosition(),rightClaw.getPosition()));
-                telemetry.addLine();
-                telemetry.addLine();
+        telemetry.addLine(String.format("Lt/Rt ElbowPos: %4.2f /  %4.2f ",
+                leftElbow.getPosition(),rightElbow.getPosition()));
+        telemetry.addLine(String.format("Lt/Rt WristPos: %4.2f /  %4.2f ",
+                leftWrist.getPosition(),rightWrist.getPosition()));
+        telemetry.addLine(String.format("Lt/Rt ClawPos: %4.2f /  %4.2f ",
+                leftClaw.getPosition(),rightClaw.getPosition()));
+        telemetry.addLine();
+        telemetry.addLine();
 
-                telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
-                        frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
-                telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
-                        backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
-                telemetry.addLine();
-                telemetry.addLine(String.format("Lt/Rt ElevEncdrs: %d  /  %d  /  %4.2f",
-                        leftElevator.getCurrentPosition(),rightElevator.getCurrentPosition(),
-    gamepad2.right_stick_y));
+        telemetry.addLine(String.format("Lt/Rt Frt Encdrs: %d  /  %d ",
+                frontLeftMotor.getCurrentPosition(),frontRightMotor.getCurrentPosition()));
+        telemetry.addLine(String.format("Lt/Rt Bck Encdrs: %d  /  %d ",
+                backLeftMotor.getCurrentPosition(),backRightMotor.getCurrentPosition()));
+        telemetry.addLine();
+        telemetry.addLine(String.format("Lt/Rt ElevEncdrs: %d  /  %d  /  %4.2f",
+                leftElevator.getCurrentPosition(),rightElevator.getCurrentPosition(),
+                gamepad2.right_stick_y));
 
-    botHeading =imu.getRobotYawPitchRollAngles().
+        botHeading =imu.getRobotYawPitchRollAngles().
 
-    getYaw(AngleUnit.DEGREES);
-                telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
-    botHeading,deltaHeading));
+                getYaw(AngleUnit.DEGREES);
+        telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
+                botHeading,deltaHeading));
 
-                telemetry.update();
-}
+        telemetry.update();
+    }
 
 
 
