@@ -51,7 +51,7 @@ public class PixelDetector extends OpenCvPipeline {
     if ("red".equals(color)) {
         // Set HSV values for red color
         lowHSV = new Scalar(0, 80, 80);
-        highHSV = new Scalar(180, 230, 255);
+        highHSV = new Scalar(180, 255, 255);
     }
     else if ("blue".equals(color)) {
         // Set HSV values for blue color

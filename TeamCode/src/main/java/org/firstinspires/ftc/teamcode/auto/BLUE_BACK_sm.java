@@ -194,6 +194,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 10:
+                    moveELevatorToTrgtPos(150);
                     stepComplete = leftDiagonal(38);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -205,6 +206,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 20:
+                    moveELevatorToTrgtPos(150);
                     stepComplete = turnRight(startAngle, 90);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -215,6 +217,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 30:
+                    moveELevatorToTrgtPos(150);
                     stepComplete = forward(7);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -233,6 +236,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 50:
+                    moveELevatorToTrgtPos(300);
                     stepComplete = backwards(10);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -243,6 +247,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 60:
+                    moveELevatorToTrgtPos(300);
                     stepComplete = strafeRight(17);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -258,6 +263,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 80:
+                    moveELevatorToTrgtPos(300);
                     stepComplete = backwards(7);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -274,6 +280,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 100:
+                    moveELevatorToTrgtPos(0);
                     stepComplete = forward(4);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -283,6 +290,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 110:
+                    moveELevatorToTrgtPos(0);
                     stepComplete = strafeRight(12);
                     if (stepComplete) {
                         stopDriveMotors();
@@ -292,6 +300,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 999:
+                    moveELevatorToTrgtPos(0);
                     home();
                     step = 1000;
                     break;
@@ -319,6 +328,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 10:
+                    moveELevatorToTrgtPos(150);
                     //moves forward 25 inches
                     stepComplete = forward(25);
                     if (stepComplete) {
@@ -331,6 +341,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 20:
+                    moveELevatorToTrgtPos(150);
                     //drops on center Spike Mark
                     rightClaw.setPosition(CLAW_OPEN);
                     sleep(750);
@@ -339,6 +350,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 30:
+                    moveELevatorToTrgtPos(300);
                     //move back 5 inches
                     stepComplete = backwards(5);
                     if (stepComplete) {
@@ -350,6 +362,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 40:
+                    moveELevatorToTrgtPos(300);
                     //turn right 90
                     stepComplete = turnRight(startAngle, 90);
                     if (stepComplete) {
@@ -360,6 +373,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 50:
+                    moveELevatorToTrgtPos(300);
                     //move back 33 inches
                     stepComplete = backwards(33);
                     if (stepComplete) {
@@ -370,6 +384,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 60:
+                    moveELevatorToTrgtPos(300);
                     //strafe left 8 inches
                     stepComplete = strafeLeft(8);
                     if (stepComplete) {
@@ -386,6 +401,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 80:
+                    moveELevatorToTrgtPos(300);
                     //move back 4 inches
                     stepComplete = backwards(4);
                     if (stepComplete) {
@@ -403,6 +419,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 100:
+                    moveELevatorToTrgtPos(0);
                     //move forward 2 inches
                     stepComplete = forward(2);
                     if (stepComplete) {
@@ -413,6 +430,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 110:
+                    moveELevatorToTrgtPos(0);
                     //strafe right 24 inches
                     stepComplete = strafeRight(24);
                     if (stepComplete) {
@@ -423,6 +441,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 999:
+                    moveELevatorToTrgtPos(0);
                     //resets back to original position
                     home();
                     step = 1000;
@@ -448,6 +467,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 10:
+                    moveELevatorToTrgtPos(150);
                     //move forward 30 inches
                     //sets claw out
                     stepComplete = forward(30);
@@ -461,6 +481,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 20:
+                    moveELevatorToTrgtPos(150);
                     //turn right 90
                     stepComplete = turnRight(startAngle, 90);
                     if (stepComplete) {
@@ -472,6 +493,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 30:
+                    moveELevatorToTrgtPos(150);
                     //move back 2 inches
                     stepComplete = backwards(2);
                     if (stepComplete) {
@@ -491,6 +513,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 50:
+                    moveELevatorToTrgtPos(300);
                     //move back 31 inches
                     stepComplete = backwards(31);
                     if (stepComplete) {
@@ -509,6 +532,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 70:
+                    moveELevatorToTrgtPos(300);
                     //move back 4 inches
                     stepComplete = backwards(4);
                     if (stepComplete) {
@@ -526,16 +550,18 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 90:
+                    moveELevatorToTrgtPos(0);
                     //move forward 4 inches
                     stepComplete = forward(4);
                     if (stepComplete) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 100;
+                        step = 110;
                     }
                     break;
 
                 case 110:
+                    moveELevatorToTrgtPos(0);
                     //strafe left 15 inches
                     stepComplete = strafeLeft(15);
                     if (stepComplete) {
@@ -546,6 +572,7 @@ public class BLUE_BACK_sm extends LinearOpMode {
                     break;
 
                 case 999:
+                    moveELevatorToTrgtPos(0);
                     //resets back to original position
                     home();
                     step = 1000;
@@ -771,6 +798,34 @@ public class BLUE_BACK_sm extends LinearOpMode {
     }
 
 
+
+    boolean moveELevatorToTrgtPos(int elevTragetPos) {
+        double flip = 1;
+        boolean complete;
+        int elevEncCloseTolerance = 20;
+        int elevEncStopTolerance = 3;
+        if(leftElevator.getCurrentPosition() > elevTragetPos) flip = -1.0;
+        if(Math.abs(leftElevator.getCurrentPosition() - elevTragetPos) > elevEncCloseTolerance) {
+            leftElevator.setPower(flip);
+            rightElevator.setPower(flip);
+            complete = false;
+        }
+        else if(Math.abs(leftElevator.getCurrentPosition() - elevTragetPos) > elevEncStopTolerance){  // slow down when close
+            leftElevator.setPower(0.33*flip);
+            rightElevator.setPower(0.33*flip);
+            complete = false;
+        }
+        else {
+            leftElevator.setPower(0.0);
+            rightElevator.setPower(0.0);
+            complete = true;
+        }
+
+        return (complete);
+    }
+
+
+
     void setWristOut() {
         leftWrist.setPosition(WRIST_OUT);
         rightWrist.setPosition(WRIST_OUT);
@@ -782,7 +837,6 @@ public class BLUE_BACK_sm extends LinearOpMode {
         rightWrist.setPosition(WRIST_IN);
 //        sleep(750);
     }
-
 
 
     void score() {
@@ -858,6 +912,12 @@ public class BLUE_BACK_sm extends LinearOpMode {
                 getYaw(AngleUnit.DEGREES);
         telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
                 botHeading,deltaHeading));
+
+
+        telemetry.addLine();
+        telemetry.addLine();
+        telemetry.addLine(String.format("Step: %d ", step));
+
 
         telemetry.update();
     }
