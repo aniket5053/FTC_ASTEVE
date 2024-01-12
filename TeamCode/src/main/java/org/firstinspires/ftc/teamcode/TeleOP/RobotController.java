@@ -196,7 +196,7 @@ public class RobotController extends LinearOpMode {
                     botHeading = 0.0;
                 }
 
-                if (gamepad1.guide) {
+                if (gamepad1.start) {
                     frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -206,6 +206,16 @@ public class RobotController extends LinearOpMode {
                     frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    sleep(50);
+                }
+
+                if (gamepad2.start) {
+                    leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    sleep(50);
+                    leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    sleep(50);
                 }
 
                 //small forward move

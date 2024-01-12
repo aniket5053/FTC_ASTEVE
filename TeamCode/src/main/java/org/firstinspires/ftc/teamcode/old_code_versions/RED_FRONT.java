@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.old_code_versions;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,14 +11,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.auto.PixelDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "BLUE BACK", group = "Auto")
-public class BLUE_BACK extends LinearOpMode {
+//@Autonomous(name = "RED FRONT", group = "Auto")
+public class RED_FRONT extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
@@ -66,7 +67,7 @@ public class BLUE_BACK extends LinearOpMode {
     Servo leftClaw;
     Servo rightClaw;
 
-    PixelDetector detector = new PixelDetector(telemetry, "blue");
+    PixelDetector detector = new PixelDetector(telemetry, "red");
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -155,49 +156,48 @@ public class BLUE_BACK extends LinearOpMode {
         switch (detector.getLocation()) {
             case LEFT:
 
-                //moves diagonally left 38 inches
-                leftDiagonal(38);
+                //move forward 30 inches
+                forward(30);
 
-                //turns right 90
-                turnRight(90);
-
-                //sets claw down
+                //sets claw out
                 setWristOut();
 
-                //moves forward 7 inches
-                forward(7);
+                //turn left 90
+                turnLeft(90);
 
-                //drops on left Spike Mark
+                //move back 2 inchs
+                backwards(2);
+
+                //drops on left spike mark
                 rightClaw.setPosition(CLAW_OPEN);
-                sleep(750);
                 setWristIn();
 
-                //moves back 10 inches
-                backwards(10);
+                //move back 31 inches
+                backwards(31);
 
-                //strafes right 17 inches
-                strafeRight(17);
-
-                //sets up low score
+                //set up low score
                 score();
 
-                //moves back 7 inches
-                backwards(7);
+                //move back 4 inches
+                backwards(4);
 
                 //drops on left area
                 leftClaw.setPosition(CLAW_OPEN);
-                sleep(750);
+                sleep(250);
 
                 //move forward 4 inches
                 forward(4);
 
-                //strafe right 12 inches
-                strafeRight(12);
+
+                //strafe left 15 inches
+                strafeLeft(15);
 
                 //resets back to original position
                 home();
 
+
                 break;
+
 
             case CENTER:
 
@@ -215,21 +215,20 @@ public class BLUE_BACK extends LinearOpMode {
                 //move back 5 inches
                 backwards(5);
 
-                //turn right 90
-                turnRight(90);
+                //turn left 90
+                turnLeft(90);
 
                 //move back 33 inches
                 backwards(33);
 
-                //strafe left 8 inches
-                strafeLeft(8);
+                //strafe right 8 inches
+                strafeRight(8);
 
                 //set up low score
                 score();
 
                 //move back 4 inches
                 backwards(4);
-
 
                 //drops on center area
                 leftClaw.setPosition(CLAW_OPEN);
@@ -238,8 +237,8 @@ public class BLUE_BACK extends LinearOpMode {
                 //move forward 4 inches
                 forward(4);
 
-                //strafe right 24 inches
-                strafeRight(24);
+                //strafe left 24 inches
+                strafeLeft(24);
 
                 //resets back to original position
                 home();
@@ -248,87 +247,61 @@ public class BLUE_BACK extends LinearOpMode {
 
             case RIGHT:
 
-                //move forward 30 inches
-                forward(30);
+                //move forward 12 inches
+                forward(12);
 
-                //sets claw out
+                //strafe right 30 inches
+                strafeRight(30);
+
+                //move forward 20 inches
+                forward(20);
+
+                //sets claw down
                 setWristOut();
 
-                //turn right 90
-                turnRight(90);
+                //turn left 90
+                turnLeft(90);
 
-                //drops on right spike mark
+
+                //moves forward 4 inches
+                forward(4);
+
+                //drops on right Spike Mark
                 rightClaw.setPosition(CLAW_OPEN);
+                sleep(750);
                 setWristIn();
 
-                //move back 31 inches
-                backwards(31);
+                //moves back 10 inches
+                backwards(10);
 
-                //set up low score
+                //strafe left 13 inches
+                strafeLeft(13);
+
+                //sets up low score
                 score();
 
-                //move back 4 inches
+                //moves back 4 inches
                 backwards(4);
 
                 //drops on right area
                 leftClaw.setPosition(CLAW_OPEN);
-                sleep(250);
+                sleep(750);
 
                 //move forward 4 inches
                 forward(4);
 
-
-                //strafe left 15 inches
-                strafeLeft(15);
+                //strafe right 12 inches
+                strafeLeft(12);
 
                 //resets back to original position
                 home();
+
+
                 break;
 
+
+
             case NOT_FOUND:
-                //set claw down
-                setWristOut();
-
-                //moves forward 25 inches
-                forward(25);
-
-                //drops on center Spike Mark
-                rightClaw.setPosition(CLAW_OPEN);
-                sleep(750);
-                setWristIn();
-
-                //move back 5 inches
-                backwards(5);
-
-                //turn right 90
-                turnRight(90);
-
-                //move back 33 inches
-                backwards(33);
-
-                //strafe left 8 inches
-                strafeLeft(8);
-
-                //set up low score
-                score();
-
-                //move back 4 inches
-                backwards(4);
-
-
-                //drops on center area
-                leftClaw.setPosition(CLAW_OPEN);
-                sleep(750);
-
-                //move forward 4 inches
-                forward(4);
-
-                //strafe right 24 inches
-                strafeRight(24);
-
-                //resets back to original position
-                home();
-
 
 
         }
@@ -336,6 +309,7 @@ public class BLUE_BACK extends LinearOpMode {
 
 
     }
+
     void autoMec(double y, double x, double rx) {
 
         telemetry.update();

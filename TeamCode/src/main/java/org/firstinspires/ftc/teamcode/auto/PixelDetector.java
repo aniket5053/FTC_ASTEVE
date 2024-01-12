@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -14,7 +15,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-
+import java.util.concurrent.TimeUnit;
 
 public class PixelDetector extends OpenCvPipeline {
     Telemetry telemetry;
@@ -139,6 +140,7 @@ public class PixelDetector extends OpenCvPipeline {
     }
 
     public void runOpMode() throws InterruptedException {
+
         //
     }
 }

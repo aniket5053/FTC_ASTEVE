@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "RED FRONT sm", group = "Auto")
-public class RED_FRONT_sm extends LinearOpMode {
+@Autonomous(name = "BLUE BACKSTAGE", group = "Auto")
+public class BLUE_BACKSTAGE extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
     static final double CLAW_CLOSED = 1.0;
@@ -30,6 +32,7 @@ public class RED_FRONT_sm extends LinearOpMode {
     static final double WRIST_SCORE = 0.44;
     double botHeading = 0.0;
     double deltaHeading = 0.0;
+    boolean startTurn = true;
     boolean isRotating;
     boolean firstTime = true;
     double initialHeading = 0.0;
@@ -40,7 +43,8 @@ public class RED_FRONT_sm extends LinearOpMode {
     double deltaAngle, unsignedDelta;
     int curPos = 0;
     int step = 0;
-    boolean stepComplete = false;
+    boolean driveMoveCompleted = false;
+    boolean elevatorMoveCompleted = false;
     double countsPerRev = 560;
     double pi = 3.1415927;
     double wheelDiameter = 3;
@@ -148,7 +152,6 @@ public class RED_FRONT_sm extends LinearOpMode {
         });
 
 
-
         leftClaw.setPosition(CLAW_CLOSED);
         sleep(250);
         rightClaw.setPosition(CLAW_CLOSED);
@@ -187,16 +190,16 @@ public class RED_FRONT_sm extends LinearOpMode {
         do {
             switch (step) {
                 case 0:
+                    //moves diagonally left 38 inches
                     resetDriveEncoders();
                     step = 10;
                     break;
 
                 case 10:
                     moveELevatorToTrgtPos(150);
-                    //move forward 30 inches
-                    //sets claw out
-                    stepComplete = forward(30);
-                    if (stepComplete) {
+                    driveMoveCompleted = leftDiagonal(38);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -207,9 +210,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 20:
                     moveELevatorToTrgtPos(150);
-                    //turn left 90
-                    stepComplete = turnLeft(startAngle, 90);
-                    if (stepComplete) {
+                    driveMoveCompleted = turnRight(startAngle, 90);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristOut();
@@ -218,10 +221,9 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 30:
-                    moveELevatorToTrgtPos(150);
-                    //move back 2 inches
-                    stepComplete = backwards(2);
-                    if (stepComplete) {
+                    driveMoveCompleted = forward(8);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristOut();
@@ -239,9 +241,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 50:
                     moveELevatorToTrgtPos(300);
-                    //move back 31 inches
-                    stepComplete = backwards(31);
-                    if (stepComplete) {
+                    driveMoveCompleted = backwards(11);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
@@ -249,47 +251,57 @@ public class RED_FRONT_sm extends LinearOpMode {
                     }
                     break;
 
-
                 case 60:
-                    //sets up low score
-                    score();
-                    step = 70;
-                    break;
-
-                case 70:
                     moveELevatorToTrgtPos(300);
-                    //move back 4 inches
-                    stepComplete = backwards(4);
-                    if (stepComplete) {
+                    driveMoveCompleted = strafeRight(16);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 80;
+                        step = 70;
                     }
                     break;
 
+                case 70:
+                    //sets up low score
+                    score();
+                    step = 80;
+                    break;
+
                 case 80:
-                    //drops on left area
-                    leftClaw.setPosition(CLAW_OPEN);
-                    sleep(750);
-                    step = 90;
+                    driveMoveCompleted = backwards(7);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 90;
+                    }
                     break;
 
                 case 90:
+                    //drops on left area
+                    leftClaw.setPosition(CLAW_OPEN);
+                    sleep(750);
+                    step = 100;
+                    break;
+
+                case 100:
                     moveELevatorToTrgtPos(0);
-                    //move forward 4 inches
-                    stepComplete = forward(4);
-                    if (stepComplete) {
+                    driveMoveCompleted = forward(6);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 100;
+                        step = 110;
                     }
                     break;
 
                 case 110:
-                    moveELevatorToTrgtPos(0);
-                    //strafe left 15 inches
-                    stepComplete = strafeLeft(15);
-                    if (stepComplete) {
+                    // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
+                    // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
+                    driveMoveCompleted = strafeRight(18);
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 999;
@@ -297,8 +309,6 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 999:
-                    moveELevatorToTrgtPos(0);
-                    //resets back to original position
                     home();
                     step = 1000;
                     break;
@@ -310,8 +320,7 @@ public class RED_FRONT_sm extends LinearOpMode {
 
             updateTelemetry();
 
-        }
-        while (step < 1000);
+        } while (step < 1000);
 
     }
 
@@ -322,15 +331,16 @@ public class RED_FRONT_sm extends LinearOpMode {
                 case 0:
                     //set claw down
                     resetDriveEncoders();
+                    moveELevatorToTrgtPos(150);
                     setWristOut();
                     step = 10;
                     break;
 
                 case 10:
                     moveELevatorToTrgtPos(150);
-                    //moves forward 25 inches
-                    stepComplete = forward(25);
-                    if (stepComplete) {
+                    driveMoveCompleted = forward(24);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -349,9 +359,10 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 30:
-                    //move back 5 inches
-                    stepComplete = backwards(5);
-                    if (stepComplete) {
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(5);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
@@ -361,9 +372,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 40:
                     moveELevatorToTrgtPos(300);
-                    //turn left 90
-                    stepComplete = turnLeft(startAngle, 90);
-                    if (stepComplete) {
+                    driveMoveCompleted = turnRight(startAngle, 90);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 50;
@@ -372,9 +383,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 50:
                     moveELevatorToTrgtPos(300);
-                    //move back 33 inches
-                    stepComplete = backwards(33);
-                    if (stepComplete) {
+                    driveMoveCompleted = backwards(33);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 60;
@@ -383,9 +394,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 60:
                     moveELevatorToTrgtPos(300);
-                    //strafe right 8 inches
-                    stepComplete = strafeRight(8);
-                    if (stepComplete) {
+                    driveMoveCompleted = strafeLeft(7);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 70;
@@ -399,10 +410,9 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 80:
-                    moveELevatorToTrgtPos(300);
-                    //move back 4 inches
-                    stepComplete = backwards(4);
-                    if (stepComplete) {
+                    driveMoveCompleted = backwards(6);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 90;
@@ -418,9 +428,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 100:
                     moveELevatorToTrgtPos(0);
-                    //move forward 2 inches
-                    stepComplete = forward(2);
-                    if (stepComplete) {
+                    driveMoveCompleted = forward(6);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 110;
@@ -428,10 +438,12 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 110:
-                    moveELevatorToTrgtPos(0);
-                    //strafe right 24 inches
-                    stepComplete = strafeRight(24);
-                    if (stepComplete) {
+                    // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
+                    // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
+                    driveMoveCompleted = strafeRight(24);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 999;
@@ -439,7 +451,6 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 999:
-                    moveELevatorToTrgtPos(0);
                     //resets back to original position
                     home();
                     step = 1000;
@@ -466,9 +477,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 10:
                     moveELevatorToTrgtPos(150);
-                    //move forward 12 inches
-                    stepComplete = forward(12);
-                    if (stepComplete) {
+                    driveMoveCompleted = forward(25);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -478,9 +489,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 20:
                     moveELevatorToTrgtPos(150);
-                    //strafe right 30 inches
-                    stepComplete = strafeRight(30);
-                    if (stepComplete) {
+                    driveMoveCompleted = turnRight(startAngle, 90);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 30;
@@ -489,10 +500,35 @@ public class RED_FRONT_sm extends LinearOpMode {
 
                 case 30:
                     moveELevatorToTrgtPos(150);
-                    //move forward 20 inches
-                    //set claw out
-                    stepComplete = forward(20);
-                    if (stepComplete) {
+                    driveMoveCompleted = backwards(9);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        setWristOut();
+                        sleep(100);
+                        step = 32;
+                    }
+                    break;
+
+                case 32:
+                    moveELevatorToTrgtPos(150);
+                    driveMoveCompleted = strafeLeft(6);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        setWristOut();
+                        sleep(100);
+                        step = 35;
+                    }
+                    break;
+
+                case 35:
+                    moveELevatorToTrgtPos(150);
+                    driveMoveCompleted = forward(7);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristOut();
@@ -501,71 +537,67 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 40:
-                    moveELevatorToTrgtPos(150);
-                    //turn left 90
-                    stepComplete = turnLeft(startAngle, 90);
-                    if (stepComplete) {
-                        stopDriveMotors();
-                        resetDriveEncoders();
-                        setWristOut();
-                        step = 50;
-                    }
+                    //drops on right Spike Mark
+                    rightClaw.setPosition(CLAW_OPEN);
+                    sleep(750);
+                    setWristIn();
+                    step = 50;
                     break;
 
                 case 50:
-                    moveELevatorToTrgtPos(150);
-                    //moves forward 4 inches
-                    stepComplete = forward(4);
-                    if (stepComplete) {
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(32);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristOut();
-                        step = 50;
+                        setWristIn();
+                        step = 55;
+                    }
+                    break;
+
+                case 55:
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = strafeRight(1);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        setWristIn();
+                        step = 60;
                     }
                     break;
 
 
                 case 60:
-                    //drops on right Spike Mark
-                    rightClaw.setPosition(CLAW_OPEN);
-                    sleep(750);
-                    setWristIn();
+                    //sets up low score
+                    score();
                     step = 70;
                     break;
 
                 case 70:
-                    //moves back 10 inches
-                    stepComplete = backwards(10);
-                    if (stepComplete) {
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(6);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
                         step = 80;
                     }
                     break;
 
                 case 80:
-                    moveELevatorToTrgtPos(300);
-                    //strafe left 13 inches
-                    stepComplete = strafeLeft(13);
-                    if (stepComplete) {
-                        stopDriveMotors();
-                        resetDriveEncoders();
-                        step = 90;
-                    }
+                    //drops on right area
+                    leftClaw.setPosition(CLAW_OPEN);
+                    sleep(750);
+                    step = 90;
                     break;
 
                 case 90:
-                    //sets up low score
-                    score();
-                    step = 100;
-                    break;
+                    moveELevatorToTrgtPos(0);
+                    driveMoveCompleted = forward(6);
 
-                case 100:
-                    moveELevatorToTrgtPos(300);
-                    //moves back 4 inches
-                    stepComplete = backwards(4);
-                    if (stepComplete) {
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 110;
@@ -573,29 +605,12 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 110:
-                    //drops on right area
-                    leftClaw.setPosition(CLAW_OPEN);
-                    sleep(750);
-                    step = 120;
-                    break;
+                    // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
+                    // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
+                    driveMoveCompleted = strafeRight(26);
 
-                case 120:
-                    moveELevatorToTrgtPos(0);
-                    //moves forward 4 inches
-                    stepComplete = forward(4);
-                    if (stepComplete) {
-                        stopDriveMotors();
-                        resetDriveEncoders();
-                        step = 130;
-                    }
-                    break;
-
-
-                case 130:
-                    moveELevatorToTrgtPos(0);
-                    //strafe right 12 inches
-                    stepComplete = strafeRight(12);
-                    if (stepComplete) {
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 999;
@@ -603,7 +618,7 @@ public class RED_FRONT_sm extends LinearOpMode {
                     break;
 
                 case 999:
-                    moveELevatorToTrgtPos(0);
+                    //resets back to original position
                     home();
                     step = 1000;
                     break;
@@ -615,8 +630,8 @@ public class RED_FRONT_sm extends LinearOpMode {
 
             updateTelemetry();
 
-        } while (step < 1000);
-
+        }
+        while (step < 1000);
 
     }
 
@@ -641,6 +656,13 @@ public class RED_FRONT_sm extends LinearOpMode {
 
         if ((!isRotating) && (firstTime)) {
             initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            // initial heading should only be 0, +/-90 or +/-180, so force to these angles!!!!
+            // if initialHeading is close to these numbers, set to the angle
+            if (Math.abs(initialHeading -10) < 10) initialHeading = 0.0;
+            if (Math.abs(initialHeading -90) < 10) initialHeading = 90.0;
+            if (Math.abs(initialHeading +90) < 10) initialHeading = -90.0;
+            if (Math.abs(initialHeading -180) < 10) initialHeading = 180.0;
+            if (Math.abs(initialHeading +180) < 10) initialHeading = -180.0;
             firstTime = false;
         }
 
@@ -693,15 +715,26 @@ public class RED_FRONT_sm extends LinearOpMode {
 
 
     boolean turnToAngle(double startAngle, double finalAngle) {
+        int counter;
+        double angleAccumulator;
+        double timeToTurn = 1400;
+        if(startTurn) {
+            startTurn = false;
+            timeToTurn = Math.abs(1400*(finalAngle-startAngle)/90);
+            myStopwatch.reset();
+        }
 
-        curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        deltaAngle = curAngle - finalAngle;
-        unsignedDelta = Math.abs(deltaAngle);
-        if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
-        else autoMec(0.0, 0.0, deltaAngle / 30.0);
-
-        if (unsignedDelta > 2.0) return (false);
-        else return (true);
+        // Use a timer just in case gyro doesnt work!!!
+        if(myStopwatch.time(TimeUnit.MILLISECONDS) <= timeToTurn) {
+            curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            deltaAngle = curAngle - finalAngle;
+            unsignedDelta = Math.abs(deltaAngle);
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
+            else autoMec(0.0, 0.0, deltaAngle / 30.0);
+            if (unsignedDelta > 2.5) return (false);
+            else {startTurn = true; return (true);}
+        }
+        else {startTurn = true; return (true);}
     }
 
 
@@ -856,7 +889,6 @@ public class RED_FRONT_sm extends LinearOpMode {
     }
 
 
-
     void setWristOut() {
         leftWrist.setPosition(WRIST_OUT);
         rightWrist.setPosition(WRIST_OUT);
@@ -913,6 +945,7 @@ public class RED_FRONT_sm extends LinearOpMode {
     /////////////////////////////////////////////////////////////////////////
     // Telemetry
     /////////////////////////////////////////////////////////////////////////
+    @SuppressLint({"SuspiciousIndentation", "DefaultLocale"})
     void updateTelemetry(){
 //                telemetry.addLine(String.format("Lt/Rt Frt Mtrs: %4.2f  /  %4.2f ",
 //                        frontLeftMotor.getPower(),frontRightMotor.getPower()));
@@ -940,9 +973,9 @@ public class RED_FRONT_sm extends LinearOpMode {
 
         botHeading =imu.getRobotYawPitchRollAngles().
 
-                getYaw(AngleUnit.DEGREES);
-        telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
-                botHeading,deltaHeading));
+        getYaw(AngleUnit.DEGREES);
+                    telemetry.addLine(String.format("Heading / Error: %5.1f / %5.1f ",
+        botHeading,deltaHeading));
 
         telemetry.addLine();
         telemetry.addLine();
@@ -951,7 +984,6 @@ public class RED_FRONT_sm extends LinearOpMode {
 
         telemetry.update();
     }
-
 
 
 
