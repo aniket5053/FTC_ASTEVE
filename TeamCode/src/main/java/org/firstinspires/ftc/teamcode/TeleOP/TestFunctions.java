@@ -41,7 +41,8 @@ public class TestFunctions extends LinearOpMode {
     boolean isRotating;
     boolean firstTime = true;
     double initialHeading = 0.0;
-
+    boolean startTurn = true;
+    double finalTime = 0.0;
     // Vars for auto movement
     double curAngle;
     double deltaAngle, unsignedDelta;
@@ -236,21 +237,22 @@ public class TestFunctions extends LinearOpMode {
                 //Use DPAD for 4 scoring positions
                 // DPAD DOWN = Score Low
                 if(gamepad2.dpad_down){
-                    turnToAngle(180);
+                    turnToAngle(0,180);
                 }
 
+
                 //DPAD LEFT = Score Med
-                if(gamepad2.dpad_left){
-                    turnToAngle(90);
+                if(gamepad2.dpad_right){
+                 boolean turning =    turnToAngle(0,-90);
                 }
 
                 // DPAD UP = Score High
                 if(gamepad2.dpad_up){
-                    turnToAngle(0);
+                    turnToAngle(0,0);
                 }
                 // DPAD RIGHT = Score Very High
-                if(gamepad2.dpad_right){
-                    turnToAngle(-90);
+                if(gamepad2.dpad_left || !startTurn){
+                    turnToAngle(0,90);
                 }
 
 
@@ -281,6 +283,12 @@ public class TestFunctions extends LinearOpMode {
                 telemetry.addLine();
                 telemetry.addLine(String.format("Cur / Delta Ang: %5.1f  /  %5.1f ",
                         curAngle,deltaAngle));
+
+                telemetry.addLine();
+                telemetry.addLine(String.format("Final Time: %5.2f  ",
+                        finalTime));
+
+
 
                 telemetry.update();
 
@@ -363,48 +371,29 @@ public class TestFunctions extends LinearOpMode {
 
 
 
-    void turnToAngle(double finalAngle){
-        double curTime;
-        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        myStopwatch.reset();
+    boolean turnToAngle(double startAngle, double finalAngle) {
+        int counter;
+        double angleAccumulator;
+        double timeToTurn = 1200;
+        if(startTurn) {
+            startTurn = false;
+            timeToTurn = Math.abs(1200*(finalAngle-startAngle)/90);
+            myStopwatch.reset();
+        }
 
-        do  {
+        // Use a timer just in case gyro doesnt work!!!
+        finalTime= myStopwatch.time(TimeUnit.MILLISECONDS);
+        if(finalTime <= timeToTurn) {
             curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             deltaAngle = curAngle - finalAngle;
             unsignedDelta = Math.abs(deltaAngle);
-            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
-            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
-            curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
-    //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
-        } while ( (unsignedDelta > 2.0) );
-
-        //Check to see if its worth trying again!!
-        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        deltaAngle = (startAngle-finalAngle);
-        unsignedDelta = Math.abs(deltaAngle);
-        if (unsignedDelta > 2.0) {
-            autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
-            myStopwatch.reset();
-
-            do {
-                curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                deltaAngle = curAngle - finalAngle;
-                unsignedDelta = Math.abs(deltaAngle);
-                if (unsignedDelta > 10.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
-                else autoMec(0.0, 0.0, deltaAngle / 10.0);
-                curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
-    //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
-            } while ((unsignedDelta > 2.0) );
+            if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
+            else autoMec(0.0, 0.0, deltaAngle / 30.0);
+            if (unsignedDelta > 1.0) return (false);
+            else {startTurn = true; return (true);}
         }
-
-
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(100);
+        else {startTurn = true; return (true);}
     }
-
 
     void driveStraight(double inches){
 

@@ -274,9 +274,9 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnRight(startAngle, 90);
-                    moveELevatorToTrgtPos(300);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
-                    if (driveMoveCompleted) {
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
@@ -286,7 +286,7 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
 
                 case 55:
                     moveELevatorToTrgtPos(300);
-                    driveMoveCompleted = backwards(78);
+                    driveMoveCompleted = backwards(75);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -409,9 +409,9 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnRight(startAngle, 90);
-                    moveELevatorToTrgtPos(300);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
-                    if (driveMoveCompleted) {
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
@@ -420,7 +420,7 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
                     break;
 
                 case 55:
-                    driveMoveCompleted = backwards(78);
+                    driveMoveCompleted = backwards(75);
                     moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted) {
@@ -450,7 +450,7 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
 
                 case 70:
                     driveMoveCompleted = backwards(6);
-                    moveELevatorToTrgtPos(150);
+                    moveELevatorToTrgtPos(0);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -579,9 +579,9 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnRight(startAngle, 90);
-                    moveELevatorToTrgtPos(300);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
-                    if (driveMoveCompleted) {
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
@@ -591,7 +591,7 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
 
 
                 case 55:
-                    driveMoveCompleted = backwards(78);
+                    driveMoveCompleted = backwards(75);
                     moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted) {
@@ -753,10 +753,10 @@ public class BLUE_FRONTSTAGE extends LinearOpMode {
     boolean turnToAngle(double startAngle, double finalAngle) {
         int counter;
         double angleAccumulator;
-        double timeToTurn = 1400;
+        double timeToTurn = 1200;
         if(startTurn) {
             startTurn = false;
-            timeToTurn = Math.abs(1400*(finalAngle-startAngle)/90);
+            timeToTurn = Math.abs(1200*(finalAngle-startAngle)/90);
             myStopwatch.reset();
         }
 

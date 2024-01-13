@@ -717,10 +717,10 @@ public class RED_BACKSTAGE extends LinearOpMode {
     boolean turnToAngle(double startAngle, double finalAngle) {
         int counter;
         double angleAccumulator;
-        double timeToTurn = 1400;
+        double timeToTurn = 1200;
         if(startTurn) {
             startTurn = false;
-            timeToTurn = Math.abs(1400*(finalAngle-startAngle)/90);
+            timeToTurn = Math.abs(1200*(finalAngle-startAngle)/90);
             myStopwatch.reset();
         }
 
