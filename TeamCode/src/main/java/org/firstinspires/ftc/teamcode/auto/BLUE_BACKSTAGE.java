@@ -304,6 +304,17 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
+                        step = 150;
+                    }
+                    break;
+
+                case 150:
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(16);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
                         step = 999;
                     }
                     break;
@@ -446,9 +457,21 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
+                        step = 150;
+                    }
+                    break;
+
+                case 150:
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(16);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
                         step = 999;
                     }
                     break;
+
 
                 case 999:
                     //resets back to original position
@@ -608,14 +631,26 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
                     // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
                     elevatorMoveCompleted = moveELevatorToTrgtPos(0);
-                    driveMoveCompleted = strafeRight(26);
+                    driveMoveCompleted = strafeRight(28);
 
                     if (elevatorMoveCompleted && driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 150;
+                    }
+                    break;
+
+                case 150:
+                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(16);
+
+                    if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 999;
                     }
                     break;
+
 
                 case 999:
                     //resets back to original position

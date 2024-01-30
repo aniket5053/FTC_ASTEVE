@@ -27,6 +27,7 @@ public class RobotController extends LinearOpMode {
     Servo leftElbow;
     Servo rightElbow;
     Servo leftWrist;
+    Servo rightWrist;
     Servo leftClaw;
     Servo rightClaw;
     IMU imu;
@@ -127,18 +128,16 @@ public class RobotController extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        double botHeading = 0.0;
-        double deltaHeading = 0.0;
 
         // TA DONE: Configure HW so that names match
-        DcMotor leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
-        DcMotor rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
-        Servo   leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
-        Servo   rightElbow = hardwareMap.get(Servo.class, "RtElbow");
-        Servo   leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
-        Servo   rightWrist = hardwareMap.get(Servo.class, "RtWrist");
-        Servo   leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
-        Servo   rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
+        leftElevator   = hardwareMap.get(DcMotor.class, "LtElevator");
+        rightElevator  = hardwareMap.get(DcMotor.class, "RtElevator");
+        leftElbow  = hardwareMap.get(Servo.class, "LtElbow");
+        rightElbow = hardwareMap.get(Servo.class, "RtElbow");
+        leftWrist  = hardwareMap.get(Servo.class, "LtWrist");
+        rightWrist = hardwareMap.get(Servo.class, "RtWrist");
+        leftClaw   = hardwareMap.get(Servo.class, "LtClaw");
+        rightClaw  = hardwareMap.get(Servo.class, "RtClaw");
 
         //TouchSensor touchSensor = hardwareMap.get(TouchSensor.class, "TouchSensor");
 
@@ -228,6 +227,16 @@ public class RobotController extends LinearOpMode {
                     driveStraight(3);
                 }
 
+                //small backward move
+                if( (gamepad1.x)  ) {
+                    strafe(3);
+                }
+
+                //small backward move
+                if( (gamepad1.b)  ) {
+                    strafe(3);
+                }
+
 
 
                 /////////////////////////////////////////////////////////////////////////
@@ -287,7 +296,8 @@ public class RobotController extends LinearOpMode {
                     deltaHeading =0.0;
                     y = y / 2.0;
                     x = x / 2.0;
-                    rx = rx / 2.0;                }
+                    rx = rx / 2.0;
+                }
 
                 // switch to robot oriented (normally field oriented), slow down
                 // AND reverse all directions (the back of the robot is now the front)
@@ -299,11 +309,17 @@ public class RobotController extends LinearOpMode {
                     rx = -rx / 2.0;
                 }
 
-
-                if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
-                {
-                    rx = rx + deltaHeading * .02;
+                // switch to robot oriented (normally field oriented),
+                if(gamepad1.dpad_up) {
+                    botHeading = 0.0;
+                    deltaHeading =0.0;
                 }
+
+// Comment out trying to fix erroneous robot rotation - caused robot to spin around sometimes
+//                if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+//                {
+//                    rx = rx + deltaHeading * .02;
+//                }
 
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
@@ -627,10 +643,10 @@ public class RobotController extends LinearOpMode {
         //botHeading = 0.0;
         //deltaHeading = 0.0;
         //*************************************************************************************
-        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
-        {
-            rx = rx + deltaHeading * .02;
-        }
+//        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+//        {
+//            rx = rx + deltaHeading * .02;
+//        }
         //////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////
 
