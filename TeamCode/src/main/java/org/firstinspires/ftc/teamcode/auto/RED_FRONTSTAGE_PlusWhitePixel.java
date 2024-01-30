@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "RED  FRONTSTAGE", group = "Auto")
+@Autonomous(name = "RED  FRONTSTAGE + WhPxl", group = "Auto")
 public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
