@@ -35,6 +35,7 @@ public class RobotController extends LinearOpMode {
     double deltaHeading = 0.0;
 
     boolean isRotating;
+    boolean fieldCentric = true;
     boolean firstTime = true;
     boolean toggleswitch = false;
     boolean firstGyro = true;
@@ -180,10 +181,6 @@ public class RobotController extends LinearOpMode {
             leftElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightElevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            boolean isRotating;
-            boolean firstTime = true;
-            double initialHeading = 0.0;
-
             while (opModeIsActive()) {
 
                 // These button choices were made so that it is hard to hit on accident,
@@ -219,24 +216,23 @@ public class RobotController extends LinearOpMode {
 
                 //small forward move
                 if( (gamepad1.y)  ) {
-                    driveStraight(-3);
-                }
-
-                //small backward move
-                if( (gamepad1.a)  ) {
                     driveStraight(3);
                 }
 
                 //small backward move
+                if( (gamepad1.a)  ) {
+                    driveStraight(-3);
+                }
+
+                //small backward move
                 if( (gamepad1.x)  ) {
-                    strafe(3);
+                    strafe(-3);
                 }
 
                 //small backward move
                 if( (gamepad1.b)  ) {
                     strafe(3);
                 }
-
 
 
                 /////////////////////////////////////////////////////////////////////////
@@ -256,21 +252,21 @@ public class RobotController extends LinearOpMode {
                 //////////////////////////////////////////////////////////////////////////////////
                 // the code section below is correcting for robot rotation when it shouldn't happen
                 //////////////////////////////////////////////////////////////////////////////////
-                if (rx == 0.0) isRotating = false;
-                else {
-                    isRotating = true;
-                    firstTime = true;
-                }
-
-                if ((!isRotating) && (firstTime)) {
-                    initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                    firstTime = false;
-                }
-
-                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                deltaHeading = botHeading - initialHeading;
-                if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
-                if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
+//                if (rx == 0.0) isRotating = false;
+//                else {
+//                    isRotating = true;
+//                    firstTime = true;
+//                }
+//
+//                if ((!isRotating) && (firstTime)) {
+//                    initialHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+//                    firstTime = false;
+//                }
+//
+//                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+//                deltaHeading = botHeading - initialHeading;
+//                if (deltaHeading > 340.0) deltaHeading = deltaHeading -360;
+//                if (deltaHeading < -340.0) deltaHeading = (360 + deltaHeading);
                 // TA TODO: test to optimize this empirical constant and polarity of deltaHeading
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
@@ -283,27 +279,15 @@ public class RobotController extends LinearOpMode {
                 //////////////////////////////////////////////////////////////////////////////////
 
 
-                //  stay in field oriented mode but slow down for more accurate movement when a trigger is depressed
-                if (gamepad1.right_trigger > 0.33 || gamepad1.left_trigger > 0.33) {
+                //  slow down for more accurate movement when a trigger is depressed
+                if ( (gamepad1.right_trigger > 0.33) || (gamepad1.left_trigger > 0.33) ){
                     y = y / 2.0;
                     x = x / 2.0;
                     rx = rx / 2.0;
                 }
 
-                // switch to robot oriented (normally field oriented) and slow down
-                if(gamepad1.right_bumper) {
-                    botHeading = 0.0;
-                    deltaHeading =0.0;
-                    y = y / 2.0;
-                    x = x / 2.0;
-                    rx = rx / 2.0;
-                }
-
-                // switch to robot oriented (normally field oriented), slow down
-                // AND reverse all directions (the back of the robot is now the front)
-                if(gamepad1.left_bumper) {
-                    botHeading = 0.0;
-                    deltaHeading =0.0;
+                // slow down AND reverse all directions (the back of the robot is now the front)
+                if ( (gamepad1.left_bumper) || (gamepad1.right_bumper) ){
                     y = -y / 2.0;
                     x = -x / 2.0;
                     rx = -rx / 2.0;
@@ -311,6 +295,16 @@ public class RobotController extends LinearOpMode {
 
                 // switch to robot oriented (normally field oriented),
                 if(gamepad1.dpad_up) {
+                    fieldCentric = false;
+                }
+
+                // switch to robot oriented (normally field oriented),
+                if(gamepad1.dpad_down) {
+                    fieldCentric = true;
+                }
+
+                // switch to robot oriented (normally field oriented),
+                if(!fieldCentric) {
                     botHeading = 0.0;
                     deltaHeading =0.0;
                 }
@@ -320,7 +314,7 @@ public class RobotController extends LinearOpMode {
 //                {
 //                    rx = rx + deltaHeading * .02;
 //                }
-
+//
                 //////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////
 
@@ -444,7 +438,7 @@ public class RobotController extends LinearOpMode {
 // the code segment below adjusts the robot position toward backboard automatically
 // NOT WANTED BY DRIVE TEAM RIGHT NOW, BUT KEEP JUST IN CASE NEEDED
 //                if (moveBack == true) {
-//                    if (currentState == 3) driveStraight(-3);;
+//                    if (currentState == 3) driveStraight(3);;
 //                    if (currentState == 99) {driveStraight(-3); moveBack = false;}
 //                }
 
@@ -679,50 +673,6 @@ public class RobotController extends LinearOpMode {
     }
 
 
-
-    void turnToAngle(double finalAngle){
-        double curTime;
-        double startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        myStopwatch.reset();
-
-        do  {
-            curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            deltaAngle = curAngle - finalAngle;
-            unsignedDelta = Math.abs(deltaAngle);
-            if (unsignedDelta > 30.0) autoMec(0.0, 0.0,  deltaAngle/unsignedDelta );
-            else autoMec(0.0, 0.0,  deltaAngle/30.0 );
-            curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
-            //    } while ( (unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle)*200.0 ) );
-        } while ( (unsignedDelta > 2.0) );
-
-        //Check to see if its worth trying again!!
-        startAngle =  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        deltaAngle = (startAngle-finalAngle);
-        unsignedDelta = Math.abs(deltaAngle);
-        if (unsignedDelta > 2.0) {
-            autoMec(0.0, 0.0, deltaAngle / unsignedDelta);  // give a nudge to start
-            myStopwatch.reset();
-
-            do {
-                curAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-                deltaAngle = curAngle - finalAngle;
-                unsignedDelta = Math.abs(deltaAngle);
-                if (unsignedDelta > 10.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
-                else autoMec(0.0, 0.0, deltaAngle / 10.0);
-                curTime = myStopwatch.time(TimeUnit.MILLISECONDS);
-                //        } while ((unsignedDelta > 2.0) && (curTime < (finalAngle - startAngle) * 200.0));
-            } while ((unsignedDelta > 2.0) );
-        }
-
-
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(100);
-    }
-
-
     void driveStraight(double inches){
 
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -790,86 +740,6 @@ public class RobotController extends LinearOpMode {
         backRightMotor.setPower(0);
         sleep(100);
     }
-
-
-
-    void rightDiagnal(double inches){
-
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        sleep(50);
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        encoderCounts = (int)(countsPerInch * inches *1.7);
-
-        do  {
-            curPos = frontLeftMotor.getCurrentPosition();;
-            deltaPos = encoderCounts - curPos ;
-            unsignedDelta = Math.abs(deltaPos);
-            //full speed
-            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, deltaPos / unsignedDelta,  0.0 );
-                // slow down last 10 inches
-            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), deltaPos /(double) (10*countsPerInch), 0.0  );
-                // min speed of .2 when real close
-            else autoMec(0.2*(double) deltaPos/ unsignedDelta, 0.2*(double) deltaPos/ unsignedDelta, 0.0  );
-        } while (unsignedDelta > (double) countsPerInch/2);
-
-
-        // Stop the motors after the sleep
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(100);
-    }
-
-
-
-    void leftDiagnal(double inches){
-
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        sleep(50);
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        encoderCounts = (int)(countsPerInch * inches *1.7);
-
-        do  {
-            curPos = frontRightMotor.getCurrentPosition();;
-            deltaPos = encoderCounts - curPos ;
-            unsignedDelta = Math.abs(deltaPos);
-            //full speed
-            if (unsignedDelta > 10*countsPerInch) autoMec((double) deltaPos / unsignedDelta, -deltaPos / unsignedDelta,  0.0 );
-                // slow down last 10 inches
-            else if (unsignedDelta > 2*countsPerInch) autoMec((double) deltaPos /(double) (10*countsPerInch), -deltaPos /(double) (10*countsPerInch), 0.0  );
-                // min speed of .2 when real close
-            else autoMec(0.2*(double) deltaPos/ unsignedDelta, -0.2*(double) deltaPos/ unsignedDelta, 0.0  );
-        } while (unsignedDelta > (double) countsPerInch/2);
-
-
-        // Stop the motors after the sleep
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-        sleep(100);
-    }
-
-
-
-
-
-
 
 
 }   // end of RobotController Class

@@ -191,10 +191,10 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 10:
                     setWristOut();
-                    moveELevatorToTrgtPos(150);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(150);
                     driveMoveCompleted = forward(24);
 
-                    if (driveMoveCompleted) {
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -203,8 +203,6 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 20:
-                    moveELevatorToTrgtPos(150);
-                    setWristOut();
                     driveMoveCompleted = turnLeft(startAngle, 90);
 
                     if (driveMoveCompleted) {
@@ -237,9 +235,9 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 40:
                     driveMoveCompleted = turnRight(startAngle, 0);
-                    moveELevatorToTrgtPos(300);
+                    elevatorMoveCompleted =moveELevatorToTrgtPos(300);
 
-                    if (driveMoveCompleted) {
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
@@ -249,7 +247,6 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 45:
                     driveMoveCompleted = backwards(20);
-                    moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -274,7 +271,6 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 55:
                     driveMoveCompleted = backwards(75);
-                    moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -285,10 +281,10 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 60:
-                    driveMoveCompleted = strafeRight(28);
-                    moveELevatorToTrgtPos(0);
+                    driveMoveCompleted = strafeRight(33);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
 
-                    if (driveMoveCompleted) {
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 65;
@@ -355,16 +351,16 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
         do {
             switch (step) {
                 case 0:
+                    setWristOut();
                     resetDriveEncoders();
                     step = 10;
                     break;
 
                 case 10:
-                    moveELevatorToTrgtPos(150);
-                    setWristOut();
-                    driveMoveCompleted = forward(24);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(150);
+                    driveMoveCompleted = forward(23);
 
-                    if (driveMoveCompleted) {
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -383,13 +379,11 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 40:
-                    driveMoveCompleted = backwards(20);
-                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(2);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                         step = 50;
                     }
@@ -397,33 +391,90 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnLeft(startAngle, 90);
-                    elevatorMoveCompleted = moveELevatorToTrgtPos(300);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(-100);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         setWristIn();
-                        step = 55;
+                        step = 5500;
                     }
                     break;
 
-                case 55:
-                    moveELevatorToTrgtPos(300);
-                    driveMoveCompleted = backwards(75);
+
+
+
+
+                // GO TO STACK OF WHITE PIXELS TO PICK ONE UP BEFORE GOING TO BACKSTAGE
+                case 5500:
+                    driveMoveCompleted = forward(16);
+                    setWristOut();
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
+                        step = 5510;
+                    }
+                    break;
+
+                case 5510:
+                    driveMoveCompleted = strafeRight(5);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 5520;
+                    }
+                    break;
+
+                case 5520:
+                    driveMoveCompleted = forward(5);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 5530;
+                    }
+                    break;
+
+                case 5530:
+                    rightClaw.setPosition(CLAW_CLOSED);
+                    sleep(750);
+                    setWristIn();
+                    sleep(150);
+                    startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                    step = 5540;
+                    break;
+
+                case 5540:
+                    driveMoveCompleted = strafeLeft( 25);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(300);
+
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 5550;
+                    }
+                    break;
+
+
+                case 5550:
+                    driveMoveCompleted = backwards(93);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
                         step = 60;
                     }
                     break;
 
-                case 60:
-                    driveMoveCompleted = strafeRight(26);
-                    moveELevatorToTrgtPos(0);
 
-                    if (driveMoveCompleted) {
+
+                case 60:
+                    driveMoveCompleted = strafeRight(28);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
+
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 65;
@@ -437,8 +488,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 70:
-                    driveMoveCompleted = backwards(6);
-                    moveELevatorToTrgtPos(0);
+                    driveMoveCompleted = backwards(4);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -448,8 +498,9 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 80:
-                    //drops on right area
+                    //drops pixels
                     leftClaw.setPosition(CLAW_OPEN);
+                     rightClaw.setPosition(CLAW_OPEN);
                     sleep(750);
                     step = 90;
                     break;
@@ -470,10 +521,10 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                 case 999:
                     //resets back to original position
                     home();
-                    step = 1000;
+                    step = 10000;
                     break;
 
-                case 1000:
+                case 10000:
                     // case just to exit while loop
                     break;
             }
@@ -481,7 +532,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
             updateTelemetry();
 
-        } while (step < 1000);
+        } while (step < 10000);
     }
 
 
@@ -494,11 +545,10 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 10:
-                    moveELevatorToTrgtPos(150);
-                    setWristOut();
-                    driveMoveCompleted = forward(24);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(150);
+                    driveMoveCompleted = forward(27);
 
-                    if (driveMoveCompleted) {
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -507,8 +557,6 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 20:
-                    moveELevatorToTrgtPos(150);
-                    setWristOut();
                     driveMoveCompleted = turnRight(startAngle, 90);
 
                     if (driveMoveCompleted) {
@@ -520,45 +568,44 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 30:
                     driveMoveCompleted = backwards(2);
+                    setWristOut();
 
                     if (driveMoveCompleted) {
+                        setWristOut();
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristOut();
                         step = 35;
                     }
                     break;
 
                 case 35:
-                    //drops on right Spike Mark
+                    //make sure wrist is out, then drops on right Spike Mark
+                    setWristOut();
+                    sleep(250);
                     rightClaw.setPosition(CLAW_OPEN);
                     sleep(750);
                     setWristIn();
-                    sleep(150);
+                    sleep(250);
                     startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                     step = 40;
                     break;
 
                 case 40:
                     driveMoveCompleted = turnLeft(startAngle, 0);
-                    moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
                         step = 45;
                     }
                     break;
 
                 case 45:
-                    driveMoveCompleted = backwards(20);
-                    moveELevatorToTrgtPos(300);
+                    driveMoveCompleted = backwards(3);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
                         startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                         step = 50;
                     }
@@ -567,32 +614,91 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnLeft(startAngle, 90);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(-100);
+
+                    if (driveMoveCompleted && elevatorMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        setWristOut();
+                        step = 5500;
+                    }
+                    break;
+
+
+
+
+
+
+                // GO TO STACK OF WHITE PIXELS TO PICK ONE UP BEFORE GOING TO BACKSTAGE
+                case 5500:
+                    driveMoveCompleted = forward(15);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 5520;
+                    }
+                    break;
+
+                case 5510: // skip - no strafe nec
+                    driveMoveCompleted = strafeRight(6);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 5520;
+                    }
+                    break;
+
+                case 5520:
+                    driveMoveCompleted = forward(4);
+
+                    if (driveMoveCompleted) {
+                        stopDriveMotors();
+                        resetDriveEncoders();
+                        step = 5530;
+                    }
+                    break;
+
+                case 5530:
+                    rightClaw.setPosition(CLAW_CLOSED);
+                    sleep(750);
+                    setWristIn();
+                    sleep(150);
+                    startAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                    step = 5540;
+                    break;
+
+                case 5540:
+                    driveMoveCompleted = strafeLeft( 22);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
-                        step = 55;
+                        step = 5550;
                     }
                     break;
 
 
-                case 55:
-                    driveMoveCompleted = backwards(75);
-                    moveELevatorToTrgtPos(300);
+                case 5550:
+                    driveMoveCompleted = backwards(94);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        setWristIn();
                         step = 60;
                     }
                     break;
 
 
+
+
+
+
+
                 case 60:
-                    driveMoveCompleted = strafeRight(17);
+                    driveMoveCompleted = strafeRight(20);
                     moveELevatorToTrgtPos(0);
 
                     if (driveMoveCompleted) {
@@ -623,6 +729,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                 case 80:
                     //drops on right area
                     leftClaw.setPosition(CLAW_OPEN);
+                     rightClaw.setPosition(CLAW_OPEN);
                     sleep(750);
                     step = 90;
                     break;
@@ -643,10 +750,10 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                 case 999:
                     //resets back to original position
                     home();
-                    step = 1000;
+                    step = 10000;
                     break;
 
-                case 1000:
+                case 10000:
                     // case just to exit while loop
                     break;
             }
@@ -655,7 +762,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
             updateTelemetry();
 
         }
-        while (step < 1000);
+        while (step < 10000);
 
     }
 
@@ -702,9 +809,9 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
         //botHeading = 0.0;
         //deltaHeading = 0.0;
         //*************************************************************************************
-        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+        if ((!isRotating) && (Math.abs(deltaHeading) > 0.49))// DEGREES - was 2.2
         {
-            rx = rx + deltaHeading * .02;
+            rx = rx + deltaHeading * .05;  //was .02
         }
         //////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////
@@ -941,7 +1048,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
         }
         leftWrist.setPosition(WRIST_SCORE);
         rightWrist.setPosition(WRIST_SCORE);
-        sleep(2000);
+        sleep(1000);
     }
 
     void home() {
@@ -963,7 +1070,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
             rightElbow.setPosition(ELBOW_DOWN);
             sleep(250);
         }
-        sleep(1500);
+        sleep(150);
     }
 
 

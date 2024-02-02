@@ -253,7 +253,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
 
                 case 60:
                     moveELevatorToTrgtPos(300);
-                    driveMoveCompleted = strafeRight(16);
+                    driveMoveCompleted = strafeRight(18);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -304,24 +304,23 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 150;
+                        step = 140;
                     }
                     break;
 
+                case 140:
+                    home();
+                    step = 150;
+                    break;
+
                 case 150:
-                    moveELevatorToTrgtPos(300);
                     driveMoveCompleted = backwards(16);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 999;
+                        step = 1000;
                     }
-                    break;
-
-                case 999:
-                    home();
-                    step = 1000;
                     break;
 
                 case 1000:
@@ -349,7 +348,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
 
                 case 10:
                     moveELevatorToTrgtPos(150);
-                    driveMoveCompleted = forward(24);
+                    driveMoveCompleted = forward(23);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -457,26 +456,24 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 150;
+                        step = 140;
                     }
                     break;
 
+                case 140:
+                    //resets back to original position
+                    home();
+                    step = 150;
+                    break;
+
                 case 150:
-                    moveELevatorToTrgtPos(300);
                     driveMoveCompleted = backwards(16);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 999;
+                        step = 1000;
                     }
-                    break;
-
-
-                case 999:
-                    //resets back to original position
-                    home();
-                    step = 1000;
                     break;
 
                 case 1000:
@@ -631,31 +628,29 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
                     // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
                     elevatorMoveCompleted = moveELevatorToTrgtPos(0);
-                    driveMoveCompleted = strafeRight(28);
+                    driveMoveCompleted = strafeRight(30);
 
                     if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 150;
+                        step = 140;
                     }
                     break;
 
+                case 140:
+                    //resets back to original position
+                    home();
+                    step = 150;
+                    break;
+
                 case 150:
-                    moveELevatorToTrgtPos(300);
                     driveMoveCompleted = backwards(16);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
-                        step = 999;
+                        step = 1000;
                     }
-                    break;
-
-
-                case 999:
-                    //resets back to original position
-                    home();
-                    step = 1000;
                     break;
 
                 case 1000:
@@ -713,9 +708,9 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
         //botHeading = 0.0;
         //deltaHeading = 0.0;
         //*************************************************************************************
-        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+        if ((!isRotating) && (Math.abs(deltaHeading) > 0.49))// DEGREES - was 2.2
         {
-            rx = rx + deltaHeading * .02;
+            rx = rx + deltaHeading * .05;  //was .02
         }
         //////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////
@@ -951,7 +946,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
         }
         leftWrist.setPosition(WRIST_SCORE);
         rightWrist.setPosition(WRIST_SCORE);
-        sleep(2000);
+        sleep(1000);
     }
 
     void home() {
@@ -973,7 +968,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
             rightElbow.setPosition(ELBOW_DOWN);
             sleep(250);
         }
-        sleep(1500);
+        sleep(150);
     }
 
 

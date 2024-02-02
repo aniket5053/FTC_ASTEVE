@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "RED  FRONTSTAGE", group = "Auto")
+@Autonomous(name = "xRED  FRONTSTAGE", group = "Auto")
 public class RED_FRONTSTAGE extends LinearOpMode {
 
     static final double CLAW_OPEN = 0.5;
@@ -363,7 +363,7 @@ public class RED_FRONTSTAGE extends LinearOpMode {
                 case 10:
                     moveELevatorToTrgtPos(150);
                     setWristOut();
-                    driveMoveCompleted = forward(24);
+                    driveMoveCompleted = forward(23);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -703,9 +703,9 @@ public class RED_FRONTSTAGE extends LinearOpMode {
         //botHeading = 0.0;
         //deltaHeading = 0.0;
         //*************************************************************************************
-        if ((!isRotating) && (Math.abs(deltaHeading) > 2.2))// DEGREES
+        if ((!isRotating) && (Math.abs(deltaHeading) > 0.49))// DEGREES - was 2.2
         {
-            rx = rx + deltaHeading * .02;
+            rx = rx + deltaHeading * .05;  //was .02
         }
         //////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////
