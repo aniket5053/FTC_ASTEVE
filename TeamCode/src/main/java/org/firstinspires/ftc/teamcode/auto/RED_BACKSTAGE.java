@@ -221,7 +221,7 @@ public class RED_BACKSTAGE extends LinearOpMode {
 
                 case 30:
                     moveELevatorToTrgtPos(150);
-                    driveMoveCompleted = backwards(3);
+                    driveMoveCompleted = backwards(4);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -423,7 +423,7 @@ public class RED_BACKSTAGE extends LinearOpMode {
 
                 case 80:
                     moveELevatorToTrgtPos(300);
-                    driveMoveCompleted = backwards(6);
+                    driveMoveCompleted = backwards(8);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -615,7 +615,7 @@ public class RED_BACKSTAGE extends LinearOpMode {
 
                 case 120:
                     moveELevatorToTrgtPos(0);
-                    driveMoveCompleted = forward(6);
+                    driveMoveCompleted = forward(7);
                     if (driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();

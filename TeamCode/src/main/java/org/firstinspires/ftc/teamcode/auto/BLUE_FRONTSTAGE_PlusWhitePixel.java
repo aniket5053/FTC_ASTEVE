@@ -293,7 +293,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 // GO TO STACK OF WHITE PIXELS TO PICK ONE UP BEFORE GOING TO BACKSTAGE
                 case 5500:
-                    driveMoveCompleted = forward(14);
+                    driveMoveCompleted = forward(11);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -313,7 +313,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5520:
-                    driveMoveCompleted = forward(6);
+                    driveMoveCompleted = forward(7);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -332,7 +332,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5540:
-                    driveMoveCompleted = strafeRight(30);
+                    driveMoveCompleted = strafeRight(35);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -358,7 +358,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 60:
-                    driveMoveCompleted = strafeLeft(32);
+                    driveMoveCompleted = strafeLeft(30);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(-150);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -375,7 +375,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 70:
-                    driveMoveCompleted = backwards(6);
+                    driveMoveCompleted = backwards(4);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -388,12 +388,13 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     //drops on correct area
                     rightClaw.setPosition(CLAW_OPEN);
                     sleep(750);
+                    rightClaw.setPosition(CLAW_CLOSED);
                     step = 90;
                     break;
 
 
                 case 90:
-                    driveMoveCompleted = strafeRight(15);
+                    driveMoveCompleted = strafeRight(16);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -541,7 +542,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5540:
-                    driveMoveCompleted = strafeRight( 31);
+                    driveMoveCompleted = strafeRight( 35);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -567,7 +568,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 60:
-                    driveMoveCompleted = strafeLeft(27);
+                    driveMoveCompleted = strafeLeft(22);
                     moveELevatorToTrgtPos(-150);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {

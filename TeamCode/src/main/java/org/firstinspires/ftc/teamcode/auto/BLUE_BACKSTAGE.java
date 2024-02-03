@@ -300,7 +300,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
                     // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
                     elevatorMoveCompleted = moveELevatorToTrgtPos(0);
-                    driveMoveCompleted = strafeRight(18);
+                    driveMoveCompleted = strafeRight(20);
                     if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
@@ -314,7 +314,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 150:
-                    driveMoveCompleted = backwards(16);
+                    driveMoveCompleted = backwards(17);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -451,7 +451,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
                     // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
                     elevatorMoveCompleted = moveELevatorToTrgtPos(0);
-                    driveMoveCompleted = strafeRight(24);
+                    driveMoveCompleted = strafeRight(26);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -467,7 +467,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 150:
-                    driveMoveCompleted = backwards(16);
+                    driveMoveCompleted = backwards(17);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -628,7 +628,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     // must have elevator at "0" at end of autonomous for teleOp to work correctly!!!
                     // therefore on this call to move elevator, be absolutely sure it has finished getting there!!!
                     elevatorMoveCompleted = moveELevatorToTrgtPos(0);
-                    driveMoveCompleted = strafeRight(30);
+                    driveMoveCompleted = strafeRight(32);
 
                     if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
@@ -644,7 +644,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 150:
-                    driveMoveCompleted = backwards(16);
+                    driveMoveCompleted = backwards(17);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();

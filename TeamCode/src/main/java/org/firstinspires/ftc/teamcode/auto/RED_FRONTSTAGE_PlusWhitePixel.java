@@ -459,7 +459,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 5550:
-                    driveMoveCompleted = backwards(93);
+                    driveMoveCompleted = backwards(94);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -488,7 +488,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 70:
-                    driveMoveCompleted = backwards(4);
+                    driveMoveCompleted = backwards(6);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -541,6 +541,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
             switch (step) {
                 case 0:
                     resetDriveEncoders();
+                    setWristOut();
                     step = 10;
                     break;
 
@@ -568,7 +569,6 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 30:
                     driveMoveCompleted = backwards(2);
-                    setWristOut();
 
                     if (driveMoveCompleted) {
                         setWristOut();
@@ -651,7 +651,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5520:
-                    driveMoveCompleted = forward(4);
+                    driveMoveCompleted = forward(5);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -670,7 +670,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5540:
-                    driveMoveCompleted = strafeLeft( 22);
+                    driveMoveCompleted = strafeLeft( 25);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -698,7 +698,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 60:
-                    driveMoveCompleted = strafeRight(20);
+                    driveMoveCompleted = strafeRight(22);
                     moveELevatorToTrgtPos(0);
 
                     if (driveMoveCompleted) {
