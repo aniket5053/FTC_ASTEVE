@@ -67,7 +67,7 @@ public class RobotController extends LinearOpMode {
     static final int ELEV_START = 0;
     static final int ELEV_HANG = -550;
     static final int ELEV_SCORE_LOW = 300;
-    static final int ELEV_SCORE_MED = 150;
+    static final int ELEV_SCORE_MED = 50;  // was 150
     static final int ELEV_SCORE_HIGH = 0;
     static final int ELEV_SCORE_VERYHIGH = -600;
     static final int ELEV_TOP = -600;
@@ -76,7 +76,7 @@ public class RobotController extends LinearOpMode {
     static final double ELBOW_DOWN = 0.79;      //was .75 too little, .9 too much
     static final double ELBOW_HANG = 0.36;      //
     static final double ELBOW_SCORE_LOW = 0.17;        //
-    static final double ELBOW_SCORE_MED = 0.17;        //
+    static final double ELBOW_SCORE_MED = 0.19;        //  was .17
     static final double ELBOW_SCORE_HIGH = 0.21;        //
     static final double ELBOW_SCORE_VERYHIGH = 0.25;        //
 
@@ -288,9 +288,9 @@ public class RobotController extends LinearOpMode {
 
                 // slow down AND reverse all directions (the back of the robot is now the front)
                 if ( (gamepad1.left_bumper) || (gamepad1.right_bumper) ){
-                    y = -y / 2.0;
-                    x = -x / 2.0;
-                    rx = -rx / 2.0;
+                    y = -y / 1.0;
+                    x = -x / 1.0;
+                    rx = -rx / 1.0;
                 }
 
                 // switch to robot oriented (normally field oriented),

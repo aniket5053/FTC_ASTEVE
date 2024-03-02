@@ -224,7 +224,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 30:
-                    driveMoveCompleted = backwards(2);
+                    driveMoveCompleted = backwards(3);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -282,7 +282,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnRight(startAngle, 90);
-                    elevatorMoveCompleted = moveELevatorToTrgtPos(-100);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(80);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
@@ -313,7 +313,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5520:
-                    driveMoveCompleted = forward(7);
+                    driveMoveCompleted = forward(6);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -332,7 +332,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5540:
-                    driveMoveCompleted = strafeRight(35);
+                    driveMoveCompleted = strafeRight(34);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -344,7 +344,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 5550:
-                    driveMoveCompleted = backwards(94);
+                    driveMoveCompleted = backwards(92);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -358,7 +358,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 60:
-                    driveMoveCompleted = strafeLeft(30);
+                    driveMoveCompleted = strafeLeft(24);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(-150);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -394,7 +394,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 90:
-                    driveMoveCompleted = strafeRight(16);
+                    driveMoveCompleted = strafeRight(10);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -487,7 +487,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnRight(startAngle, 90);
-                    elevatorMoveCompleted = moveELevatorToTrgtPos(-100);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(80);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
@@ -542,7 +542,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
                     break;
 
                 case 5540:
-                    driveMoveCompleted = strafeRight( 35);
+                    driveMoveCompleted = strafeRight( 34);
                     elevatorMoveCompleted = moveELevatorToTrgtPos(300);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
@@ -554,7 +554,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
 
                 case 5550:
-                    driveMoveCompleted = backwards(94);
+                    driveMoveCompleted = backwards(92);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -863,7 +863,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
         //*************************************************************************************
         if ((!isRotating) && (Math.abs(deltaHeading) > 0.49))// DEGREES - was 2.2
         {
-            rx = rx + deltaHeading * .05;  //was .02
+            rx = rx + deltaHeading * .08;  //was .02 seemed small - .13 oscillates
         }
         //////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////
@@ -900,10 +900,10 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
     boolean turnToAngle(double startAngle, double finalAngle) {
         int counter;
         double angleAccumulator;
-        double timeToTurn = 1200;
+        double timeToTurn = 1000;
         if(startTurn) {
             startTurn = false;
-            timeToTurn = Math.abs(1200*(finalAngle-startAngle)/90);
+            timeToTurn = Math.abs(1000*(finalAngle-startAngle)/90);
             myStopwatch.reset();
         }
 
@@ -914,7 +914,7 @@ public class BLUE_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
             unsignedDelta = Math.abs(deltaAngle);
             if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
             else autoMec(0.0, 0.0, deltaAngle / 30.0);
-            if (unsignedDelta > 2.5) return (false);
+            if (unsignedDelta > 1.25) return (false);       //was 2.5
             else {startTurn = true; return (true);}
         }
         else {startTurn = true; return (true);}

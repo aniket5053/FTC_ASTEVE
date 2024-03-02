@@ -221,7 +221,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 30:
-                    driveMoveCompleted = forward(8);
+                    driveMoveCompleted = forward(7);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -241,7 +241,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
 
                 case 50:
                     moveELevatorToTrgtPos(300);
-                    driveMoveCompleted = backwards(11);
+                    driveMoveCompleted = backwards(12);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -269,7 +269,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 80:
-                    driveMoveCompleted = backwards(7);
+                    driveMoveCompleted = backwards(8);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -286,10 +286,10 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 100:
-                    moveELevatorToTrgtPos(0);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
                     driveMoveCompleted = forward(6);
 
-                    if (driveMoveCompleted) {
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 110;
@@ -370,7 +370,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
 
                 case 30:
                     moveELevatorToTrgtPos(300);
-                    driveMoveCompleted = backwards(5);
+                    driveMoveCompleted = backwards(3);
 
                     if (driveMoveCompleted) {
                         stopDriveMotors();
@@ -437,10 +437,10 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
                     break;
 
                 case 100:
-                    moveELevatorToTrgtPos(0);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(0);
                     driveMoveCompleted = forward(6);
 
-                    if (driveMoveCompleted) {
+                    if (elevatorMoveCompleted && driveMoveCompleted) {
                         stopDriveMotors();
                         resetDriveEncoders();
                         step = 110;
@@ -771,7 +771,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
     boolean driveStraight(double inches) {
         encoderCounts = (int) (countsPerInch * inches);
         curPos = frontLeftMotor.getCurrentPosition();
-        ;
+
         deltaPos = encoderCounts - curPos;
         unsignedDelta = Math.abs(deltaPos);
         //full speed
@@ -791,7 +791,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
     boolean strafe(double inches) {
         encoderCounts = (int) (countsPerInch * inches);
         curPos = frontLeftMotor.getCurrentPosition();
-        ;
+
         deltaPos = encoderCounts - curPos;
         unsignedDelta = Math.abs(deltaPos);
         if (unsignedDelta > 10 * countsPerInch)
@@ -807,7 +807,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
     boolean rightDiagonal(double inches) {
         encoderCounts = (int) (countsPerInch * inches * 1.7);
         curPos = frontLeftMotor.getCurrentPosition();
-        ;
+
         deltaPos = encoderCounts - curPos;
         unsignedDelta = Math.abs(deltaPos);
         //full speed
@@ -827,7 +827,7 @@ public class BLUE_BACKSTAGE extends LinearOpMode {
     boolean leftDiagonal(double inches) {
         encoderCounts = (int) (countsPerInch * inches * 1.7);
         curPos = frontRightMotor.getCurrentPosition();
-        ;
+
         deltaPos = encoderCounts - curPos;
         unsignedDelta = Math.abs(deltaPos);
         //full speed

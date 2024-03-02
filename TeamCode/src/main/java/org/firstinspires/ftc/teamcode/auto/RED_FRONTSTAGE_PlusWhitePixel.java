@@ -391,7 +391,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnLeft(startAngle, 90);
-                    elevatorMoveCompleted = moveELevatorToTrgtPos(-100);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(80);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
@@ -614,7 +614,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
 
                 case 50:
                     driveMoveCompleted = turnLeft(startAngle, 90);
-                    elevatorMoveCompleted = moveELevatorToTrgtPos(-100);
+                    elevatorMoveCompleted = moveELevatorToTrgtPos(80);
 
                     if (driveMoveCompleted && elevatorMoveCompleted) {
                         stopDriveMotors();
@@ -811,7 +811,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
         //*************************************************************************************
         if ((!isRotating) && (Math.abs(deltaHeading) > 0.49))// DEGREES - was 2.2
         {
-            rx = rx + deltaHeading * .05;  //was .02
+            rx = rx + deltaHeading * .03;  //was .02
         }
         //////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////
@@ -862,7 +862,7 @@ public class RED_FRONTSTAGE_PlusWhitePixel extends LinearOpMode {
             unsignedDelta = Math.abs(deltaAngle);
             if (unsignedDelta > 30.0) autoMec(0.0, 0.0, deltaAngle / unsignedDelta);
             else autoMec(0.0, 0.0, deltaAngle / 30.0);
-            if (unsignedDelta > 2.5) return (false);
+            if (unsignedDelta > 1.25) return (false);       //was 2.5
             else {startTurn = true; return (true);}
         }
         else {startTurn = true; return (true);}
